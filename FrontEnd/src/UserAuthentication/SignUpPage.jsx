@@ -54,7 +54,7 @@ function SignUpPage(){
                             <input name="email" onChange={(event) => setEmail(event.target.value)} required="required"/>
                         </div>
                         <div className="signUpUsername">
-                            <label htmlFor="username">UserName</label>
+                            <label htmlFor="username">Username</label>
                             <input name="username" onChange={(event) => setUserName(event.target.value)} required="required"/>
                         </div>
                         <div className="signUpPassword">
