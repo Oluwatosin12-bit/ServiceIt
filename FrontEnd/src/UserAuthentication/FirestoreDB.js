@@ -1,5 +1,5 @@
 import {database} from './FirebaseConfig';
-import {collection, addDoc, doc, setDoc} from 'firebase/firestore';
+import {doc, setDoc} from 'firebase/firestore';
 
 async function addUser(userCredential, firstName, lastName, userName, signUpEmail){
     const uid = userCredential.user.uid;
@@ -11,6 +11,6 @@ async function addUser(userCredential, firstName, lastName, userName, signUpEmai
         UserName: userName,
         Email: signUpEmail,
     });
-}
+};
 
-export {addUser}
+export {addUser};

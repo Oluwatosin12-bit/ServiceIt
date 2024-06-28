@@ -1,5 +1,6 @@
-import  { useNavigate } from "react-router-dom"
-import './LandingPage.css'
+import  { useNavigate } from "react-router-dom";
+import './LandingPage.css';
+
 function LandingPage(){
     const navigate = useNavigate();
     const handleLoginRoute = () =>{
@@ -12,8 +13,8 @@ function LandingPage(){
     return(
         <div className="landingPageContent">
             <div className="landingPageText">
-                <h1>Welcome</h1>
-                <p>An online marketplace to give your services a platform</p>
+                <h1 className="welcome">Welcome</h1>
+                <p className="description">An online marketplace to give your services a platform</p>
                 <button className="loginButton" onClick={handleLoginRoute}>Login</button>
                 <button className="signUpButton" onClick={handleSignUpRoute}>SignUp</button>
             </div>
@@ -22,6 +23,6 @@ function LandingPage(){
             </div>
         </div>
     )
-}
+};
 
 export default LandingPage

@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { loginUser, logOutUser } from "./Auth";
+import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+import {loginUser} from "./Auth";
 import "./LoginPage.css";
 
 
@@ -9,31 +9,34 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignUpRoute = () => {
-    navigate(`/SignUpPage`);
+  const handleSignUpRoute = ()=>{
+    navigate('/SignUpPage');
+  };
+  const handleResetPasswordRoute = ()=>{
+    navigate('/ResetPasswordPage');
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       const result = await loginUser(email, password);
-      if (result === true) {
+      if (result !==undefined) {
         navigate("/MainPage");
-      } else {
-        console.error("Error logging user");
+      } else{
+        alert("Incorrect password");
       }
     } catch (error) {
       console.error("Error logging in user:", error);
-    }
+    };
   };
 
   return (
     <div>
       <button className="backButton" onClick={() => navigate(-1)}> ⬅ </button>
       <div className="loginPageContent">
-        <div className="loginForm">
-          <form onSubmit={handleLogin}>
-            <h3>Login Form</h3>
+        <div >
+          <form className="loginForm" onSubmit={handleLogin}>
+            <p className="loginHeading">Login</p>
             <div className="loginEmail">
               <label htmlFor="email">Email</label>
               <input
@@ -42,6 +45,7 @@ function LoginPage() {
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Enter Email address..."
               />
+              <span className="icon">📧</span>
             </div>
 
             <div className="loginPassword">
@@ -53,20 +57,18 @@ function LoginPage() {
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter Password..."
               />
+              <span className="icon">🔒</span>
             </div>
 
             <div className="linkOut">
-              <p className="linkToResetPassword">Forgot Password?</p>
+              <a className="linkToResetPassword" onClick={handleResetPasswordRoute}>Forgot Password?</a>
               <a className="linkToSignUp" onClick={handleSignUpRoute}>
                 Sign Up
               </a>
             </div>
-
-            <div>
               <button className="sendLoginButton" type="submit" onClick={handleLogin}>
                 Login
               </button>
-            </div>
           </form>
         </div>
         <div>
@@ -78,6 +80,6 @@ function LoginPage() {
       </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

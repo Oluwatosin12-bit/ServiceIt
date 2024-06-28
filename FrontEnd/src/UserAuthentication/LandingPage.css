@@ -5,8 +5,12 @@
     align-items: center;
     justify-content: space-around;
 }
+
+.welcome, .description{
+    color: var(--color6);
+}
 .landingImage{
-    width: 110%
+    width: 110%;
 }
 .loginButton, .signUpButton {
     border-radius: 8px;
@@ -18,9 +22,9 @@
     background-color: #f9f9f9;
     cursor: pointer;
     transition: border-color 0.25s;
-    margin: 5px
+    margin: 5px;
 }
 
 .loginButton:hover, .signUpButton:hover{
-    background-color: var(--color1);
+    background: var(--buttonColor);
 }
