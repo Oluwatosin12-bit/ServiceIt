@@ -42,34 +42,20 @@ function SignUpPage(){
                     <form className="signUpForm">
                         <h3>Create an account</h3>
                         <div className="signUpFirstName">
-<<<<<<< HEAD
-                            <label htmlFor="firstName">FirstName</label>
-                            <input name="firstName" onChange={(event) => setFirstName(event.target.value)} placeholder="First First name" required="required"/>
-                        </div>
-                        <div className="signUpLastName">
-                            <label htmlFor="lastName">LastName</label>
-                            <input name="lastName" onChange={(event) => setLastName(event.target.value)} placeholder="Enter Last name" />
-=======
                             <label htmlFor="firstName">First name</label>
                             <input name="firstName" onChange={(event) => setFirstName(event.target.value)} required="required"/>
                         </div>
                         <div className="signUpLastName">
                             <label htmlFor="lastName">Last name</label>
                             <input name="lastName" onChange={(event) => setLastName(event.target.value)}/>
->>>>>>> ead5d69af275e066578cf075cbfacc08279d4366
                         </div>
                         <div className="signUpEmail">
                             <label htmlFor="email">Email</label>
                             <input name="email" onChange={(event) => setEmail(event.target.value)} placeholder="Enter Email" required="required"/>
                         </div>
                         <div className="signUpUsername">
-<<<<<<< HEAD
-                            <label htmlFor="username">UserName</label>
-                            <input name="username" onChange={(event) => setUserName(event.target.value)} required="required" placeholder="Enter Username" />
-=======
                             <label htmlFor="username">Username</label>
                             <input name="username" onChange={(event) => setUserName(event.target.value)} required="required"/>
->>>>>>> ead5d69af275e066578cf075cbfacc08279d4366
                         </div>
                         <div className="signUpPassword">
                             <label htmlFor="password">Password</label>
