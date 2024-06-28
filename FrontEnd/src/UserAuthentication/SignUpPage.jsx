@@ -42,7 +42,7 @@ function SignUpPage(){
                     <form className="signUpForm">
                         <h3>Create an account</h3>
                         <div className="signUpFirstName">
-                            <label htmlFor="firstName">FirstName</label>
+                            <label htmlFor="firstName">First name</label>
                             <input name="firstName" onChange={(event) => setFirstName(event.target.value)} required="required"/>
                         </div>
                         <div className="signUpLastName">
