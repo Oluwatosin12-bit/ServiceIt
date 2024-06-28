@@ -1,4 +1,5 @@
 import  { useNavigate } from "react-router-dom"
+import './LandingPage.css'
 function LandingPage(){
     const navigate = useNavigate();
     const handleLoginRoute = () =>{
@@ -7,12 +8,18 @@ function LandingPage(){
     const handleSignUpRoute = () =>{
         navigate(`/SignUpPage`);
     };
+
     return(
-        <div>
-            <form>
-                <button onClick={handleLoginRoute}>Login</button>
-                <button onClick={handleSignUpRoute}>SignUp</button>
-            </form>
+        <div className="landingPageContent">
+            <div className="landingPageText">
+                <h1>Welcome</h1>
+                <p>An online marketplace to give your services a platform</p>
+                <button className="loginButton" onClick={handleLoginRoute}>Login</button>
+                <button className="signUpButton" onClick={handleSignUpRoute}>SignUp</button>
+            </div>
+            <div>
+                <img className="landingImage" src="src/Images/coworking-woman-doing-online-shopping-at-home.gif"/>
+            </div>
         </div>
     )
 }
