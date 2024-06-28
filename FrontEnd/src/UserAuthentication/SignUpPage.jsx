@@ -18,13 +18,13 @@ function SignUpPage(){
 
     const handleSignUp = async(event) =>{
         event.preventDefault();
-        if (signUpPassword.length < MIN_PASSWORD_LENGTH) {
-            alert(`Minimum password length is ${minimumPasswordLength}`)
+        if (password.length < MIN_PASSWORD_LENGTH) {
+            alert(`Minimum password length is ${MIN_PASSWORD_LENGTH}`)
         } else {
             try{
-                const userCredential = await registerUser(signUpEmail, signUpPassword);
+                const userCredential = await registerUser(email, password);
                 if (userCredential!== null){
-                    addUser(userCredential, firstName, lastName, userName, signUpEmail)
+                    addUser(userCredential, firstName, lastName, userName, email)
                     navigate('/MainPage');
                 } else {
                     console.error('Error creating user');
