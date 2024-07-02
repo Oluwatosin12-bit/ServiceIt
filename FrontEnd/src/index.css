@@ -1,4 +1,4 @@
-@import 'Colors.css';
+@import "Colors.css";
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -14,7 +14,7 @@ body {
   padding-bottom: 0;
   background-color: var(--color7);
   margin-top: 20px;
-};
+}
 
 #root {
   height: 100%;

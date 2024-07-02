@@ -1,8 +1,7 @@
-import {useNavigate} from "react-router-dom";
-import {useState} from "react";
-import {loginUser} from "./Auth";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { loginUser } from "./Auth";
 import "./LoginPage.css";
-
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -10,32 +9,35 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
 
-  const handleSignUpRoute = ()=>{
-    navigate('/SignUpPage');
+  const handleSignUpRoute = () => {
+    navigate("/SignUpPage");
   };
-  const handleResetPasswordRoute = ()=>{
-    navigate('/ResetPasswordPage');
+  const handleResetPasswordRoute = () => {
+    navigate("/ResetPasswordPage");
   };
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       const result = await loginUser(email, password);
-      if (result !==undefined) {
+      if (result !== undefined) {
         navigate("/MainPage");
-      } else{
+      } else {
         alert("Incorrect password");
       }
     } catch (error) {
       console.error("Error logging in user:", error);
-    };
+    }
   };
 
   return (
     <div>
-      <button className="backButton" onClick={() => navigate(-1)}> ⬅ </button>
+      <button className="backButton" onClick={() => navigate(-1)}>
+        {" "}
+        ⬅{" "}
+      </button>
       <div className="loginPageContent">
-        <div >
+        <div>
           <form className="loginForm" onSubmit={handleLogin}>
             <p className="loginHeading">Login</p>
             <div className="loginEmail">
@@ -46,7 +48,9 @@ function LoginPage() {
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Enter Email address..."
               />
-              <span><i className="fa-solid fa-envelope icon"></i></span>
+              <span>
+                <i className="fa-solid fa-envelope icon"></i>
+              </span>
             </div>
 
             <div className="loginPassword">
@@ -59,19 +63,32 @@ function LoginPage() {
                 placeholder="Enter Password..."
               />
               <span className="icon" onClick={() => setVisible(!visible)}>
-                {visible ? <i className="fa-solid fa-eye"></i> : <i className="fa-solid fa-eye-slash"></i>}
+                {visible ? (
+                  <i className="fa-solid fa-eye"></i>
+                ) : (
+                  <i className="fa-solid fa-eye-slash"></i>
+                )}
               </span>
             </div>
 
             <div className="linkOut">
-              <a className="linkToResetPassword" onClick={handleResetPasswordRoute}>Forgot Password?</a>
+              <a
+                className="linkToResetPassword"
+                onClick={handleResetPasswordRoute}
+              >
+                Forgot Password?
+              </a>
               <a className="linkToSignUp" onClick={handleSignUpRoute}>
                 Sign Up
               </a>
             </div>
-              <button className="sendLoginButton" type="submit" onClick={handleLogin}>
-                Login
-              </button>
+            <button
+              className="sendLoginButton"
+              type="submit"
+              onClick={handleLogin}
+            >
+              Login
+            </button>
           </form>
         </div>
         <div>
@@ -83,6 +100,6 @@ function LoginPage() {
       </div>
     </div>
   );
-};
+}
 
 export default LoginPage;

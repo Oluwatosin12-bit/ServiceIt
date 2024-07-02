@@ -8,8 +8,8 @@ import {
   setDoc,
   getDoc,
 } from "firebase/firestore";
-import { onAuthStateChanged } from 'firebase/auth';
-import {useState, useEffect} from 'react';
+import { onAuthStateChanged } from "firebase/auth";
+import { useState, useEffect } from "react";
 
 async function addUser(userId, firstName, lastName, userName, signUpEmail) {
   const userDocRef = doc(database, "users", userId);
@@ -40,7 +40,7 @@ async function isUsernameUnique(username) {
   return querySnapshot.empty;
 }
 
-async function updateUserInfo() {
+async function updateUserData() {
   const userDocRef = doc(database, "users", uid);
   await setDoc(userDocRef, {});
 }
@@ -62,7 +62,6 @@ const getUID = () => {
   return userUID;
 };
 
-
 const getUserData = async (uid) => {
   if (uid === null) {
     console.log("No UID provided");
@@ -74,12 +73,11 @@ const getUserData = async (uid) => {
 
     if (userDocSnap.exists()) {
       console.log("User data:", userDocSnap.data());
-      return userDocSnap.data()
+      return userDocSnap.data();
     }
   } catch (error) {
     console.error("Error accessing Firestore:", error);
   }
 };
 
-
-export { addUser, isUsernameUnique, getUID, getUserData};
+export { addUser, isUsernameUnique, getUID, getUserData, updateUserData };

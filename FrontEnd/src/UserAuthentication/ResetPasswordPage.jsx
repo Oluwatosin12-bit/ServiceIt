@@ -1,8 +1,7 @@
-import {useNavigate} from "react-router-dom";
-import {useState} from "react";
-import {recoverPassword} from './Auth';
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { recoverPassword } from "./Auth";
 import "./LoginPage.css";
-
 
 function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -14,17 +13,20 @@ function ResetPasswordPage() {
       const result = await recoverPassword(email);
       if (result !== null) {
         navigate("/MainPage");
-      };
+      }
     } catch (error) {
       console.error("Error logging in user:", error);
-    };
+    }
   };
 
   return (
     <div>
-      <button className="backButton" onClick={() => navigate(-1)}> ⬅ </button>
+      <button className="backButton" onClick={() => navigate(-1)}>
+        {" "}
+        ⬅{" "}
+      </button>
       <div className="loginPageContent">
-        <div >
+        <div>
           <form className="loginForm" onSubmit={handleResetPassword}>
             <h3>Reset Password</h3>
             <div className="loginEmail">
@@ -52,6 +54,6 @@ function ResetPasswordPage() {
       </div>
     </div>
   );
-};
+}
 
 export default ResetPasswordPage;
