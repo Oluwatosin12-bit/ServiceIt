@@ -11,6 +11,7 @@ function SignUpPage(){
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [userName, setUserName] = useState('');
+    const [visible, setVisible] = useState(false);
     const MIN_PASSWORD_LENGTH = 6;
     const handleLoginRoute = () => {
         navigate(`/LoginPage`);
@@ -22,12 +23,10 @@ function SignUpPage(){
             alert(`Minimum password length is ${MIN_PASSWORD_LENGTH}`);
         } else {
             try{
-                const userCredential = await registerUser(email, password);
-                if (userCredential!==undefined){
-                    addUser(userCredential, firstName, lastName, userName, email);
+                const userCredential = await registerUser(email, password, userName, firstName, lastName,);
+                if (userCredential!==null){
+                    alert("Account successfully created")
                     navigate('/MainPage');
-                } else{
-                    alert("Incorrect Email address");
                 };
             } catch (error){
                 console.error("Error registering user:", error);
@@ -43,11 +42,11 @@ function SignUpPage(){
                         <h3>Create an account</h3>
                         <div className="signUpFirstName">
                             <label htmlFor="firstName">First name</label>
-                            <input name="firstName" onChange={(event) => setFirstName(event.target.value)} required="required"/>
+                            <input name="firstName" onChange={(event) => setFirstName(event.target.value)} required="required" placeholder="Enter First name"/>
                         </div>
                         <div className="signUpLastName">
                             <label htmlFor="lastName">Last name</label>
-                            <input name="lastName" onChange={(event) => setLastName(event.target.value)}/>
+                            <input name="lastName" onChange={(event) => setLastName(event.target.value)} placeholder="Enter Last name"/>
                         </div>
                         <div className="signUpEmail">
                             <label htmlFor="email">Email</label>
@@ -55,11 +54,17 @@ function SignUpPage(){
                         </div>
                         <div className="signUpUsername">
                             <label htmlFor="username">Username</label>
-                            <input name="username" onChange={(event) => setUserName(event.target.value)} required="required"/>
+                            <input name="username" onChange={(event) => setUserName(event.target.value)} required="required" placeholder="Enter Username"/>
                         </div>
                         <div className="signUpPassword">
                             <label htmlFor="password">Password</label>
-                            <input name="password" onChange={(event) => setPassword(event.target.value)} placeholder="Enter Password" />
+                            <input name="password"
+                            type={visible ? "text" : "password"}
+                            onChange={(event) => setPassword(event.target.value)}
+                            placeholder="Enter Password" />
+                            <span className="icon" onClick={() => setVisible(!visible)}>
+                                {visible ? <i className="fa-solid fa-eye"></i> : <i className="fa-solid fa-eye-slash"></i>}
+                            </span>
                         </div>
                         <p className="linkToLogin" onClick={handleLoginRoute}>Already have an account?</p>
                         <button className="sendSignUpButton" onClick={handleSignUp}>Sign Up</button>

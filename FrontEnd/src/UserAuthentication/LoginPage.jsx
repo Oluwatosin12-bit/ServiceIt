@@ -8,6 +8,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [visible, setVisible] = useState(false);
 
   const handleSignUpRoute = ()=>{
     navigate('/SignUpPage');
@@ -45,7 +46,7 @@ function LoginPage() {
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Enter Email address..."
               />
-              <span className="icon">📧</span>
+              <span><i className="fa-solid fa-envelope icon"></i></span>
             </div>
 
             <div className="loginPassword">
@@ -53,11 +54,13 @@ function LoginPage() {
               <input
                 name="password"
                 required="required"
-                type="password"
+                type={visible ? "text" : "password"}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter Password..."
               />
-              <span className="icon">🔒</span>
+              <span className="icon" onClick={() => setVisible(!visible)}>
+                {visible ? <i className="fa-solid fa-eye"></i> : <i className="fa-solid fa-eye-slash"></i>}
+              </span>
             </div>
 
             <div className="linkOut">

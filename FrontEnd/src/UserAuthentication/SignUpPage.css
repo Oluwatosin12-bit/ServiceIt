@@ -159,10 +159,10 @@
     position: absolute;
     right: 10px;
     top: 50%;
-    bottom: 40%;
+    bottom: 50%;
     transform: translateY(-50%);
     font-size: 1.2em;
-    color: #4a148c;
+    color: var(--color5);
 }
 
 .sendSignUpButton{

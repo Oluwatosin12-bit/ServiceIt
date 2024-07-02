@@ -4,18 +4,26 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  sendPasswordResetEmail,
-} from "firebase/auth";
+  sendPasswordResetEmail} from "firebase/auth";
+import {addUser, isUsernameUnique} from './FirestoreDB';
 
-const registerUser = async (email, password) => {
+const registerUser = async (email, password, username, firstName, lastName) => {
   try {
-    const user = await createUserWithEmailAndPassword(auth, email, password);
-    if (user!==null){
-      return user;
-    };
+    const isUnique = await isUsernameUnique(username);
+    if (isUnique !== true){
+      alert("Username taken")
+      return null
+    }
+      const newUser = await createUserWithEmailAndPassword(auth, email, password);
+      const userId = newUser.user.uid
+      const addUserToDB = await addUser(userId, firstName, lastName, username, email);
+      if (newUser!==null && addUserToDB!==false){
+        return newUser;
+      };
     return null;
   } catch (error) {
-    console.error("Error logging in:", error);
+    return null;
+    console.error("Error registering user:", error);
   };
 };
 
@@ -45,6 +53,8 @@ const recoverPassword = async (email) => {
     console.error("Error recovering password:", error);
   };
 };
+
+
 
 export {
   registerUser,
