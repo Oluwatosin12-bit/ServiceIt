@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUID, getUserData } from "../UserAuthentication/FirestoreDB";
-import { logOutUser } from "../UserAuthentication/Auth";
+import { getUserData } from "../UserAuthentication/FirestoreDB";
+import { getUID } from "../UserAuthentication/Auth";
+import "./MainPage.css";
 
 function MainPage() {
   const navigate = useNavigate();
   const userUID = getUID();
   const [userData, setUserData] = useState(null);
-
   useEffect(() => {
     const fetchData = async () => {
       if (userUID) {
@@ -17,24 +17,19 @@ function MainPage() {
     };
     fetchData();
   }, [userUID]);
-
-  const handleLogOut = async () => {
-    try {
-      console.log("clicked");
-      await logOutUser();
-      console.log("logged out");
-      navigate("/");
-    } catch (error) {
-      console.error("Error logging out", error);
-    }
+  const handleUserProfileRoute = () => {
+    navigate("/UserProfile");
   };
 
   return (
     <div>
-      <div className="welcome">
+      <div className="welcomePlace">
         <h1>Welcome {userData?.FirstName}! </h1>
       </div>
-      <button onClick={handleLogOut}>Sign Out</button>
+      <i
+        className="fa-solid fa-user profileIcon"
+        onClick={handleUserProfileRoute}
+      ></i>
     </div>
   );
 }

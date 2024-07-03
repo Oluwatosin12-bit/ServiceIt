@@ -16,12 +16,4 @@ body {
   margin-top: 20px;
 }
 
-#root {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
+

@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
 } from "firebase/auth";
+import { useState, useEffect } from "react";
 import { addUser, isUsernameUnique } from "./FirestoreDB";
 
 const registerUser = async (email, password, username, firstName, lastName) => {
@@ -29,8 +30,7 @@ const registerUser = async (email, password, username, firstName, lastName) => {
     }
     return null;
   } catch (error) {
-    console.error("Error registering user:", error);
-    return null;
+    throw new Error("Error registering user");
   }
 };
 
@@ -44,7 +44,7 @@ const loginUser = async (email, password) => {
     }
     return user;
   } catch (error) {
-    console.error("Error logging in:", error);
+    throw new Error("Error logging in");
   }
 };
 
@@ -57,8 +57,25 @@ const recoverPassword = async (email) => {
     const reset = sendPasswordResetEmail(auth, email);
     return reset;
   } catch (error) {
-    console.error("Error recovering password:", error);
+    throw new Error("Error recovering password");
   }
+};
+
+const getUID = () => {
+  const [userUID, setUserUID] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserUID(user.uid);
+      } else {
+        setUserUID(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  return userUID;
 };
 
 export {
@@ -67,5 +84,6 @@ export {
   logOutUser,
   recoverPassword,
   auth,
+  getUID,
   onAuthStateChanged,
 };

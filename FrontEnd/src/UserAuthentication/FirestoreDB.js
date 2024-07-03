@@ -1,4 +1,4 @@
-import { database, auth } from "./FirebaseConfig";
+import { database } from "./FirebaseConfig";
 import {
   query,
   where,
@@ -8,8 +8,9 @@ import {
   setDoc,
   getDoc,
 } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import { useState, useEffect } from "react";
+import { storage } from "../UserAuthentication/FirebaseConfig";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
 
 async function addUser(userId, firstName, lastName, userName, signUpEmail) {
   const userDocRef = doc(database, "users", userId);
@@ -30,7 +31,6 @@ async function isDatabase() {
 
 async function isUsernameUnique(username) {
   const databaseExists = await isDatabase("users");
-  console.log(databaseExists);
   if (databaseExists === false) {
     return true;
   }
@@ -45,26 +45,8 @@ async function updateUserData() {
   await setDoc(userDocRef, {});
 }
 
-const getUID = () => {
-  const [userUID, setUserUID] = useState(null);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserUID(user.uid);
-      } else {
-        setUserUID(null);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
-  return userUID;
-};
-
 const getUserData = async (uid) => {
   if (uid === null) {
-    console.log("No UID provided");
     return;
   }
   try {
@@ -72,12 +54,59 @@ const getUserData = async (uid) => {
     const userDocSnap = await getDoc(userDocRef);
 
     if (userDocSnap.exists()) {
-      console.log("User data:", userDocSnap.data());
       return userDocSnap.data();
     }
   } catch (error) {
-    console.error("Error accessing Firestore:", error);
+    throw new Error("Error accessing Firestore");
   }
 };
 
-export { addUser, isUsernameUnique, getUID, getUserData, updateUserData };
+const uploadPostImage = async (serviceCategory, imageUpload) => {
+  try {
+    const imageRef = ref(
+      storage,
+      `${serviceCategory}/${imageUpload.name + v4()}`
+    );
+    await uploadBytes(imageRef, imageUpload);
+    const downloadURL = await getDownloadURL(imageRef);
+    return downloadURL;
+  } catch (error) {
+    throw new Error("Error uploading image");
+  }
+};
+
+const createPost = async (formData, serviceCategory, imageUpload, userId) => {
+  try {
+    const imageURL = await uploadPostImage(serviceCategory, imageUpload);
+    const formDataWithImage = { ...formData, imageURL };
+
+    if (userId === null) {
+      throw new Error("Invalid user ID");
+    }
+    if (formData.serviceTitle === null) {
+      throw new Error("Invalid service title");
+    }
+    const userDocRef = doc(database, "users", userId);
+    const postsCollectionRef = collection(userDocRef, "Posts");
+    const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
+    await setDoc(postDocRef, formDataWithImage);
+  } catch (error) {
+    throw new Error("Error creating post");
+  }
+};
+
+const fetchUserPosts = async (userId) => {
+  const subCollectionRef = collection(database, "users", userId, "Posts");
+  const querySnapshot = await getDocs(subCollectionRef);
+  const data = querySnapshot.docs.map((doc) => doc.data());
+  return data;
+};
+
+export {
+  addUser,
+  isUsernameUnique,
+  getUserData,
+  updateUserData,
+  createPost,
+  fetchUserPosts,
+};

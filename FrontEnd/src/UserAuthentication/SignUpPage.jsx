@@ -10,7 +10,7 @@ function SignUpPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [userName, setUserName] = useState("");
-  const [visible, setVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const MIN_PASSWORD_LENGTH = 6;
   const handleLoginRoute = () => {
     navigate(`/LoginPage`);
@@ -34,7 +34,7 @@ function SignUpPage() {
           navigate("/MainPage");
         }
       } catch (error) {
-        console.error("Error registering user:", error);
+        throw new Error("Error registering user:");
       }
     }
   };
@@ -87,12 +87,15 @@ function SignUpPage() {
               <label htmlFor="password">Password</label>
               <input
                 name="password"
-                type={visible ? "text" : "password"}
+                type={isPasswordVisible ? "text" : "password"}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter Password"
               />
-              <span className="icon" onClick={() => setVisible(!visible)}>
-                {visible ? (
+              <span
+                className="icon"
+                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+              >
+                {isPasswordVisible ? (
                   <i className="fa-solid fa-eye"></i>
                 ) : (
                   <i className="fa-solid fa-eye-slash"></i>

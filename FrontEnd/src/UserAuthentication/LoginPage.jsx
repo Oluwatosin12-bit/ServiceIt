@@ -7,7 +7,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [visible, setVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSignUpRoute = () => {
     navigate("/SignUpPage");
@@ -26,7 +26,7 @@ function LoginPage() {
         alert("Incorrect password");
       }
     } catch (error) {
-      console.error("Error logging in user:", error);
+      throw new Error("Error logging in user:");
     }
   };
 
@@ -58,12 +58,15 @@ function LoginPage() {
               <input
                 name="password"
                 required="required"
-                type={visible ? "text" : "password"}
+                type={isPasswordVisible ? "text" : "password"}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter Password..."
               />
-              <span className="icon" onClick={() => setVisible(!visible)}>
-                {visible ? (
+              <span
+                className="icon"
+                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+              >
+                {isPasswordVisible ? (
                   <i className="fa-solid fa-eye"></i>
                 ) : (
                   <i className="fa-solid fa-eye-slash"></i>

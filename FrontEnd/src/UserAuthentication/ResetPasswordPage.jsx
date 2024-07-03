@@ -15,7 +15,7 @@ function ResetPasswordPage() {
         navigate("/MainPage");
       }
     } catch (error) {
-      console.error("Error logging in user:", error);
+      throw new Error("Error recovering password:");
     }
   };
 
