@@ -1,4 +1,4 @@
-import { database } from "./FirebaseConfig";
+import { database, storage } from "./FirebaseConfig";
 import {
   query,
   where,
@@ -7,8 +7,9 @@ import {
   getDocs,
   setDoc,
   getDoc,
+  onSnapshot,
+  orderBy
 } from "firebase/firestore";
-import { storage } from "../UserAuthentication/FirebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
@@ -46,9 +47,6 @@ async function updateUserData() {
 }
 
 const getUserData = async (uid) => {
-  if (uid === null) {
-    return;
-  }
   try {
     const userDocRef = doc(database, "users", uid);
     const userDocSnap = await getDoc(userDocRef);
@@ -79,7 +77,6 @@ const createPost = async (formData, serviceCategory, imageUpload, userId) => {
   try {
     const imageURL = await uploadPostImage(serviceCategory, imageUpload);
     const formDataWithImage = { ...formData, imageURL };
-
     if (userId === null) {
       throw new Error("Invalid user ID");
     }
@@ -90,17 +87,43 @@ const createPost = async (formData, serviceCategory, imageUpload, userId) => {
     const postsCollectionRef = collection(userDocRef, "Posts");
     const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
     await setDoc(postDocRef, formDataWithImage);
-  } catch (error) {
+
+  } catch(error){
     throw new Error("Error creating post");
   }
 };
 
-const fetchUserPosts = async (userId) => {
-  const subCollectionRef = collection(database, "users", userId, "Posts");
-  const querySnapshot = await getDocs(subCollectionRef);
-  const data = querySnapshot.docs.map((doc) => doc.data());
-  return data;
+const fetchUserPosts = (userId, callback) => {
+  if (userId===null) return;
+
+  const q = query(collection(database, `users/${userId}/Posts`));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const postsData = [];
+    querySnapshot.forEach((doc) => {
+      postsData.push(doc.data());
+    });
+
+    callback(postsData);
+  });
+
+  return unsubscribe;
 };
+
+const fetchUserFeed = (userId, callback) =>{
+  if (userId===null) return;
+
+  const q = query(collection(database, `users`));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const postsData = [];
+    querySnapshot.forEach((doc) => {
+      postsData.push(doc.data());
+    });
+    callback(postsData);
+  });
+
+  return unsubscribe;
+}
+fetchUserFeed()
 
 export {
   addUser,

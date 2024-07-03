@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { logOutUser, getUID } from "../UserAuthentication/Auth";
-import { createPost, getUserData } from "../UserAuthentication/FirestoreDB";
+import { createPost, getUserData, fetchUserPosts } from "../UserAuthentication/FirestoreDB";
 import "./UserProfile.css";
 
 function UserProfilePage() {
@@ -9,6 +9,7 @@ function UserProfilePage() {
   const userUID = getUID();
   const [userData, setUserData] = useState(null);
   const [imageUpload, setImageUpload] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
   const [formData, setFormData] = useState({
     serviceCategory: "",
     serviceTitle: "",
@@ -19,6 +20,16 @@ function UserProfilePage() {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  useEffect(() => {
+    if (userUID===null) return;
+    const unsubscribe = fetchUserPosts(userUID, (postsData) => {
+      setUserPosts(postsData);
+    });
+
+    return () => unsubscribe && unsubscribe();
+  }, [userUID]);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,6 +119,15 @@ function UserProfilePage() {
         />
         <button type="submit">Create Post</button>
       </form>
+
+      {userPosts.map((post, index)=>{
+        return(
+          <div key={index}>
+          <p>{post.serviceCategory}</p>
+          <img src={post.imageURL}/>
+        </div>
+        )
+      })}
     </div>
   );
 }
