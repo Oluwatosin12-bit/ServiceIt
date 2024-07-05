@@ -1,0 +1,43 @@
+@import "../Colors.css";
+
+p {
+  color: var(--color6);
+}
+.homePageList {
+  display: flex;
+}
+.categorySection {
+  width: 250px;
+  flex-shrink: 0;
+}
+.feedSection {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+.feedSection p {
+  margin-top: 0;
+}
+
+.feedSection img {
+  width: 400px;
+  height: 300px;
+}
+
+@media (max-width: 1000px) {
+  .categorySection {
+    width: 100px;
+  }
+  .feedSection img {
+    width: 200px;
+    height: 150px;
+  }
+  p {
+    font-size: 10px;
+  }
+  h1 {
+    font-size: 15px;
+  }
+}

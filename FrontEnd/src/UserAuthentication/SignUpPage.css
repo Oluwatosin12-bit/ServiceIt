@@ -1,220 +1,135 @@
-@import '../Colors.css';
-
-/* body{
-    margin: 10px;
-}
-.signUpPageContent{
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    height: 100vh;
+@import "../Colors.css";
+.signUpPageContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  height: 100vh;
 }
 
-.signUpImage{
-    width: 110%;
+.signUpForm {
+  flex: 1;
+  background: rgb(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(214, 41, 118, 0.7);
 }
 
-.signUpForm{
-    background-color: var(--color1);
-    height: 35rem;
-    width: 20rem;
-    border-radius: 10px;
-    padding: 20px;
-    color: var(--color4);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
+.signUpHeading {
+  text-align: center;
+  color: var(--color7);
 }
 
-.signUpForm h3{
-    margin-bottom: 20px;
-    color: #333;
-    text-align: center;
+.signUpImage {
+  width: 110%;
 }
 
-.signUpEmail, .signUpPassword {
-    margin: 5px;
-}
-
-.signUpEmail input,
-.signUpPassword input,
-.signUpFirstName input,
-.signUpLastName input,
-.signUpUsername input{
-    width: 90%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid var(--primaryColor);
-    border-radius: 5px;
-    display: block;
-}
-
-.sendSignUpButton{
-    padding: 0;
-    width: 100%;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.4em 0.6em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    margin: 5px;
-};
-
-.linkTosignUp{
-    text-align: center;
-}
-.linkTosignUp:hover{
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.backButton{
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 20px;
-    border-radius: 2px;
-    border: none;
-    cursor: pointer;
-    color: #333;
-    outline: none;
-} */
-
-@import '../Colors.css';
-
-.signUpPageContent{
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    height: 100vh;
-}
-
-.signUpForm{
-    flex: 1;
-    background: rgb(255,255,255,0.7);
-    backdrop-filter: blur(10px);
-    padding: 2em;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(214,41,118, 0.7);
-}
-
-.signUpHeading{
-    text-align: center;
-    color: var(--color7);
-}
-
-.signUpImage{
-    width: 110%;
-}
-
-.signUpForm h3{
-    margin-bottom: 20px;
-    color: #737272;
+.signUpForm h3 {
+  margin-bottom: 20px;
+  color: #737272;
 }
 
 .signUpEmail,
 .signUpPassword,
 .signUpFirstName,
 .signUpLastName,
-.signUpUsername{
-    position: relative;
-    width: 100%;
-    margin-bottom: 1em;
-    color: var(--color7);
+.signUpUsername {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1em;
+  color: var(--color7);
 }
 
 .signUpEmail label,
 .signUpPassword label,
 .signUpFirstName label,
 .signUpLastName label,
-.signUpUsername label{
-    font-size: 12px;
+.signUpUsername label {
+  font-size: 12px;
 }
 
 .signUpEmail input,
 .signUpPassword input,
 .signUpFirstName input,
 .signUpLastName input,
-.signUpUsername input{
-    width: 90%;
-    padding: 0.75em 2.5em 0.75em 1em;
-    border: 1px solid var(--color6);
-    border-radius: 5px;
-    outline: none;
-    font-size: 0.7em;
-    color: var(--color7);
-    background: transparent;
-    margin-right: 0.7rem;
+.signUpUsername input {
+  width: 90%;
+  padding: 0.75em 2.5em 0.75em 1em;
+  border: 1px solid var(--color6);
+  border-radius: 5px;
+  outline: none;
+  font-size: 0.7em;
+  color: var(--color7);
+  background: transparent;
+  margin-right: 0.7rem;
 }
 
 .icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    bottom: 40%;
-    transform: translateY(-50%);
-    font-size: 1.2em;
-    color: #4a148c;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  bottom: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2em;
+  color: var(--color5);
 }
 
-.sendSignUpButton{
-    padding: 0;
-    display: block;
-    width: 100%;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.4em 0.6em;
-    font-size: 1em;
-    font-weight: 500;
-    cursor: pointer;
-    transition: border-color 0.25s;
-    margin-top: 20px;
-    background: var(--buttonColor);
-
+.sendSignUpButton {
+  padding: 0;
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.4em 0.6em;
+  font-size: 1em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  margin-top: 20px;
+  background: var(--buttonColor);
 }
 
-.linkToSignUp:hover, .linkToResetPassword:hover, .backButton:hover{
-    cursor: pointer;
-    text-decoration: underline;
+.linkToSignUp:hover,
+.linkToResetPassword:hover,
+.backButton:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
-.linkOut{
-    display: flex;
-    align-items: center;
-    width: 100%;
-    justify-content: space-between;
+.linkOut {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
 }
 
-.linkToLogin{
-    color: var(--color6);
-    text-decoration: none;
-    font-size: 0.7em;
-    margin-top: 10px;
-    text-decoration: underline;
+.linkToLogin {
+  color: var(--color6);
+  text-decoration: none;
+  font-size: 0.7em;
+  margin-top: 10px;
+  text-decoration: underline;
 }
 
-.linkToLogin:hover{
-    cursor: pointer;
-    color: var(--color7);
+.linkToLogin:hover {
+  cursor: pointer;
+  color: var(--color7);
 }
 
-.backButton{
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 20px;
-    border: none;
-    cursor: pointer;
-    background-color: var(--color6);
-    outline: none;
-    display: block;
-    border-radius: 5px;
+.backButton {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  background-color: var(--color6);
+  outline: none;
+  display: block;
+  border-radius: 5px;
 }

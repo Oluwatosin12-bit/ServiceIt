@@ -1,0 +1,25 @@
+.userProfileSection {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .welcomePlace {
+    color: var(--color6);
+  }
+
+  .userPostsPreview {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+
+  .userPostsPreview img {
+    width: 400px;
+    height: 300px;
+  }
+
+  @media (max-width: 1000px) {
+    .userPostsPreview img {
+      width: 200px;
+    }
+  }

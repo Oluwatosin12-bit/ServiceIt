@@ -1,22 +1,16 @@
-:root{
-    /* --primaryColor: #D5D2D2CD;
-    --color1: #958b7e;
-    --color2: #352d28;
-    --color3: #000000;
-    --color4: #ffffff; */
-
-    --color1: rgb(254,218,117);
-    --color2: rgb(250,126,30);
-    --color3: rgb(214,41,118);
-    --color4: rgb(150,47,191);
-    --color5: rgb(79,91,213);
-    --color6: rgb(255, 255, 255);
-    --color7: black;
-    --buttonColor: linear-gradient(45deg, blue 0%, purple 0%, rgb(230, 70, 182) 0%, rgb(255, 102, 102) 100%);
-}
-
-/* color1: Yellow
-    color2: orange
-    color3: pink
-    color4: purple
-    color5: blue */
+:root {
+    --color1: rgb(254, 218, 117); /* Yellow */
+    --color2: rgb(250, 126, 30); /*Orange */
+    --color3: rgb(214, 41, 118); /* Pink */
+    --color4: rgb(150, 47, 191); /* Purple */
+    --color5: rgb(79, 91, 213); /* Blue */
+    --color6: rgb(255, 255, 255); /* White */
+    --color7: black; /* Black */
+    --buttonColor: linear-gradient(
+      45deg,
+      blue 0%,
+      purple 0%,
+      rgb(230, 70, 182) 0%,
+      rgb(255, 102, 102) 100%
+    );
+  }

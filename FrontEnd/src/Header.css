@@ -1,0 +1,48 @@
+@import "./Colors.css";
+.headerSection {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--color6);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  border-bottom: 1px solid #cccccc;
+  background-color: var(--color7);
+}
+.navigationList {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color6);
+}
+
+.navigationList p,
+.navigationList i,
+.navigationList a {
+  color: var(--color6);
+  text-decoration: none;
+}
+
+.navigationList li {
+  margin-right: 10px;
+  color: var(--color6);
+}
+
+@media (max-width: 1000px) {
+  p {
+    font-size: 15px;
+  }
+  h1 {
+    font-size: 20px;
+  }
+  h2 {
+    font-size: 18px;
+  }
+  h3 {
+    font-size: 13px;
+  }
+}
