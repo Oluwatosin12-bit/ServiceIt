@@ -1,15 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./LandingPage.css";
 
 function LandingPage() {
-  const navigate = useNavigate();
-  const handleLoginRoute = () => {
-    navigate(`/LoginPage`);
-  };
-  const handleSignUpRoute = () => {
-    navigate(`/SignUpPage`);
-  };
-
   return (
     <div className="landingPageContent">
       <div className="landingPageText">
@@ -17,12 +9,12 @@ function LandingPage() {
         <p className="description">
           An online marketplace to give your services a platform
         </p>
-        <button className="loginButton" onClick={handleLoginRoute}>
-          Login
-        </button>
-        <button className="signUpButton" onClick={handleSignUpRoute}>
-          SignUp
-        </button>
+        <Link to="/LoginPage">
+          <button className="loginButton">Login</button>
+        </Link>
+        <Link to="SignUpPage">
+          <button className="signUpButton">SignUp</button>
+        </Link>
       </div>
       <div>
         <img

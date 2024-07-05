@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { registerUser } from "./Auth";
 import "./SignUpPage.css";
 
@@ -10,34 +10,43 @@ function SignUpPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [userName, setUserName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const MIN_PASSWORD_LENGTH = 6;
-  const handleLoginRoute = () => {
-    navigate(`/LoginPage`);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const MIN_PASSWORD_LENGTH = 8;
+
+  const validateForm = () => {
+    return (
+      email.trim() !== "" && password.trim() !== "" && userName.trim() !== ""
+    );
   };
+  useEffect(() => {
+    setIsFormValid(validateForm());
+  }, [email, password, userName]);
 
   const handleSignUp = async (event) => {
     event.preventDefault();
     if (password.length < MIN_PASSWORD_LENGTH) {
-      alert(`Minimum password length is ${MIN_PASSWORD_LENGTH}`);
-    } else {
-      try {
-        const userCredential = await registerUser(
-          email,
-          password,
-          userName,
-          firstName,
-          lastName
-        );
-        if (userCredential !== null) {
-          alert("Account successfully created");
-          navigate("/MainPage");
-        }
-      } catch (error) {
-        throw new Error("Error registering user:");
+      setErrorMessage("Password must be at least 8 characters");
+    }
+    try {
+      const userCredential = await registerUser(
+        email,
+        password,
+        userName,
+        firstName,
+        lastName
+      );
+      if (userCredential !== null) {
+        navigate("/UserProfile");
+      } else {
+        setErrorMessage("Username taken");
       }
+    } catch (error) {
+      setErrorMessage(error.message);
     }
   };
+
   return (
     <div>
       <button className="backButton" onClick={() => navigate(-1)}>
@@ -52,6 +61,7 @@ function SignUpPage() {
               <label htmlFor="firstName">First name</label>
               <input
                 name="firstName"
+                id="firstName"
                 onChange={(event) => setFirstName(event.target.value)}
                 required="required"
                 placeholder="Enter First name"
@@ -61,6 +71,7 @@ function SignUpPage() {
               <label htmlFor="lastName">Last name</label>
               <input
                 name="lastName"
+                id="lastName"
                 onChange={(event) => setLastName(event.target.value)}
                 placeholder="Enter Last name"
               />
@@ -69,6 +80,7 @@ function SignUpPage() {
               <label htmlFor="email">Email</label>
               <input
                 name="email"
+                id="email"
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Enter Email"
                 required="required"
@@ -78,6 +90,7 @@ function SignUpPage() {
               <label htmlFor="username">Username</label>
               <input
                 name="username"
+                id="username"
                 onChange={(event) => setUserName(event.target.value)}
                 required="required"
                 placeholder="Enter Username"
@@ -87,7 +100,9 @@ function SignUpPage() {
               <label htmlFor="password">Password</label>
               <input
                 name="password"
+                id="password"
                 type={isPasswordVisible ? "text" : "password"}
+                minLength={8}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter Password"
               />
@@ -102,12 +117,18 @@ function SignUpPage() {
                 )}
               </span>
             </div>
-            <p className="linkToLogin" onClick={handleLoginRoute}>
-              Already have an account?
-            </p>
-            <button className="sendSignUpButton" onClick={handleSignUp}>
+            <Link to="/LoginPage">
+              <p className="linkToLogin">Already have an account?</p>
+            </Link>
+
+            <button
+              className="sendSignUpButton"
+              onClick={handleSignUp}
+              disabled={!isFormValid}
+            >
               Sign Up
             </button>
+            {errorMessage && <p className="errorMessage">{errorMessage}</p>}
           </form>
         </div>
         <div>

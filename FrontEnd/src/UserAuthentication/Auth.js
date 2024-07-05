@@ -13,24 +13,23 @@ const registerUser = async (email, password, username, firstName, lastName) => {
   try {
     const isUnique = await isUsernameUnique(username);
     if (isUnique !== true) {
-      alert("Username taken");
       return null;
     }
     const newUser = await createUserWithEmailAndPassword(auth, email, password);
     const userId = newUser.user.uid;
-    const addUserToDB = await addUser(
+    const userAddedToDB = await addUser(
       userId,
       firstName,
       lastName,
       username,
       email
     );
-    if (newUser !== null && addUserToDB !== false) {
+    if (newUser !== null && userAddedToDB !== false) {
       return newUser;
     }
     return null;
   } catch (error) {
-    throw new Error("Error registering user");
+    throw new Error(`Error registering user: ${error.message}`);
   }
 };
 
@@ -44,7 +43,7 @@ const loginUser = async (email, password) => {
     }
     return user;
   } catch (error) {
-    throw new Error("Error logging in");
+    throw new Error(`Error logging in: ${error.message}`);
   }
 };
 
@@ -57,11 +56,11 @@ const recoverPassword = async (email) => {
     const reset = sendPasswordResetEmail(auth, email);
     return reset;
   } catch (error) {
-    throw new Error("Error recovering password");
+    throw new Error(`Error recovering password: ${error.message}`);
   }
 };
 
-const getUID = () => {
+const useUID = () => {
   const [userUID, setUserUID] = useState(null);
 
   useEffect(() => {
@@ -84,6 +83,6 @@ export {
   logOutUser,
   recoverPassword,
   auth,
-  getUID,
+  useUID,
   onAuthStateChanged,
 };

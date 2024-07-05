@@ -1,35 +1,42 @@
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUserData } from "../UserAuthentication/FirestoreDB";
-import { getUID } from "../UserAuthentication/Auth";
+import { fetchUserFeed } from "../UserAuthentication/FirestoreDB";
+import CategoryList from "./CategoryList";
 import "./MainPage.css";
 
-function MainPage() {
-  const navigate = useNavigate();
-  const userUID = getUID();
-  const [userData, setUserData] = useState(null);
-  useEffect(() => {
-    const fetchData = async () => {
-      if (userUID) {
-        const data = await getUserData(userUID);
-        setUserData(data);
-      }
-    };
-    fetchData();
-  }, [userUID]);
-  const handleUserProfileRoute = () => {
-    navigate("/UserProfile");
+function MainPage({ userUID }) {
+  const [userFeed, setUserFeed] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchFeed = async () => {
+    if (userUID !== null) {
+      const feedData = await fetchUserFeed(userUID);
+      setUserFeed(feedData);
+      setIsLoading(false);
+    }
   };
+  useEffect(() => {
+    fetchFeed();
+  }, [userUID]);
 
   return (
-    <div>
-      <div className="welcomePlace">
-        <h1>Welcome {userData?.FirstName}! </h1>
+    <div className="homePageList">
+      <div className="categorySection">
+        <CategoryList />
       </div>
-      <i
-        className="fa-solid fa-user profileIcon"
-        onClick={handleUserProfileRoute}
-      ></i>
+      <div className="feedSection">
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : userFeed.length === 0 ? (
+          <p>No posts found.</p>
+        ) : (
+          userFeed.map((post, index) => (
+            <div key={index}>
+              <p>{post.serviceCategory}</p>
+              <img src={post.imageURL} alt={`Post ${index}`} />
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }

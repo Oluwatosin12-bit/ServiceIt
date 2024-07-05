@@ -15,7 +15,7 @@ function ResetPasswordPage() {
         navigate("/MainPage");
       }
     } catch (error) {
-      throw new Error("Error recovering password:");
+      throw new Error(`Error recovering password: ${error.message}`);
     }
   };
 

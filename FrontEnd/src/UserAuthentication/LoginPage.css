@@ -1,5 +1,4 @@
 @import "../Colors.css";
-
 .loginPageContent {
   display: flex;
   align-items: center;
@@ -117,4 +116,9 @@
   background-color: var(--color6);
   outline: none;
   display: block;
+}
+
+.errorMessage {
+  color: red;
+  font-size: 0.8rem;
 }

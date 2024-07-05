@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { loginUser } from "./Auth";
 import "./LoginPage.css";
@@ -8,13 +8,7 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
-  const handleSignUpRoute = () => {
-    navigate("/SignUpPage");
-  };
-  const handleResetPasswordRoute = () => {
-    navigate("/ResetPasswordPage");
-  };
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -22,11 +16,9 @@ function LoginPage() {
       const result = await loginUser(email, password);
       if (result !== undefined) {
         navigate("/MainPage");
-      } else {
-        alert("Incorrect password");
       }
     } catch (error) {
-      throw new Error("Error logging in user:");
+      setErrorMessage(error.message);
     }
   };
 
@@ -44,6 +36,7 @@ function LoginPage() {
               <label htmlFor="email">Email</label>
               <input
                 name="email"
+                id="email"
                 required="required"
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Enter Email address..."
@@ -57,6 +50,7 @@ function LoginPage() {
               <label htmlFor="password">Password</label>
               <input
                 name="password"
+                id="password"
                 required="required"
                 type={isPasswordVisible ? "text" : "password"}
                 onChange={(event) => setPassword(event.target.value)}
@@ -75,23 +69,13 @@ function LoginPage() {
             </div>
 
             <div className="linkOut">
-              <a
-                className="linkToResetPassword"
-                onClick={handleResetPasswordRoute}
-              >
-                Forgot Password?
-              </a>
-              <a className="linkToSignUp" onClick={handleSignUpRoute}>
-                Sign Up
-              </a>
+              <Link to="/ResetPasswordPage">Forgot Password?</Link>
+              <Link to="/SignUpPage">SignUp</Link>
             </div>
-            <button
-              className="sendLoginButton"
-              type="submit"
-              onClick={handleLogin}
-            >
+            <button className="sendLoginButton" type="submit">
               Login
             </button>
+            {errorMessage && <p className="errorMessage">Incorrect Password</p>}
           </form>
         </div>
         <div>
