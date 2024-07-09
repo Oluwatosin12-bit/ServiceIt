@@ -5,10 +5,18 @@ p {
 }
 .homePageList {
   display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
 }
 .categorySection {
   width: 250px;
-  flex-shrink: 0;
+  position: fixed;
+  top: 100px;
+  bottom: 0;
+  overflow-y: auto;
+  background-color: var(--color7);
+  border-right: 1px solid #cccccc;
 }
 .feedSection {
   flex-grow: 1;
@@ -16,19 +24,30 @@ p {
   justify-content: space-around;
   flex-wrap: wrap;
   padding: 10px;
-}
-.feedSection p {
-  margin-top: 0;
+  margin-left: 250px;
+  margin-top: 100px;
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-.feedSection img {
-  width: 400px;
-  height: 300px;
+.postFeed {
+  margin: 1rem;
+}
+.postFeed:hover {
+  transition: 0.1s;
+  transform: scale(1.1);
+  box-shadow: 0 8px 16px rgba(213, 205, 205, 0.4);
+  border-radius: 5px;
+  border: solid gold;
 }
 
 @media (max-width: 1000px) {
   .categorySection {
     width: 100px;
+  }
+  .feedSection {
+    margin-left: 100px;
   }
   .feedSection img {
     width: 200px;
