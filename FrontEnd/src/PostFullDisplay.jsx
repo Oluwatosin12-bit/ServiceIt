@@ -11,7 +11,10 @@ function PostFullDisplay({ userUID, post, show, onClose }) {
   const createdAt = post.createdAt.toDate();
   return (
     <div className="modalOverlay" onClick={onClose}>
-      <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modalContent"
+        onClick={(event) => event.stopPropagation()}
+      >
         <button className="modalClose" onClick={onClose}>
           &times;
         </button>

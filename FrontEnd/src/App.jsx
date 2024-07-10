@@ -6,7 +6,8 @@ import LandingPage from "./UserAuthentication/LandingPage";
 import ResetPasswordPage from "./UserAuthentication/ResetPasswordPage";
 import MainPage from "./HomePage/MainPage";
 import UserProfile from "./ProfilePage/UserProfile";
-import BookingForm from "./BookingPage";
+import BookingForm from "./BookingPage/BookingPage";
+import NotificationsPage from "./Notifications/NotificationsPage";
 import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
@@ -40,7 +41,14 @@ function App() {
           path="/UserProfile"
           element={<UserProfile userUID={userUID} userData={userData} />}
         />
-        <Route path="/BookingPage" element={<BookingForm />} />
+        <Route
+          path="/BookingPage"
+          element={<BookingForm userData={userData} />}
+        />
+        <Route
+          path="/NotificationsPage"
+          element={<NotificationsPage userData={userData} />}
+        />
       </Routes>
     </Router>
   );

@@ -37,7 +37,7 @@ function Header({ userData }) {
             </Link>
           </li>
           <li>
-            <Link to="/UserProfile">
+            <Link to="/NotificationsPage">
               <i className="fa-solid fa-bell profileIcon"></i>
             </Link>
           </li>

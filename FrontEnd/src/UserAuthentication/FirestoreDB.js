@@ -13,6 +13,7 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
+const DATABASE_FOLDER_NAME = "users";
 async function addUser(
   userID,
   firstName,
@@ -21,7 +22,7 @@ async function addUser(
   signUpEmail,
   selectedCategories
 ) {
-  const userDocRef = doc(database, "users", userID);
+  const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
   return await setDoc(userDocRef, {
     userID: userID,
     FirstName: firstName,
@@ -33,7 +34,7 @@ async function addUser(
 }
 
 async function isDatabaseExist() {
-  const usersCollection = query(collection(database, "users"));
+  const usersCollection = query(collection(database, DATABASE_FOLDER_NAME));
   const querySnapshot = await getDocs(usersCollection);
   return !querySnapshot.empty;
 }
@@ -54,7 +55,7 @@ const getUserData = async (uid) => {
     return;
   }
   try {
-    const userDocRef = doc(database, "users", uid);
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, uid);
     const userDocSnap = await getDoc(userDocRef);
 
     if (userDocSnap.exists()) {
@@ -98,7 +99,7 @@ const createPost = async (formData, imageUpload, userId, userData) => {
       throw new Error(`Invalid user ID: ${error.message}`);
     }
 
-    const userDocRef = doc(database, "users", userId);
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userId);
     const postsCollectionRef = collection(userDocRef, "Posts");
     const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
     await setDoc(postDocRef, formDataWithImage);
@@ -109,7 +110,9 @@ const createPost = async (formData, imageUpload, userId, userData) => {
 
 const fetchUserPosts = (userId, callback) => {
   if (userId === null) return;
-  const q = query(collection(database, `users/${userId}/Posts`));
+  const q = query(
+    collection(database, `${DATABASE_FOLDER_NAME}/${userId}/Posts`)
+  );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const postsData = [];
     querySnapshot.forEach((doc) => {
@@ -127,11 +130,16 @@ const fetchUserFeed = async (userID) => {
   const userData = await getUserData(userID);
   const userCategoryInterest = userData.selectedCategories || [];
 
-  const usersSnapshot = await getDocs(collection(database, `users`));
+  const usersSnapshot = await getDocs(
+    collection(database, DATABASE_FOLDER_NAME)
+  );
   const allPosts = [];
   for (const userDoc of usersSnapshot.docs) {
     const userId = userDoc.id;
-    const userPostsSnapshot = collection(database, `users/${userId}/Posts`);
+    const userPostsSnapshot = collection(
+      database,
+      `${DATABASE_FOLDER_NAME}/${userId}/Posts`
+    );
     const postsSnapshot = await getDocs(userPostsSnapshot);
     postsSnapshot.forEach((postDoc) => {
       if (postDoc.exists) {
@@ -165,37 +173,11 @@ const fetchUserFeed = async (userID) => {
   return allPosts;
 };
 
-const requestAppointment = async (userUID, vendorUID, appointmentData) => {
-  try {
-    const userDocRef = doc(database, "users", userUID);
-    const userAppointmentCollection = collection(userDocRef, "Appointments");
-    const userAppointmentDocRef = doc(
-      userAppointmentCollection,
-      appointmentData.title
-    );
-    await setDoc(userAppointmentDocRef, appointmentData);
-
-    const vendorDocRef = doc(database, "users", vendorUID);
-    const vendorAppointmentCollection = collection(
-      vendorDocRef,
-      "Appointments"
-    );
-    const vendorAppointmentDocRef = doc(
-      vendorAppointmentCollection,
-      appointmentData.title
-    );
-    await setDoc(vendorAppointmentDocRef, appointmentData);
-  } catch (error) {
-    throw new Error(`Error booking an appointment: ${error.message}`);
-  }
-};
-
 export {
   addUser,
   isUsernameUnique,
   getUserData,
   createPost,
   fetchUserPosts,
-  fetchUserFeed,
-  requestAppointment,
+  fetchUserFeed
 };

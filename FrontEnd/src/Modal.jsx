@@ -5,7 +5,10 @@ function Modal({ show, onClose, children }) {
   }
   return (
     <div className="modalOverlay" onClick={onClose}>
-      <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="modalContent"
+        onClick={(event) => event.stopPropagation()}
+      >
         <button className="modalClose" onClick={onClose}>
           &times;
         </button>

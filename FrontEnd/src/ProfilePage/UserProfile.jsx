@@ -9,7 +9,7 @@ function UserProfilePage({ userUID, userData }) {
   const navigate = useNavigate();
   const [imageUpload, setImageUpload] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
-  const [isShowModal, setIsShowModal] = useState(false);
+  const [isModalShown, setIsModalShown] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [serviceCategories, setSelectedCategories] = useState([]);
   const [availableCategories] = useState([
@@ -65,7 +65,7 @@ function UserProfilePage({ userUID, userData }) {
   }, [userUID]);
 
   const toggleModal = () => {
-    setIsShowModal(!isShowModal);
+    setIsModalShown(!isModalShown);
   };
 
   const handleLogOut = async () => {
@@ -106,7 +106,7 @@ function UserProfilePage({ userUID, userData }) {
           </div>
         </div>
 
-        <Modal show={isShowModal} onClose={toggleModal}>
+        <Modal show={isModalShown} onClose={toggleModal}>
           <form onSubmit={handleFormSubmit} className="postForm">
             <div className="formGroup">
               <label htmlFor="serviceTitle">Title:</label>
