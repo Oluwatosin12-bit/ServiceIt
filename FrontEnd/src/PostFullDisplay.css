@@ -1,0 +1,25 @@
+.fullDisplay {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.imageArea {
+  padding: 10px;
+  margin-right: 20px;
+}
+
+.imageArea img {
+  width: 350px;
+  height: 350px;
+}
+
+.fullDisplayTitle,
+.fullDisplayPrice,
+.fullDisplayDescription {
+  color: var(--color7);
+}
+
+.fullDisplayDetails {
+  overflow: auto;
+}

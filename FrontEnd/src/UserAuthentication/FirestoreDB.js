@@ -7,24 +7,34 @@ import {
   getDocs,
   setDoc,
   getDoc,
-  onSnapshot
+  onSnapshot,
+  Timestamp,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
-async function addUser(userID, firstName, lastName, userName, signUpEmail) {
-  const userDocRef = doc(database, "users", userID);
+const DATABASE_FOLDER_NAME = "users";
+async function addUser(
+  userID,
+  firstName,
+  lastName,
+  userName,
+  signUpEmail,
+  selectedCategories
+) {
+  const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
   return await setDoc(userDocRef, {
     userID: userID,
     FirstName: firstName,
     LastName: lastName,
     UserName: userName,
     Email: signUpEmail,
+    selectedCategories: selectedCategories || [],
   });
 }
 
 async function isDatabaseExist() {
-  const usersCollection = query(collection(database, "users"));
+  const usersCollection = query(collection(database, DATABASE_FOLDER_NAME));
   const querySnapshot = await getDocs(usersCollection);
   return !querySnapshot.empty;
 }
@@ -45,14 +55,14 @@ const getUserData = async (uid) => {
     return;
   }
   try {
-    const userDocRef = doc(database, "users", uid);
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, uid);
     const userDocSnap = await getDoc(userDocRef);
 
     if (userDocSnap.exists()) {
       return userDocSnap.data();
     }
   } catch (error) {
-    throw new Error("Error accessing User data");
+    throw new Error(`Error accessing User data: ${error.message}`);
   }
 };
 
@@ -66,31 +76,43 @@ const uploadPostImage = async (serviceCategory, imageUpload) => {
     const downloadURL = await getDownloadURL(imageRef);
     return downloadURL;
   } catch (error) {
-    throw new Error("Error uploading image");
+    throw new Error(`Error uploading image: ${error.message}`);
   }
 };
 
-const createPost = async (formData, imageUpload, userId) => {
+const createPost = async (formData, imageUpload, userId, userData) => {
   try {
-    const imageURL = await uploadPostImage(formData.serviceCategory, imageUpload);
-    const formDataWithImage = { ...formData, imageURL };
+    const imageURL = await uploadPostImage(
+      formData.serviceCategories[0],
+      imageUpload
+    );
+    const createdAt = Timestamp.now();
+    const vendorUsername = userData.UserName;
+    const formDataWithImage = {
+      ...formData,
+      imageURL,
+      createdAt,
+      vendorUsername,
+    };
 
     if (userId === null) {
-      throw new Error("Invalid user ID");
+      throw new Error(`Invalid user ID: ${error.message}`);
     }
 
-    const userDocRef = doc(database, "users", userId);
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userId);
     const postsCollectionRef = collection(userDocRef, "Posts");
     const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
     await setDoc(postDocRef, formDataWithImage);
   } catch (error) {
-    throw new Error("Error creating post");
+    throw new Error(`Error creating post: ${error.message}`);
   }
 };
 
 const fetchUserPosts = (userId, callback) => {
-  if (userId===null) return;
-  const q = query(collection(database, `users/${userId}/Posts`));
+  if (userId === null) return;
+  const q = query(
+    collection(database, `${DATABASE_FOLDER_NAME}/${userId}/Posts`)
+  );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const postsData = [];
     querySnapshot.forEach((doc) => {
@@ -103,28 +125,53 @@ const fetchUserPosts = (userId, callback) => {
   return unsubscribe;
 };
 
-const fetchUserFeed = async(userID) =>{
-  if (userID===null) return;
+const fetchUserFeed = async (userID) => {
+  if (userID === null) return;
+  const userData = await getUserData(userID);
+  const userCategoryInterest = userData.selectedCategories || [];
 
-  const usersSnapshot = await getDocs(collection(database, `users`));
+  const usersSnapshot = await getDocs(
+    collection(database, DATABASE_FOLDER_NAME)
+  );
   const allPosts = [];
   for (const userDoc of usersSnapshot.docs) {
     const userId = userDoc.id;
-    const userPostsSnapshot = collection(database, `users/${userId}/Posts`);
+    const userPostsSnapshot = collection(
+      database,
+      `${DATABASE_FOLDER_NAME}/${userId}/Posts`
+    );
     const postsSnapshot = await getDocs(userPostsSnapshot);
     postsSnapshot.forEach((postDoc) => {
       if (postDoc.exists) {
-        allPosts.push({
-          userId: userId,
-          postId: postDoc.id,
-          ...postDoc.data()
-        });
+        const postData = postDoc.data();
+        if (
+          !userData ||
+          !userData.selectedCategories ||
+          userData.selectedCategories.length === 0
+        ) {
+          allPosts.push({
+            userId: userId,
+            postId: postDoc.id,
+            ...postData,
+          });
+        } else {
+          if (
+            postData.serviceCategories.some((category) =>
+              userCategoryInterest.includes(category)
+            )
+          ) {
+            allPosts.push({
+              userId: userId,
+              postId: postDoc.id,
+              ...postData,
+            });
+          }
+        }
       }
     });
   }
-
   return allPosts;
-}
+};
 
 export {
   addUser,

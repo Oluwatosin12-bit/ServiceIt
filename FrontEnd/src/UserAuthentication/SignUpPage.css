@@ -34,10 +34,31 @@
   color: #737272;
 }
 
+.nameFields{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 1em;
+}
+.signUpFirstName,
+.signUpLastName{
+  flex: 1;
+  margin-right: 10px;
+}
+.signUpFirstName input,
+.signUpLastName input {
+  padding: 0.75em 2.5em 0.75em 1em;
+  border: 1px solid var(--color6);
+  border-radius: 5px;
+  outline: none;
+  font-size: 0.7em;
+  color: var(--color7);
+  background: transparent;
+  /* margin-right: 0.7rem; */
+}
+
 .signUpEmail,
 .signUpPassword,
-.signUpFirstName,
-.signUpLastName,
 .signUpUsername {
   position: relative;
   width: 100%;
@@ -55,8 +76,6 @@
 
 .signUpEmail input,
 .signUpPassword input,
-.signUpFirstName input,
-.signUpLastName input,
 .signUpUsername input {
   width: 90%;
   padding: 0.75em 2.5em 0.75em 1em;
@@ -92,6 +111,11 @@
   transition: border-color 0.25s;
   margin-top: 20px;
   background: var(--buttonColor);
+}
+
+.sendSignUpbutton:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
 }
 
 .linkToSignUp:hover,
@@ -132,4 +156,46 @@
   outline: none;
   display: block;
   border-radius: 5px;
+}
+
+.selectedCategories {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.categoryTag {
+  display: inline-block;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 2px 5px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  font-size: 10px;
+}
+
+.cancelIcon {
+  cursor: pointer;
+  margin-left: 5px;
+  color: #999;
+}
+
+.cancelIcon:hover {
+  color: #666;
+}
+
+.availableCategories {
+  margin-top: 20px;
+}
+
+#categoryDropdown {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.availableCategories label{
+  font-size: 12px;
 }

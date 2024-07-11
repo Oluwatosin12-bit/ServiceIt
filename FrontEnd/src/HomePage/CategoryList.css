@@ -1,19 +1,9 @@
 @import "../Colors.css";
-.categories {
-  position: fixed;
-  top: 129px;
-  height: calc(100vh - 129px);
-  z-index: 1000;
-  overflow-y: auto;
-  width: 200px;
-  padding-top: 20px;
-  border-right: 1px solid #cccccc;
-  background-color: var(--color7);
-}
 .categoriesList {
   color: var(--color6);
   text-align: center;
 }
+
 .categories ul li {
   list-style: none;
   margin-bottom: 10px;
@@ -23,6 +13,9 @@
 @media (max-width: 1000px) {
   .categories {
     width: 100px;
+  }
+  .categories ul {
+    padding: 5px;
   }
   .categories ul li {
     font-size: 10px;

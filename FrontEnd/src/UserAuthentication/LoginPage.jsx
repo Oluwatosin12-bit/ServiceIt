@@ -70,7 +70,7 @@ function LoginPage() {
 
             <div className="linkOut">
               <Link to="/ResetPasswordPage">Forgot Password?</Link>
-              <Link to="/SignUpPage">SignUp</Link>
+              <Link to="/SignUpPage">Sign Up</Link>
             </div>
             <button className="sendLoginButton" type="submit">
               Login

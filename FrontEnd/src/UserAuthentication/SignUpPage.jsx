@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { registerUser } from "./Auth";
+import { categories } from "../Categories";
 import "./SignUpPage.css";
 
 function SignUpPage() {
@@ -13,7 +14,23 @@ function SignUpPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const MIN_PASSWORD_LENGTH = 8;
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [availableCategories] = useState(categories);
+  const MIN_PASSWORD_LENGTH = 6;
+
+  const removeCategory = (category) => {
+    setSelectedCategories(selectedCategories.filter((cat) => cat !== category));
+  };
+  const handleCategoryChange = (event) => {
+    const selectedOptions = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value
+    );
+    const newCategories = selectedOptions.filter(
+      (category) => !selectedCategories.includes(category)
+    );
+    setSelectedCategories([...selectedCategories, ...newCategories]);
+  };
 
   const validateForm = () => {
     return (
@@ -27,7 +44,9 @@ function SignUpPage() {
   const handleSignUp = async (event) => {
     event.preventDefault();
     if (password.length < MIN_PASSWORD_LENGTH) {
-      setErrorMessage("Password must be at least 8 characters");
+      setErrorMessage(
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters`
+      );
     }
     try {
       const userCredential = await registerUser(
@@ -35,15 +54,16 @@ function SignUpPage() {
         password,
         userName,
         firstName,
-        lastName
+        lastName,
+        selectedCategories
       );
       if (userCredential !== null) {
         navigate("/UserProfile");
       } else {
-        setErrorMessage("Username taken");
+        setErrorMessage("Username taken. Please choose a different one");
       }
     } catch (error) {
-      setErrorMessage(error.message);
+      setErrorMessage("Invalid Input");
     }
   };
 
@@ -57,24 +77,26 @@ function SignUpPage() {
         <div>
           <form className="signUpForm">
             <h3>Create an account</h3>
-            <div className="signUpFirstName">
-              <label htmlFor="firstName">First name</label>
-              <input
-                name="firstName"
-                id="firstName"
-                onChange={(event) => setFirstName(event.target.value)}
-                required="required"
-                placeholder="Enter First name"
-              />
-            </div>
-            <div className="signUpLastName">
-              <label htmlFor="lastName">Last name</label>
-              <input
-                name="lastName"
-                id="lastName"
-                onChange={(event) => setLastName(event.target.value)}
-                placeholder="Enter Last name"
-              />
+            <div className="nameFields">
+              <div className="signUpFirstName">
+                <label htmlFor="firstName">First name</label>
+                <input
+                  name="firstName"
+                  id="firstName"
+                  onChange={(event) => setFirstName(event.target.value)}
+                  required="required"
+                  placeholder="Enter First name"
+                />
+              </div>
+              <div className="signUpLastName">
+                <label htmlFor="lastName">Last name</label>
+                <input
+                  name="lastName"
+                  id="lastName"
+                  onChange={(event) => setLastName(event.target.value)}
+                  placeholder="Enter Last name"
+                />
+              </div>
             </div>
             <div className="signUpEmail">
               <label htmlFor="email">Email</label>
@@ -117,6 +139,32 @@ function SignUpPage() {
                 )}
               </span>
             </div>
+
+            <div className="selectedCategories">
+              {selectedCategories.map((category, index) => (
+                <div className="categoryTag" key={index}>
+                  {category}
+                  <span
+                    className="cancelIcon"
+                    onClick={() => removeCategory(category)}
+                  >
+                    ×
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="availableCategories">
+              <label htmlFor="categoryDropdown">Select Categories:</label>
+              <select id="categoryDropdown" onChange={handleCategoryChange}>
+                {availableCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <Link to="/LoginPage">
               <p className="linkToLogin">Already have an account?</p>
             </Link>

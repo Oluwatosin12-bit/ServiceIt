@@ -9,7 +9,14 @@ import {
 import { useState, useEffect } from "react";
 import { addUser, isUsernameUnique } from "./FirestoreDB";
 
-const registerUser = async (email, password, username, firstName, lastName) => {
+const registerUser = async (
+  email,
+  password,
+  username,
+  firstName,
+  lastName,
+  selectedCategories
+) => {
   try {
     const isUnique = await isUsernameUnique(username);
     if (isUnique !== true) {
@@ -22,7 +29,8 @@ const registerUser = async (email, password, username, firstName, lastName) => {
       firstName,
       lastName,
       username,
-      email
+      email,
+      selectedCategories || []
     );
     if (newUser !== null && userAddedToDB !== false) {
       return newUser;
