@@ -3,28 +3,23 @@ import { useEffect, useState } from "react";
 import { logOutUser } from "../UserAuthentication/Auth";
 import { createPost, fetchUserPosts } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
+import { CATEGORIES } from "../Categories";
 import "./UserProfile.css";
 
 function UserProfilePage({ userUID, userData }) {
   const navigate = useNavigate();
   const [imageUpload, setImageUpload] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
-  const [isModalShown, setIsModalShown] = useState(false);
+  const [isCreatePostModalShown, setIsCreatePostModalShown] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [serviceCategories, setSelectedCategories] = useState([]);
-  const [availableCategories] = useState([
-    "Hair Styling",
-    "Plumbing",
-    "Fitness",
-    "Cleaning",
-    "Electricity",
-    "Home Decor",
-    "Car Repair",
-    "Pet Sitting",
-    "Chef",
-  ]);
+  const [availableCategories] = useState(CATEGORIES);
   const removeCategory = (category) => {
-    setSelectedCategories(serviceCategories.filter((cat) => cat !== category));
+    setSelectedCategories(
+      serviceCategories.filter(
+        (serviceCategory) => serviceCategory !== category
+      )
+    );
   };
   const handleCategoryChange = (event) => {
     const selectedOptions = Array.from(
@@ -65,7 +60,7 @@ function UserProfilePage({ userUID, userData }) {
   }, [userUID]);
 
   const toggleModal = () => {
-    setIsModalShown(!isModalShown);
+    setIsCreatePostModalShown(!isCreatePostModalShown);
   };
 
   const handleLogOut = async () => {
@@ -106,7 +101,7 @@ function UserProfilePage({ userUID, userData }) {
           </div>
         </div>
 
-        <Modal show={isModalShown} onClose={toggleModal}>
+        <Modal isShown={isCreatePostModalShown} onClose={toggleModal}>
           <form onSubmit={handleFormSubmit} className="postForm">
             <div className="formGroup">
               <label htmlFor="serviceTitle">Title:</label>

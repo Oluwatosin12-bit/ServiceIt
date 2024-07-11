@@ -1,6 +1,6 @@
 import "./Modal.css";
-function Modal({ show, onClose, children }) {
-  if (!show) {
+function Modal({ isShown, onClose, children }) {
+  if (!isShown) {
     return null;
   }
   return (

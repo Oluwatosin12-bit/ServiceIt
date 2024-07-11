@@ -80,7 +80,7 @@ const uploadPostImage = async (serviceCategory, imageUpload) => {
   }
 };
 
-const createPost = async (formData, imageUpload, userId, userData) => {
+const createPost = async (formData, imageUpload, userID, userData) => {
   try {
     const imageURL = await uploadPostImage(
       formData.serviceCategories[0],
@@ -95,11 +95,11 @@ const createPost = async (formData, imageUpload, userId, userData) => {
       vendorUsername,
     };
 
-    if (userId === null) {
+    if (userID === null) {
       throw new Error(`Invalid user ID: ${error.message}`);
     }
 
-    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userId);
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
     const postsCollectionRef = collection(userDocRef, "Posts");
     const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
     await setDoc(postDocRef, formDataWithImage);
@@ -108,10 +108,10 @@ const createPost = async (formData, imageUpload, userId, userData) => {
   }
 };
 
-const fetchUserPosts = (userId, callback) => {
-  if (userId === null) return;
+const fetchUserPosts = (userID, callback) => {
+  if (userID === null) return;
   const q = query(
-    collection(database, `${DATABASE_FOLDER_NAME}/${userId}/Posts`)
+    collection(database, `${DATABASE_FOLDER_NAME}/${userID}/Posts`)
   );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const postsData = [];
@@ -126,7 +126,9 @@ const fetchUserPosts = (userId, callback) => {
 };
 
 const fetchUserFeed = async (userID) => {
-  if (userID === null) return;
+  if (userID === null) {
+    return;
+  }
   const userData = await getUserData(userID);
   const userCategoryInterest = userData.selectedCategories || [];
 
@@ -179,5 +181,5 @@ export {
   getUserData,
   createPost,
   fetchUserPosts,
-  fetchUserFeed
+  fetchUserFeed,
 };

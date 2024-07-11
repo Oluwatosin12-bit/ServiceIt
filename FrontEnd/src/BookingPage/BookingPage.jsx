@@ -1,7 +1,7 @@
 import "./BookingPage.css";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { requestAppointment } from "./BookingDB";
+import { requestAppointment, appointmentChanges } from "./BookingDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
@@ -9,7 +9,8 @@ function BookingForm({ userData }) {
   const location = useLocation();
   const { post, userUID } = location.state || {};
   const invisibleComponent = false;
-  const [isModalShown, setIsModalShown] = useState(false);
+  const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
+  const [isRequestPending, setIsRequestPending] = useState(false);
   const [appointmentData, setAppointmentData] = useState({
     appointmentTitle: "",
     appointmentDescription: "",
@@ -26,22 +27,31 @@ function BookingForm({ userData }) {
   const sendAppointmentRequest = async (
     userUID,
     vendorUID,
+    vendorUsername,
     appointmentData,
     userData
   ) => {
-    await requestAppointment(userUID, vendorUID, appointmentData, userData);
+    await requestAppointment(
+      userUID,
+      vendorUID,
+      vendorUsername,
+      appointmentData,
+      userData
+    );
   };
 
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
+      setIsRequestPending(true);
       await sendAppointmentRequest(
         userUID,
         post.userId,
+        post.vendorUsername,
         appointmentData,
         userData
       );
-      toggleModal();
+      appointmentChanges(userUID);
       setAppointmentData({
         appointmentTitle: "",
         appointmentDescription: "",
@@ -49,16 +59,21 @@ function BookingForm({ userData }) {
         appointmentTime: "",
         appointmentAdditionalNote: "",
       });
+      toggleModal();
     } catch (error) {
       throw new Error(`Error sending appointment request ${error.message}`);
+    } finally {
+      setIsRequestPending(false);
     }
   };
 
   const toggleModal = () => {
-    setIsModalShown(!isModalShown);
+    if (isRequestPending !== null && !isRequestPending) {
+      setIsBookingFormModalShown(!isBookingFormModalShown);
+    }
   };
 
-  if (!post) {
+  if (post === null) {
     return (
       <div>
         <h2>Booking Page</h2>
@@ -113,12 +128,12 @@ function BookingForm({ userData }) {
         />
         <button type="submit">Send Request</button>
       </form>
-      <Modal show={isModalShown} onClose={toggleModal}>
+      <Modal isShown={isBookingFormModalShown} onClose={toggleModal}>
         <p className="thankYou">
           Thank you for requesting an appointment with {post.vendorUsername}
         </p>
       </Modal>
-      {invisibleComponent && <NotificationsPage vendorId={post.userId} />}
+      {invisibleComponent && <NotificationsPage vendorID={post.userId} />}
     </div>
   );
 }

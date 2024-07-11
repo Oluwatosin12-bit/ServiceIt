@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { registerUser } from "./Auth";
-import { categories } from "../Categories";
+import { CATEGORIES} from "../Categories";
 import "./SignUpPage.css";
 
 function SignUpPage() {
@@ -15,7 +15,7 @@ function SignUpPage() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [availableCategories] = useState(categories);
+  const [availableCategories] = useState(CATEGORIES);
   const MIN_PASSWORD_LENGTH = 6;
 
   const removeCategory = (category) => {

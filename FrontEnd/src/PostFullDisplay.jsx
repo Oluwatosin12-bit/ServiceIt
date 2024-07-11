@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import "./PostFullDisplay.css";
-function PostFullDisplay({ userUID, post, show, onClose }) {
+function PostFullDisplay({ userUID, post, isShown, onClose }) {
   const navigate = useNavigate();
   const handleBookingFormOpen = () => {
     navigate("/BookingPage", { state: { post, userUID } });
   };
-  if (!show) {
+  if (!isShown) {
     return null;
   }
   const createdAt = post.createdAt.toDate();

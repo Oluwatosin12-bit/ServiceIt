@@ -8,7 +8,7 @@ import "./MainPage.css";
 function MainPage({ userUID, userData }) {
   const [userFeed, setUserFeed] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalShown, setIsModalShown] = useState(false);
+  const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
 
   const fetchFeed = async () => {
@@ -24,7 +24,7 @@ function MainPage({ userUID, userData }) {
 
   const toggleModal = (post) => {
     setSelectedPost(post);
-    setIsModalShown(!isModalShown);
+    setIsPostDetailModalShown(!isPostDetailModalShown);
   };
 
   return (
@@ -48,12 +48,12 @@ function MainPage({ userUID, userData }) {
             </div>
           ))
         )}
-        {isModalShown && selectedPost && (
+        {isPostDetailModalShown && selectedPost !== null && (
           <div>
             <PostFullDisplay
               userUID={userUID}
               post={selectedPost}
-              show={isModalShown}
+              isShown={isPostDetailModalShown}
               onClose={toggleModal}
             />
           </div>
