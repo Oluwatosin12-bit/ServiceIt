@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import {useState} from "react"
 import "./Header.css";
 function Header({ userData }) {
   return (
@@ -12,39 +13,39 @@ function Header({ userData }) {
       <nav className="navigation">
         <ul className="navigationList">
           <li>
-            <Link to="/MainPage">
+            <NavLink to="/MainPage">
               <p>Home</p>
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link to="">
+            <NavLink to="/AppointmentPage">
               <p>Appointments</p>
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link to="">
+            <NavLink to="">
               <p>Favorites</p>
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link to="">
+            <NavLink to="">
               <p>History</p>
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link to="">
+            <NavLink to="">
               <p>About Us</p>
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link to="/NotificationsPage">
+            <NavLink to="/NotificationsPage">
               <i className="fa-solid fa-bell profileIcon"></i>
-            </Link>
+            </NavLink>
           </li>
           <li>
-            <Link to="/UserProfile">
+            <NavLink to="/UserProfile">
               <i className="fa-solid fa-user profileIcon"></i>
-            </Link>
+            </NavLink>
           </li>
         </ul>
       </nav>

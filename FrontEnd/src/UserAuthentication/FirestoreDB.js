@@ -14,6 +14,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
 const DATABASE_FOLDER_NAME = "users";
+const POSTS_COLLECTION = "Posts";
 async function addUser(
   userID,
   firstName,
@@ -40,11 +41,11 @@ async function isDatabaseExist() {
 }
 
 async function isUsernameUnique(username) {
-  const databaseExists = await isDatabaseExist("users");
+  const databaseExists = await isDatabaseExist(DATABASE_FOLDER_NAME);
   if (databaseExists === false) {
     return true;
   }
-  const usersCollection = collection(database, "users");
+  const usersCollection = collection(database, DATABASE_FOLDER_NAME);
   const check = query(usersCollection, where("UserName", "==", username));
   const querySnapshot = await getDocs(check);
   return querySnapshot.empty;
@@ -100,7 +101,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
     }
 
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
-    const postsCollectionRef = collection(userDocRef, "Posts");
+    const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
     const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
     await setDoc(postDocRef, formDataWithImage);
   } catch (error) {
@@ -109,9 +110,14 @@ const createPost = async (formData, imageUpload, userID, userData) => {
 };
 
 const fetchUserPosts = (userID, callback) => {
-  if (userID === null) return;
+  if (userID === null) {
+    return;
+  }
   const q = query(
-    collection(database, `${DATABASE_FOLDER_NAME}/${userID}/Posts`)
+    collection(
+      database,
+      `${DATABASE_FOLDER_NAME}/${userID}/${POSTS_COLLECTION}`
+    )
   );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const postsData = [];
@@ -140,7 +146,7 @@ const fetchUserFeed = async (userID) => {
     const userId = userDoc.id;
     const userPostsSnapshot = collection(
       database,
-      `${DATABASE_FOLDER_NAME}/${userId}/Posts`
+      `${DATABASE_FOLDER_NAME}/${userId}/${POSTS_COLLECTION}`
     );
     const postsSnapshot = await getDocs(userPostsSnapshot);
     postsSnapshot.forEach((postDoc) => {

@@ -11,6 +11,7 @@ function BookingForm({ userData }) {
   const invisibleComponent = false;
   const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
   const [isRequestPending, setIsRequestPending] = useState(false);
+  const [popUpMessage, setPopUpMessage] = useState("");
   const [appointmentData, setAppointmentData] = useState({
     appointmentTitle: "",
     appointmentDescription: "",
@@ -43,22 +44,29 @@ function BookingForm({ userData }) {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      setIsRequestPending(true);
-      await sendAppointmentRequest(
-        userUID,
-        post.userId,
-        post.vendorUsername,
-        appointmentData,
-        userData
-      );
-      appointmentChanges(userUID);
-      setAppointmentData({
-        appointmentTitle: "",
-        appointmentDescription: "",
-        appointmentDate: "",
-        appointmentTime: "",
-        appointmentAdditionalNote: "",
-      });
+      if (userUID === post.userId) {
+        setPopUpMessage("You cannot book an appointment with yourself");
+      } else {
+        setIsRequestPending(true);
+        await sendAppointmentRequest(
+          userUID,
+          post.userId,
+          post.vendorUsername,
+          appointmentData,
+          userData
+        );
+        appointmentChanges(userUID);
+        setAppointmentData({
+          appointmentTitle: "",
+          appointmentDescription: "",
+          appointmentDate: "",
+          appointmentTime: "",
+          appointmentAdditionalNote: "",
+        });
+        setPopUpMessage(
+          `Your appointment request has been sent to ${post.vendorUsername}`
+        );
+      }
       toggleModal();
     } catch (error) {
       throw new Error(`Error sending appointment request ${error.message}`);
@@ -129,9 +137,7 @@ function BookingForm({ userData }) {
         <button type="submit">Send Request</button>
       </form>
       <Modal isShown={isBookingFormModalShown} onClose={toggleModal}>
-        <p className="thankYou">
-          Thank you for requesting an appointment with {post.vendorUsername}
-        </p>
+        <p className="popUpMessage">{popUpMessage}</p>
       </Modal>
       {invisibleComponent && <NotificationsPage vendorID={post.userId} />}
     </div>

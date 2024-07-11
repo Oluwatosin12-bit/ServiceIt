@@ -11,11 +11,15 @@ import {
   addDoc,
   Timestamp,
   orderBy,
+  updateDoc,
 } from "firebase/firestore";
 
 const DATABASE_FOLDER_NAME = "users";
 const APPOINTMENT_COLLECTION = "Appointments";
 const NOTIFICATION_COLLECTION = "Notifications";
+const PENDING_STATUS = "pending";
+const ACCEPTED_STATUS = "accepted";
+const DECLINED_STATUS = "declined";
 const requestAppointment = async (
   userUID,
   vendorUID,
@@ -24,7 +28,7 @@ const requestAppointment = async (
   userData
 ) => {
   try {
-    const Status = "pending";
+    const Status = PENDING_STATUS;
     const customerUsername = userData.UserName;
     const appointmentDataWithStatus = {
       ...appointmentData,
@@ -65,8 +69,10 @@ const appointmentChanges = (userID) => {
     snapshot.docChanges().forEach((change) => {
       const appointmentData = change.doc.data();
       const vendorID = appointmentData.vendorUID;
+      console.log(appointmentData);
 
       if (change.type === "added") {
+        console.log("added doc");
         const notificationMessage = `You just requested an appointment on ${appointmentData.appointmentDate} with ${appointmentData.vendorUsername} for ${appointmentData.appointmentTitle}`;
         addNotification(userID, notificationMessage, appointmentData);
 
@@ -74,12 +80,22 @@ const appointmentChanges = (userID) => {
         addNotification(vendorID, vendorNotificationMessage, appointmentData);
       } else if (
         change.type === "modified" &&
-        appointmentData.Status === "accepted"
+        appointmentData.Status === ACCEPTED_STATUS
       ) {
+        console.log("modified to accepted");
         const notificationMessage = `Your request has been accepted by ${appointmentData.vendorUsername}`;
         addNotification(userID, notificationMessage, appointmentData);
 
         const vendorNotificationMessage = `You accepted a service request from ${appointmentData.customerUsername}`;
+        addNotification(vendorID, vendorNotificationMessage, appointmentData);
+      } else if (
+        change.type === "modified" &&
+        appointmentData.Status === DECLINED_STATUS
+      ) {
+        const notificationMessage = `You declined appointment request made by ${appointmentData.vendorUsername}`;
+        addNotification(userID, notificationMessage, appointmentData);
+
+        const vendorNotificationMessage = `You declined appointment request made by ${appointmentData.customerUsername}`;
         addNotification(vendorID, vendorNotificationMessage, appointmentData);
       }
     });
@@ -139,4 +155,118 @@ const fetchNotifications = (userID, callback) => {
   }
 };
 
-export { requestAppointment, appointmentChanges, fetchNotifications };
+const fetchPendingAppointments = (userID, callback) => {
+  try {
+    if (userID === null) {
+      return;
+    }
+    const q = query(
+      collection(
+        database,
+        DATABASE_FOLDER_NAME,
+        userID,
+        APPOINTMENT_COLLECTION
+      ),
+      where("Status", "==", PENDING_STATUS)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const pendingAppointmentsData = [];
+      querySnapshot.forEach((doc) => {
+        pendingAppointmentsData.push({ docID: doc.id, ...doc.data() });
+      });
+
+      callback(pendingAppointmentsData);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    throw new Error(`Error fetching pending appointment data:${error.message}`);
+  }
+};
+
+const fetchUpcomingAppointments = (userID, callback) => {
+  try {
+    if (userID === null) {
+      return;
+    }
+    const q = query(
+      collection(
+        database,
+        DATABASE_FOLDER_NAME,
+        userID,
+        APPOINTMENT_COLLECTION
+      ),
+      where("Status", "==", ACCEPTED_STATUS)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const upcomingAppointmentsData = [];
+      querySnapshot.forEach((doc) => {
+        upcomingAppointmentsData.push({ docID: doc.id, ...doc.data() });
+      });
+
+      callback(upcomingAppointmentsData);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    throw new Error(`Error fetching pending appointment data:${error.message}`);
+  }
+};
+
+const acceptAppointment = async (userID, vendorID, appointmentID) => {
+  const userAppointmentRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    userID,
+    APPOINTMENT_COLLECTION,
+    appointmentID
+  );
+  await updateDoc(userAppointmentRef, {
+    Status: ACCEPTED_STATUS,
+  });
+
+  const vendorAppointmentRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    vendorID,
+    APPOINTMENT_COLLECTION,
+    appointmentID
+  );
+  await updateDoc(vendorAppointmentRef, {
+    Status: ACCEPTED_STATUS,
+  });
+};
+
+const declineAppointment = async (userID, vendorID, appointmentID) => {
+  const userAppointmentRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    userID,
+    APPOINTMENT_COLLECTION,
+    appointmentID
+  );
+  await updateDoc(userAppointmentRef, {
+    Status: DECLINED_STATUS,
+  });
+
+  const vendorAppointmentRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    vendorID,
+    APPOINTMENT_COLLECTION,
+    appointmentID
+  );
+  await updateDoc(vendorAppointmentRef, {
+    Status: DECLINED_STATUS,
+  });
+};
+
+export {
+  requestAppointment,
+  appointmentChanges,
+  fetchNotifications,
+  fetchPendingAppointments,
+  fetchUpcomingAppointments,
+  acceptAppointment,
+  declineAppointment,
+};
