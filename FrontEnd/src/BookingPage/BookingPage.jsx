@@ -1,7 +1,7 @@
 import "./BookingPage.css";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import { requestAppointment, appointmentChanges } from "./BookingDB";
+import { requestAppointment, appointmentChanges, vendorAppointmentChanges } from "./BookingDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
@@ -56,6 +56,7 @@ function BookingForm({ userData }) {
           userData
         );
         appointmentChanges(userUID);
+        vendorAppointmentChanges(post.userId);
         setAppointmentData({
           appointmentTitle: "",
           appointmentDescription: "",

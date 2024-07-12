@@ -20,6 +20,7 @@ const NOTIFICATION_COLLECTION = "Notifications";
 const PENDING_STATUS = "pending";
 const ACCEPTED_STATUS = "accepted";
 const DECLINED_STATUS = "declined";
+
 const requestAppointment = async (
   userUID,
   vendorUID,
@@ -68,35 +69,12 @@ const appointmentChanges = (userID) => {
   const unsubscribe = onSnapshot(userAppointmentCollectionRef, (snapshot) => {
     snapshot.docChanges().forEach((change) => {
       const appointmentData = change.doc.data();
-      const vendorID = appointmentData.vendorUID;
       console.log(appointmentData);
 
       if (change.type === "added") {
-        console.log("added doc");
         const notificationMessage = `You just requested an appointment on ${appointmentData.appointmentDate} with ${appointmentData.vendorUsername} for ${appointmentData.appointmentTitle}`;
-        addNotification(userID, notificationMessage, appointmentData);
+        addCustomerNotification(userID, notificationMessage, appointmentData);
 
-        const vendorNotificationMessage = `A new service request has been made by ${appointmentData.customerUsername} for ${appointmentData.appointmentTitle}`;
-        addNotification(vendorID, vendorNotificationMessage, appointmentData);
-      } else if (
-        change.type === "modified" &&
-        appointmentData.Status === ACCEPTED_STATUS
-      ) {
-        console.log("modified to accepted");
-        const notificationMessage = `Your request has been accepted by ${appointmentData.vendorUsername}`;
-        addNotification(userID, notificationMessage, appointmentData);
-
-        const vendorNotificationMessage = `You accepted a service request from ${appointmentData.customerUsername}`;
-        addNotification(vendorID, vendorNotificationMessage, appointmentData);
-      } else if (
-        change.type === "modified" &&
-        appointmentData.Status === DECLINED_STATUS
-      ) {
-        const notificationMessage = `You declined appointment request made by ${appointmentData.vendorUsername}`;
-        addNotification(userID, notificationMessage, appointmentData);
-
-        const vendorNotificationMessage = `You declined appointment request made by ${appointmentData.customerUsername}`;
-        addNotification(vendorID, vendorNotificationMessage, appointmentData);
       }
     });
   });
@@ -104,9 +82,33 @@ const appointmentChanges = (userID) => {
   return unsubscribe;
 };
 
-const addNotification = async (ID, message, appointmentData) => {
+const vendorAppointmentChanges = (vendorID) => {
+  const userAppointmentCollectionRef = collection(
+    database,
+    DATABASE_FOLDER_NAME,
+    vendorID,
+    APPOINTMENT_COLLECTION
+  );
+
+  const unsubscribe = onSnapshot(userAppointmentCollectionRef, (snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      const appointmentData = change.doc.data();
+      // const vendorID = appointmentData.vendorUID;
+      console.log(appointmentData);
+
+      if (change.type === "added") {
+        const vendorNotificationMessage = `A new service request has been made by ${appointmentData.customerUsername} for ${appointmentData.appointmentTitle}`;
+        addVendorNotification(vendorID, vendorNotificationMessage, appointmentData);
+      }
+    });
+  });
+
+  return unsubscribe;
+};
+
+const addCustomerNotification = async (userID, message, appointmentData) => {
   try {
-    const userDocRef = doc(database, DATABASE_FOLDER_NAME, ID);
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
     const notificationCollectionRef = collection(
       userDocRef,
       NOTIFICATION_COLLECTION
@@ -120,6 +122,32 @@ const addNotification = async (ID, message, appointmentData) => {
       await addDoc(notificationCollectionRef, {
         message: message,
         timestamp: Timestamp.now(),
+        userID: userID
+      });
+      return;
+    }
+  } catch (error) {
+    throw new Error(`Error adding notification: ${error.message}`);
+  }
+};
+
+const addVendorNotification = async (vendorID, message, appointmentData) => {
+  try {
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, vendorID);
+    const notificationCollectionRef = collection(
+      userDocRef,
+      NOTIFICATION_COLLECTION
+    );
+
+    const snapshot = await getDocs(notificationCollectionRef);
+    const existingNotifications = snapshot.docs.map(
+      (doc) => doc.data().message
+    );
+    if (snapshot.empty || existingNotifications.includes(message) === false) {
+      await addDoc(notificationCollectionRef, {
+        message: message,
+        timestamp: Timestamp.now(),
+        userID: vendorID
       });
       return;
     }
@@ -224,7 +252,7 @@ const acceptAppointment = async (userID, vendorID, appointmentID) => {
   await updateDoc(userAppointmentRef, {
     Status: ACCEPTED_STATUS,
   });
-
+  await new Promise((resolve) => setTimeout(resolve, 100));
   const vendorAppointmentRef = doc(
     database,
     DATABASE_FOLDER_NAME,
@@ -264,6 +292,7 @@ const declineAppointment = async (userID, vendorID, appointmentID) => {
 export {
   requestAppointment,
   appointmentChanges,
+  vendorAppointmentChanges,
   fetchNotifications,
   fetchPendingAppointments,
   fetchUpcomingAppointments,

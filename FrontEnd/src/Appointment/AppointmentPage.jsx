@@ -10,8 +10,7 @@ import AppointmentDetails from "./AppointmentDetails";
 import Modal from "../Modal";
 
 function AppointmentPage({ userData }) {
-  const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] =
-    useState(false);
+  const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] = useState(false);
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
   const userID = userData?.userID;
