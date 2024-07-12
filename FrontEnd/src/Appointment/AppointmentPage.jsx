@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import {
   fetchPendingAppointments,
   fetchUpcomingAppointments,
+  userAppointmentChanges,
+  vendorAppointmentChanges,
   acceptAppointment,
   declineAppointment,
 } from "../BookingPage/BookingDB";
@@ -14,6 +16,22 @@ function AppointmentPage({ userData }) {
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
   const userID = userData?.userID;
+
+  const acceptedAppointment = async (vendorID, customerID, appointmentID) => {
+    console.log("vendor:", vendorID)
+    console.log("Customer:", customerID)
+    await acceptAppointment(customerID, vendorID, appointmentID);
+    userAppointmentChanges(customerID);
+    vendorAppointmentChanges(vendorID)
+  };
+
+  const declinedAppointment = async (vendorID, customerID, appointmentID) => {
+    console.log("vendor:", vendorID)
+    console.log("Customer:", customerID)
+    await declineAppointment(customerID, vendorID, appointmentID);
+    userAppointmentChanges(customerID);
+    vendorAppointmentChanges(vendorID)
+  };
 
   useEffect(() => {
     if (userID === undefined) {
@@ -37,14 +55,6 @@ function AppointmentPage({ userData }) {
     return () => unsubscribe();
   }, [userID]);
 
-  const acceptedAppointment = async (userID, vendorID, appointmentID) => {
-    await acceptAppointment(userID, vendorID, appointmentID);
-  };
-
-  const declinedAppointment = async (userID, vendorID, appointmentID) => {
-    await declineAppointment(userID, vendorID, appointmentID);
-  };
-
   const toggleModal = () => {
     setIsAppointmentDetailsModalShown(!isAppointmentDetailsModalShown);
   };
@@ -56,6 +66,7 @@ function AppointmentPage({ userData }) {
       </div>
     );
   }
+  console.log(pendingAppointmentData)
   return (
     <div className="appointmentPage">
       <h2>Pending Appointments</h2>
@@ -67,7 +78,7 @@ function AppointmentPage({ userData }) {
               <button
                 onClick={() =>
                   acceptedAppointment(
-                    userID,
+                    appointment.customerUID,
                     appointment.vendorUID,
                     appointment.docID
                   )
@@ -78,7 +89,7 @@ function AppointmentPage({ userData }) {
               <button
                 onClick={() =>
                   declinedAppointment(
-                    userID,
+                    appointment.customerUID,
                     appointment.vendorUID,
                     appointment.docID
                   )
@@ -100,8 +111,8 @@ function AppointmentPage({ userData }) {
             <button
               onClick={() =>
                 declinedAppointment(
+                  appointment.customerUID,
                   userID,
-                  appointment.vendorUID,
                   appointment.docID
                 )
               }

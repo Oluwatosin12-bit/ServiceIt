@@ -32,6 +32,7 @@ const requestAppointment = async (
   try {
     const Status = PENDING_STATUS;
     const customerUsername = userData.UserName;
+    const appointmentID = generateRandomID();
     const appointmentDataWithStatus = {
       ...appointmentData,
       customerUID: userUID,
@@ -39,24 +40,20 @@ const requestAppointment = async (
       vendorUsername,
       customerUsername,
       Status,
+      docID: appointmentID
     };
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userUID, APPOINTMENT_COLLECTION, appointmentID);
+    await setDoc(userDocRef, appointmentDataWithStatus);
 
-    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userUID);
-    const userAppointmentCollection = collection(
-      userDocRef,
-      APPOINTMENT_COLLECTION
-    );
-    await addDoc(userAppointmentCollection, appointmentDataWithStatus);
-
-    const vendorDocRef = doc(database, DATABASE_FOLDER_NAME, vendorUID);
-    const vendorAppointmentCollection = collection(
-      vendorDocRef,
-      APPOINTMENT_COLLECTION
-    );
-    await addDoc(vendorAppointmentCollection, appointmentDataWithStatus);
+    const vendorDocRef = doc(database, DATABASE_FOLDER_NAME, vendorUID, APPOINTMENT_COLLECTION, appointmentID);
+    await setDoc(vendorDocRef, appointmentDataWithStatus);
   } catch (error) {
     throw new Error(`Error booking an appointment: ${error.message}`);
   }
+};
+
+const generateRandomID = () => {
+  return Math.random().toString(36).substring(2);
 };
 
 const userAppointmentChanges = (userID) => {
@@ -75,7 +72,25 @@ const userAppointmentChanges = (userID) => {
       if (change.type === "added") {
         const userNotificationMessage = `You just requested an appointment on ${appointmentData.appointmentDate} with ${appointmentData.vendorUsername} for ${appointmentData.appointmentTitle}`;
         await addNotification(customerID, userNotificationMessage);
-      }
+      } else if (
+          change.type === "modified" &&
+          appointmentData.Status === ACCEPTED_STATUS
+        ) {
+          const userNotificationMessage = `Your request has been accepted by ${appointmentData.vendorUsername}`;
+          await addNotification(customerID, userNotificationMessage);
+
+          const vendorNotificationMessage = `You accepted a service request from ${appointmentData.customerUsername}`;
+          addNotification(vendorID, vendorNotificationMessage, appointmentData);
+        } else if (
+          change.type === "modified" &&
+          appointmentData.Status === DECLINED_STATUS
+        ) {
+          const userNotificationMessage = `Your appointment request to ${appointmentData.vendorUsername} was declined` ;
+          await addNotification(customerID, userNotificationMessage);
+
+          const vendorNotificationMessage = `You declined appointment request made by ${appointmentData.customerUsername}`;
+          addNotification(vendorID, vendorNotificationMessage, appointmentData);
+        }
     });
   });
 
@@ -100,6 +115,23 @@ const vendorAppointmentChanges = (userID) => {
        if (userID === vendorID){
         await addNotification(userID, vendorNotificationMessage);
        }
+      } else if (
+        change.type === "modified" &&
+        appointmentData.Status === ACCEPTED_STATUS
+      ) {
+        console.log("modified")
+        const vendorNotificationMessage = `You accepted a service request from ${appointmentData.customerUsername}`;
+        if (userID === vendorID){
+          await addNotification(userID, vendorNotificationMessage);
+         }
+      } else if (
+        change.type === "modified" &&
+        appointmentData.Status === DECLINED_STATUS
+      ) {
+        const vendorNotificationMessage = `You declined appointment request made by ${appointmentData.customerUsername}`;
+        if (userID === vendorID){
+          await addNotification(userID, vendorNotificationMessage);
+         }
       }
     });
   });
