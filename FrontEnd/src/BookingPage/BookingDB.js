@@ -13,6 +13,7 @@ import {
   orderBy,
   updateDoc,
 } from "firebase/firestore";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const DATABASE_FOLDER_NAME = "users";
 const APPOINTMENT_COLLECTION = "Appointments";
@@ -58,7 +59,7 @@ const requestAppointment = async (
   }
 };
 
-const appointmentChanges = (userID) => {
+const userAppointmentChanges = (userID) => {
   const userAppointmentCollectionRef = collection(
     database,
     DATABASE_FOLDER_NAME,
@@ -67,14 +68,13 @@ const appointmentChanges = (userID) => {
   );
 
   const unsubscribe = onSnapshot(userAppointmentCollectionRef, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
+    snapshot.docChanges().forEach(async (change) => {
       const appointmentData = change.doc.data();
-      console.log(appointmentData);
+      const customerID = appointmentData.customerUID
 
       if (change.type === "added") {
-        const notificationMessage = `You just requested an appointment on ${appointmentData.appointmentDate} with ${appointmentData.vendorUsername} for ${appointmentData.appointmentTitle}`;
-        addCustomerNotification(userID, notificationMessage, appointmentData);
-
+        const userNotificationMessage = `You just requested an appointment on ${appointmentData.appointmentDate} with ${appointmentData.vendorUsername} for ${appointmentData.appointmentTitle}`;
+        await addNotification(customerID, userNotificationMessage);
       }
     });
   });
@@ -82,23 +82,24 @@ const appointmentChanges = (userID) => {
   return unsubscribe;
 };
 
-const vendorAppointmentChanges = (vendorID) => {
+const vendorAppointmentChanges = (userID) => {
   const userAppointmentCollectionRef = collection(
     database,
     DATABASE_FOLDER_NAME,
-    vendorID,
+    userID,
     APPOINTMENT_COLLECTION
   );
 
   const unsubscribe = onSnapshot(userAppointmentCollectionRef, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
+    snapshot.docChanges().forEach(async (change) => {
       const appointmentData = change.doc.data();
-      // const vendorID = appointmentData.vendorUID;
-      console.log(appointmentData);
+      const vendorID = appointmentData.vendorUID;
 
       if (change.type === "added") {
         const vendorNotificationMessage = `A new service request has been made by ${appointmentData.customerUsername} for ${appointmentData.appointmentTitle}`;
-        addVendorNotification(vendorID, vendorNotificationMessage, appointmentData);
+       if (userID === vendorID){
+        await addNotification(userID, vendorNotificationMessage);
+       }
       }
     });
   });
@@ -106,55 +107,25 @@ const vendorAppointmentChanges = (vendorID) => {
   return unsubscribe;
 };
 
-const addCustomerNotification = async (userID, message, appointmentData) => {
+const addNotification = async (ID, message) => {
   try {
-    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
-    const notificationCollectionRef = collection(
-      userDocRef,
-      NOTIFICATION_COLLECTION
-    );
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, ID);
+    const notificationCollectionRef = collection(userDocRef, NOTIFICATION_COLLECTION);
 
     const snapshot = await getDocs(notificationCollectionRef);
-    const existingNotifications = snapshot.docs.map(
-      (doc) => doc.data().message
-    );
-    if (snapshot.empty || existingNotifications.includes(message) === false) {
+    const existingNotifications = snapshot.docs.map((doc) => doc.data().message);
+
+    if (snapshot.empty || !existingNotifications.includes(message)) {
       await addDoc(notificationCollectionRef, {
         message: message,
         timestamp: Timestamp.now(),
-        userID: userID
       });
-      return;
     }
   } catch (error) {
-    throw new Error(`Error adding notification: ${error.message}`);
+    console.error(`Error adding notification: ${error.message}`);
   }
 };
 
-const addVendorNotification = async (vendorID, message, appointmentData) => {
-  try {
-    const userDocRef = doc(database, DATABASE_FOLDER_NAME, vendorID);
-    const notificationCollectionRef = collection(
-      userDocRef,
-      NOTIFICATION_COLLECTION
-    );
-
-    const snapshot = await getDocs(notificationCollectionRef);
-    const existingNotifications = snapshot.docs.map(
-      (doc) => doc.data().message
-    );
-    if (snapshot.empty || existingNotifications.includes(message) === false) {
-      await addDoc(notificationCollectionRef, {
-        message: message,
-        timestamp: Timestamp.now(),
-        userID: vendorID
-      });
-      return;
-    }
-  } catch (error) {
-    throw new Error(`Error adding notification: ${error.message}`);
-  }
-};
 
 const fetchNotifications = (userID, callback) => {
   try {
@@ -171,9 +142,15 @@ const fetchNotifications = (userID, callback) => {
       orderBy("timestamp", "desc")
     );
     const unsubscribe = onSnapshot(userAppointmentCollectionRef, (snapshot) => {
+      const uniqueMessages = new Set();
       const notifications = [];
       snapshot.forEach((doc) => {
-        notifications.push(doc.data());
+        const notification = doc.data();
+        const message = notification.message;
+        if (uniqueMessages.has(message) !== true) {
+          uniqueMessages.add(message);
+          notifications.push(notification);
+        }
       });
       callback(notifications);
     });
@@ -291,8 +268,9 @@ const declineAppointment = async (userID, vendorID, appointmentID) => {
 
 export {
   requestAppointment,
-  appointmentChanges,
+  userAppointmentChanges,
   vendorAppointmentChanges,
+  addNotification,
   fetchNotifications,
   fetchPendingAppointments,
   fetchUpcomingAppointments,

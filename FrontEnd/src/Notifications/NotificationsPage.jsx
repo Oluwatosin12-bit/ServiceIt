@@ -12,15 +12,12 @@ function NotificationsPage({ userData, vendorID }) {
       return;
     }
     const unsubscribe = fetchNotifications(userID, (notificationData) => {
-      const userNotifications = notificationData.filter(
-        notification => notification.userID === userID
-      );
+      const userNotifications = notificationData
       setUserNotificationData(userNotifications);
     });
 
     return () => unsubscribe();
   }, [userID]);
-
 
   return (
     <div className="notificationsSection">
