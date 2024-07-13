@@ -61,7 +61,7 @@ const requestAppointment = async (
   }
 };
 
-const appointmentChanges = (userID) => {
+const userAppointmentChanges = (userID) => {
   const userAppointmentCollectionRef = collection(
     database,
     DATABASE_FOLDER_NAME,
@@ -315,7 +315,8 @@ const declineAppointment = async (userID, vendorID, appointmentID) => {
 
 export {
   requestAppointment,
-  appointmentChanges,
+  userAppointmentChanges,
+  vendorAppointmentChanges,
   fetchNotifications,
   fetchPendingAppointments,
   fetchUpcomingAppointments,
