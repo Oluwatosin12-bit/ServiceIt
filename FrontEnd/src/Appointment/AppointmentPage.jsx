@@ -12,61 +12,68 @@ import AppointmentDetails from "./AppointmentDetails";
 import Modal from "../Modal";
 
 function AppointmentPage({ userData }) {
-  const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] = useState(false);
+  const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] =
+    useState(false);
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
   const userID = userData?.userID;
 
-  const acceptedAppointment = async (vendorID, customerID, appointmentID) => {
-    console.log("vendor:", vendorID)
-    console.log("Customer:", customerID)
+  const handleAcceptedAppointment = async (
+    vendorID,
+    customerID,
+    appointmentID
+  ) => {
     await acceptAppointment(customerID, vendorID, appointmentID);
     userAppointmentChanges(customerID);
-    vendorAppointmentChanges(vendorID)
+    vendorAppointmentChanges(vendorID);
   };
 
-  const declinedAppointment = async (vendorID, customerID, appointmentID) => {
-    console.log("vendor:", vendorID)
-    console.log("Customer:", customerID)
+  const handleDeclinedAppointment = async (
+    vendorID,
+    customerID,
+    appointmentID
+  ) => {
     await declineAppointment(customerID, vendorID, appointmentID);
     userAppointmentChanges(customerID);
-    vendorAppointmentChanges(vendorID)
+    vendorAppointmentChanges(vendorID);
   };
 
   useEffect(() => {
     if (userID === undefined) {
       return;
     }
-    const unsubscribe = fetchPendingAppointments(userID, (appointmentData) => {
-      setPendingAppointmentData(appointmentData);
-    });
-
-    return () => unsubscribe();
-  }, [userID]);
-
-  useEffect(() => {
-    if (userID === undefined) {
-      return;
-    }
-    const unsubscribe = fetchUpcomingAppointments(userID, (appointmentData) => {
-      setUpcomingAppointmentData(appointmentData);
-    });
-
-    return () => unsubscribe();
+    const unsubscribePendingAppointment = fetchPendingAppointments(
+      userID,
+      (appointmentData) => {
+        setPendingAppointmentData(appointmentData);
+      }
+    );
+    const unsubscribeUpcomingAppointment = fetchUpcomingAppointments(
+      userID,
+      (appointmentData) => {
+        setUpcomingAppointmentData(appointmentData);
+      }
+    );
+    return () => {
+      unsubscribePendingAppointment();
+      unsubscribeUpcomingAppointment();
+    };
   }, [userID]);
 
   const toggleModal = () => {
     setIsAppointmentDetailsModalShown(!isAppointmentDetailsModalShown);
   };
 
-  if (pendingAppointmentData === null && upcomingAppointmentData == null) {
+  if (
+    pendingAppointmentData.length === 0 &&
+    upcomingAppointmentData.length === 0
+  ) {
     return (
-      <div>
-        <h2>No Appointment Data found.</h2>
+      <div className="appointmentPage">
+        <h2>No appointments found.</h2>
       </div>
     );
   }
-  console.log(pendingAppointmentData)
   return (
     <div className="appointmentPage">
       <h2>Pending Appointments</h2>
@@ -77,7 +84,7 @@ function AppointmentPage({ userData }) {
             <div>
               <button
                 onClick={() =>
-                  acceptedAppointment(
+                  handleAcceptedAppointment(
                     appointment.customerUID,
                     appointment.vendorUID,
                     appointment.docID
@@ -88,7 +95,7 @@ function AppointmentPage({ userData }) {
               </button>
               <button
                 onClick={() =>
-                  declinedAppointment(
+                  handleDeclinedAppointment(
                     appointment.customerUID,
                     appointment.vendorUID,
                     appointment.docID
@@ -110,7 +117,7 @@ function AppointmentPage({ userData }) {
             <button>Add to Google Calendar</button>
             <button
               onClick={() =>
-                declinedAppointment(
+                handleDeclinedAppointment(
                   appointment.customerUID,
                   userID,
                   appointment.docID

@@ -1,7 +1,11 @@
 import "./BookingPage.css";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
-import { requestAppointment, userAppointmentChanges, vendorAppointmentChanges} from "./BookingDB";
+import { useState, useEffect } from "react";
+import {
+  requestAppointment,
+  userAppointmentChanges,
+  vendorAppointmentChanges,
+} from "./BookingDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
@@ -11,6 +15,7 @@ function BookingForm({ userData }) {
   const invisibleComponent = false;
   const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
   const [isRequestPending, setIsRequestPending] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(true);
   const [popUpMessage, setPopUpMessage] = useState("");
   const [appointmentData, setAppointmentData] = useState({
     appointmentTitle: "",
@@ -41,6 +46,13 @@ function BookingForm({ userData }) {
     );
   };
 
+  useEffect(() => {
+    const isFormValid = Object.values(appointmentData).every((val) => val !== "");
+    setIsFormValid(isFormValid);
+    if (userUID === post.userId){
+      setIsFormValid(false)
+    }
+  }, [appointmentData]);
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
@@ -56,7 +68,7 @@ function BookingForm({ userData }) {
           userData
         );
         userAppointmentChanges(userUID);
-        vendorAppointmentChanges(post.userId)
+        vendorAppointmentChanges(post.userId);
         setAppointmentData({
           appointmentTitle: "",
           appointmentDescription: "",
@@ -135,7 +147,7 @@ function BookingForm({ userData }) {
           value={appointmentData.appointmentAdditionalNote}
           onChange={(event) => handleChange(event)}
         />
-        <button type="submit">Send Request</button>
+        <button type="submit" disabled={!isFormValid}>Send Request</button>
       </form>
       <Modal isShown={isBookingFormModalShown} onClose={toggleModal}>
         <p className="popUpMessage">{popUpMessage}</p>
