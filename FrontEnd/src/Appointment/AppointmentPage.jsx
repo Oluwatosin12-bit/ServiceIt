@@ -16,26 +16,46 @@ function AppointmentPage({ userData }) {
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
   const userID = userData?.userID;
 
+  const handleAcceptedAppointment = async (
+    vendorID,
+    customerID,
+    appointmentID
+  ) => {
+    await acceptAppointment(customerID, vendorID, appointmentID);
+    userAppointmentChanges(customerID);
+    vendorAppointmentChanges(vendorID);
+  };
+
+  const handleDeclinedAppointment = async (
+    vendorID,
+    customerID,
+    appointmentID
+  ) => {
+    await declineAppointment(customerID, vendorID, appointmentID);
+    userAppointmentChanges(customerID);
+    vendorAppointmentChanges(vendorID);
+  };
+
   useEffect(() => {
     if (userID === undefined) {
       return;
     }
-    const unsubscribe = fetchPendingAppointments(userID, (appointmentData) => {
-      setPendingAppointmentData(appointmentData);
-    });
-
-    return () => unsubscribe();
-  }, [userID]);
-
-  useEffect(() => {
-    if (userID === undefined) {
-      return;
-    }
-    const unsubscribe = fetchUpcomingAppointments(userID, (appointmentData) => {
-      setUpcomingAppointmentData(appointmentData);
-    });
-
-    return () => unsubscribe();
+    const unsubscribePendingAppointment = fetchPendingAppointments(
+      userID,
+      (appointmentData) => {
+        setPendingAppointmentData(appointmentData);
+      }
+    );
+    const unsubscribeUpcomingAppointment = fetchUpcomingAppointments(
+      userID,
+      (appointmentData) => {
+        setUpcomingAppointmentData(appointmentData);
+      }
+    );
+    return () => {
+      unsubscribePendingAppointment();
+      unsubscribeUpcomingAppointment();
+    };
   }, [userID]);
 
   const acceptedAppointment = async (userID, vendorID, appointmentID) => {
@@ -50,10 +70,13 @@ function AppointmentPage({ userData }) {
     setIsAppointmentDetailsModalShown(!isAppointmentDetailsModalShown);
   };
 
-  if (pendingAppointmentData === null && upcomingAppointmentData == null) {
+  if (
+    pendingAppointmentData.length === 0 &&
+    upcomingAppointmentData.length === 0
+  ) {
     return (
-      <div>
-        <h2>No Appointment Data found.</h2>
+      <div className="appointmentPage">
+        <h2>No appointments found.</h2>
       </div>
     );
   }
@@ -67,8 +90,8 @@ function AppointmentPage({ userData }) {
             <div>
               <button
                 onClick={() =>
-                  acceptedAppointment(
-                    userID,
+                  handleAcceptedAppointment(
+                    appointment.customerUID,
                     appointment.vendorUID,
                     appointment.docID
                   )
@@ -78,8 +101,8 @@ function AppointmentPage({ userData }) {
               </button>
               <button
                 onClick={() =>
-                  declinedAppointment(
-                    userID,
+                  handleDeclinedAppointment(
+                    appointment.customerUID,
                     appointment.vendorUID,
                     appointment.docID
                   )
@@ -100,7 +123,8 @@ function AppointmentPage({ userData }) {
             <button>Add to Google Calendar</button>
             <button
               onClick={() =>
-                declinedAppointment(
+                handleDeclinedAppointment(
+                  appointment.customerUID,
                   userID,
                   appointment.vendorUID,
                   appointment.docID

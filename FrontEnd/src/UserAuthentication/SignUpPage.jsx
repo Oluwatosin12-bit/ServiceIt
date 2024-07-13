@@ -37,6 +37,7 @@ function SignUpPage() {
       email.trim() !== "" && password.trim() !== "" && userName.trim() !== ""
     );
   };
+
   useEffect(() => {
     setIsFormValid(validateForm());
   }, [email, password, userName]);
@@ -47,6 +48,7 @@ function SignUpPage() {
       setErrorMessage(
         `Password must be at least ${MIN_PASSWORD_LENGTH} characters`
       );
+      return;
     }
     try {
       const userCredential = await registerUser(

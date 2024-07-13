@@ -37,21 +37,25 @@ const requestAppointment = async (
       vendorUsername,
       customerUsername,
       Status,
+      docID: appointmentID,
     };
-
-    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userUID);
-    const userAppointmentCollection = collection(
-      userDocRef,
-      APPOINTMENT_COLLECTION
+    const userDocRef = doc(
+      database,
+      DATABASE_FOLDER_NAME,
+      userUID,
+      APPOINTMENT_COLLECTION,
+      appointmentID
     );
-    await addDoc(userAppointmentCollection, appointmentDataWithStatus);
+    await setDoc(userDocRef, appointmentDataWithStatus);
 
-    const vendorDocRef = doc(database, DATABASE_FOLDER_NAME, vendorUID);
-    const vendorAppointmentCollection = collection(
-      vendorDocRef,
-      APPOINTMENT_COLLECTION
+    const vendorDocRef = doc(
+      database,
+      DATABASE_FOLDER_NAME,
+      vendorUID,
+      APPOINTMENT_COLLECTION,
+      appointmentID
     );
-    await addDoc(vendorAppointmentCollection, appointmentDataWithStatus);
+    await setDoc(vendorDocRef, appointmentDataWithStatus);
   } catch (error) {
     throw new Error(`Error booking an appointment: ${error.message}`);
   }
@@ -66,7 +70,48 @@ const appointmentChanges = (userID) => {
   );
 
   const unsubscribe = onSnapshot(userAppointmentCollectionRef, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
+    snapshot.docChanges().forEach(async (change) => {
+      const appointmentData = change.doc.data();
+      const customerID = appointmentData.customerUID;
+
+      if (change.type === "added") {
+        const userNotificationMessage = `You just requested an appointment on ${appointmentData.appointmentDate} with ${appointmentData.vendorUsername} for ${appointmentData.appointmentTitle}`;
+        await addNotification(customerID, userNotificationMessage);
+      } else if (
+        change.type === "modified" &&
+        appointmentData.Status === ACCEPTED_STATUS
+      ) {
+        const userNotificationMessage = `Your request has been accepted by ${appointmentData.vendorUsername}`;
+        await addNotification(customerID, userNotificationMessage);
+
+        const vendorNotificationMessage = `You accepted a service request from ${appointmentData.customerUsername}`;
+        addNotification(vendorID, vendorNotificationMessage, appointmentData);
+      } else if (
+        change.type === "modified" &&
+        appointmentData.Status === DECLINED_STATUS
+      ) {
+        const userNotificationMessage = `Your appointment request to ${appointmentData.vendorUsername} was declined`;
+        await addNotification(customerID, userNotificationMessage);
+
+        const vendorNotificationMessage = `You declined appointment request made by ${appointmentData.customerUsername}`;
+        addNotification(vendorID, vendorNotificationMessage, appointmentData);
+      }
+    });
+  });
+
+  return unsubscribe;
+};
+
+const vendorAppointmentChanges = (userID) => {
+  const userAppointmentCollectionRef = collection(
+    database,
+    DATABASE_FOLDER_NAME,
+    userID,
+    APPOINTMENT_COLLECTION
+  );
+
+  const unsubscribe = onSnapshot(userAppointmentCollectionRef, (snapshot) => {
+    snapshot.docChanges().forEach(async (change) => {
       const appointmentData = change.doc.data();
       const vendorID = appointmentData.vendorUID;
       console.log(appointmentData);
@@ -77,17 +122,17 @@ const appointmentChanges = (userID) => {
         addNotification(userID, notificationMessage, appointmentData);
 
         const vendorNotificationMessage = `A new service request has been made by ${appointmentData.customerUsername} for ${appointmentData.appointmentTitle}`;
-        addNotification(vendorID, vendorNotificationMessage, appointmentData);
+        if (userID === vendorID) {
+          await addNotification(userID, vendorNotificationMessage);
+        }
       } else if (
         change.type === "modified" &&
         appointmentData.Status === ACCEPTED_STATUS
       ) {
-        console.log("modified to accepted");
-        const notificationMessage = `Your request has been accepted by ${appointmentData.vendorUsername}`;
-        addNotification(userID, notificationMessage, appointmentData);
-
         const vendorNotificationMessage = `You accepted a service request from ${appointmentData.customerUsername}`;
-        addNotification(vendorID, vendorNotificationMessage, appointmentData);
+        if (userID === vendorID) {
+          await addNotification(userID, vendorNotificationMessage);
+        }
       } else if (
         change.type === "modified" &&
         appointmentData.Status === DECLINED_STATUS
@@ -96,7 +141,9 @@ const appointmentChanges = (userID) => {
         addNotification(userID, notificationMessage, appointmentData);
 
         const vendorNotificationMessage = `You declined appointment request made by ${appointmentData.customerUsername}`;
-        addNotification(vendorID, vendorNotificationMessage, appointmentData);
+        if (userID === vendorID) {
+          await addNotification(userID, vendorNotificationMessage);
+        }
       }
     });
   });
@@ -116,7 +163,8 @@ const addNotification = async (ID, message, appointmentData) => {
     const existingNotifications = snapshot.docs.map(
       (doc) => doc.data().message
     );
-    if (snapshot.empty || existingNotifications.includes(message) === false) {
+
+    if (snapshot.empty || !existingNotifications.includes(message)) {
       await addDoc(notificationCollectionRef, {
         message: message,
         timestamp: Timestamp.now(),
@@ -131,7 +179,7 @@ const addNotification = async (ID, message, appointmentData) => {
 const fetchNotifications = (userID, callback) => {
   try {
     if (userID === undefined) {
-      throw new Error(`Invalid userID:${error.message}`);
+      throw new Error(`Invalid userID: ${error.message}`);
     }
     const userAppointmentCollectionRef = query(
       collection(
@@ -151,7 +199,7 @@ const fetchNotifications = (userID, callback) => {
     });
     return unsubscribe;
   } catch (error) {
-    throw new Error(`Error sending appointment notification:${error.message}`);
+    throw new Error(`Error sending appointment notification: ${error.message}`);
   }
 };
 
@@ -180,7 +228,9 @@ const fetchPendingAppointments = (userID, callback) => {
 
     return unsubscribe;
   } catch (error) {
-    throw new Error(`Error fetching pending appointment data:${error.message}`);
+    throw new Error(
+      `Error fetching pending appointment data: ${error.message}`
+    );
   }
 };
 
@@ -209,7 +259,9 @@ const fetchUpcomingAppointments = (userID, callback) => {
 
     return unsubscribe;
   } catch (error) {
-    throw new Error(`Error fetching pending appointment data:${error.message}`);
+    throw new Error(
+      `Error fetching upcoming appointment data: ${error.message}`
+    );
   }
 };
 
