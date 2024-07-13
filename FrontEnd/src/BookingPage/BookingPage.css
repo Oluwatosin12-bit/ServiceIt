@@ -13,11 +13,11 @@
 }
 
 .vendorUsername,
-.thankYou {
+.popUpMessage {
   color: var(--color7);
 }
 
-.thankYou {
+.popUpMessage {
   padding-top: 10px;
   padding-right: 5px;
 }

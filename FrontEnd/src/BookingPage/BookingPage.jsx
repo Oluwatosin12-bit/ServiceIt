@@ -1,7 +1,11 @@
 import "./BookingPage.css";
 import { useLocation } from "react-router-dom";
-import { useState } from "react";
-import { requestAppointment } from "./BookingDB";
+import { useState, useEffect } from "react";
+import {
+  requestAppointment,
+  userAppointmentChanges,
+  vendorAppointmentChanges,
+} from "./BookingDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
@@ -9,7 +13,10 @@ function BookingForm({ userData }) {
   const location = useLocation();
   const { post, userUID } = location.state || {};
   const invisibleComponent = false;
-  const [isModalShown, setIsModalShown] = useState(false);
+  const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
+  const [isRequestPending, setIsRequestPending] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(true);
+  const [popUpMessage, setPopUpMessage] = useState("");
   const [appointmentData, setAppointmentData] = useState({
     appointmentTitle: "",
     appointmentDescription: "",
@@ -26,39 +33,68 @@ function BookingForm({ userData }) {
   const sendAppointmentRequest = async (
     userUID,
     vendorUID,
+    vendorUsername,
     appointmentData,
     userData
   ) => {
-    await requestAppointment(userUID, vendorUID, appointmentData, userData);
+    await requestAppointment(
+      userUID,
+      vendorUID,
+      vendorUsername,
+      appointmentData,
+      userData
+    );
   };
 
+  useEffect(() => {
+    const isFormValid = Object.values(appointmentData).every((val) => val !== "");
+    setIsFormValid(isFormValid);
+    if (userUID === post.userId){
+      setIsFormValid(false)
+    }
+  }, [appointmentData]);
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      await sendAppointmentRequest(
-        userUID,
-        post.userId,
-        appointmentData,
-        userData
-      );
+      if (userUID === post.userId) {
+        setPopUpMessage("You cannot book an appointment with yourself");
+      } else {
+        setIsRequestPending(true);
+        await sendAppointmentRequest(
+          userUID,
+          post.userId,
+          post.vendorUsername,
+          appointmentData,
+          userData
+        );
+        userAppointmentChanges(userUID);
+        vendorAppointmentChanges(post.userId);
+        setAppointmentData({
+          appointmentTitle: "",
+          appointmentDescription: "",
+          appointmentDate: "",
+          appointmentTime: "",
+          appointmentAdditionalNote: "",
+        });
+        setPopUpMessage(
+          `Your appointment request has been sent to ${post.vendorUsername}`
+        );
+      }
       toggleModal();
-      setAppointmentData({
-        appointmentTitle: "",
-        appointmentDescription: "",
-        appointmentDate: "",
-        appointmentTime: "",
-        appointmentAdditionalNote: "",
-      });
     } catch (error) {
       throw new Error(`Error sending appointment request ${error.message}`);
+    } finally {
+      setIsRequestPending(false);
     }
   };
 
   const toggleModal = () => {
-    setIsModalShown(!isModalShown);
+    if (isRequestPending !== null && !isRequestPending) {
+      setIsBookingFormModalShown(!isBookingFormModalShown);
+    }
   };
 
-  if (!post) {
+  if (post === null) {
     return (
       <div>
         <h2>Booking Page</h2>
@@ -111,14 +147,12 @@ function BookingForm({ userData }) {
           value={appointmentData.appointmentAdditionalNote}
           onChange={(event) => handleChange(event)}
         />
-        <button type="submit">Send Request</button>
+        <button type="submit" disabled={!isFormValid}>Send Request</button>
       </form>
-      <Modal show={isModalShown} onClose={toggleModal}>
-        <p className="thankYou">
-          Thank you for requesting an appointment with {post.vendorUsername}
-        </p>
+      <Modal isShown={isBookingFormModalShown} onClose={toggleModal}>
+        <p className="popUpMessage">{popUpMessage}</p>
       </Modal>
-      {invisibleComponent && <NotificationsPage vendorId={post.userId} />}
+      {invisibleComponent && <NotificationsPage vendorID={post.userId} />}
     </div>
   );
 }

@@ -1,8 +1,8 @@
-function NotificationsPreview({ appointmentRequestData }) {
+function NotificationsPreview({ notificationData }) {
   return (
     <div>
-      <h3>{appointmentRequestData.customerUsername}</h3>
-      <p>{appointmentRequestData.title}</p>
+      <h3>{notificationData.customerUsername}</h3>
+      <p>{notificationData.appointmentTitle}</p>
     </div>
   );
 }

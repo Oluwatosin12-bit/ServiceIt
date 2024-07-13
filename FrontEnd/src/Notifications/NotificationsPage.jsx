@@ -1,62 +1,44 @@
 import NotificationsPreview from "./NotificationPreview";
-import {
-  userAppointmentNotification,
-  vendorAppointmentNotification,
-} from "../BookingPage/BookingDB";
+import { fetchNotifications } from "../BookingPage/BookingDB";
 import { useState, useEffect } from "react";
 import "./NotificationPage.css";
 
-function NotificationsPage({ userData, vendorId }) {
-  const userId = userData?.userID;
-  const [userAppointmentRequestData, setUserAppointmentRequestData] = useState(
-    []
-  );
-  const [vendorAppointmentRequestData, setVendorAppointmentRequestData] =
-    useState([]);
+function NotificationsPage({ userData, vendorID }) {
+  const userID = userData?.userID;
+  const [userNotificationData, setUserNotificationData] = useState([]);
+  const [vendorNotificationData, setVendorNotificationData] = useState([]);
 
   useEffect(() => {
-    if (userId === undefined) return;
-    const unsubscribe = userAppointmentNotification(
-      userId,
-      (userAppointmentData) => {
-        setUserAppointmentRequestData(userAppointmentData);
-      }
-    );
+    if (userID === undefined) return;
+    const unsubscribe = fetchNotifications(userID, (userAppointmentData) => {
+      setUserNotificationData(userAppointmentData);
+    });
 
     return () => unsubscribe();
-  }, [userId]);
+  }, [userID]);
 
   useEffect(() => {
-    if (vendorId === undefined) return;
-    const unsubscribe = vendorAppointmentNotification(
-      vendorId,
-      (userAppointmentData) => {
-        setVendorAppointmentRequestData(userAppointmentData);
-      }
-    );
+    if (vendorID === undefined) return;
+    const unsubscribe = fetchNotifications(vendorID, (userAppointmentData) => {
+      setVendorNotificationData(userAppointmentData);
+    });
 
     return () => unsubscribe();
-  }, [vendorId]);
-
+  }, [vendorID]);
   return (
     <div className="notificationsSection">
-      <p>Hi</p>
       <h2>User Notifications:</h2>
-      {userAppointmentRequestData.map((appointment, index) => (
+      {userNotificationData.map((appointment, index) => (
         <div key={index}>
-          <p>{appointment.appointmentTitle}</p>
-          <NotificationsPreview
-            appointmentRequestData={userAppointmentRequestData}
-          />
+          <p>{appointment.message}</p>
+          <NotificationsPreview notificationData={userNotificationData} />
         </div>
       ))}
 
-      {vendorAppointmentRequestData.map((appointment, index) => (
+      {vendorNotificationData.map((appointment, index) => (
         <div key={index}>
-          <p>{appointment.appointmentTitle}</p>
-          <NotificationsPreview
-            appointmentRequestData={userAppointmentRequestData}
-          />
+          <p>{appointment.message}</p>
+          <NotificationsPreview notificationData={vendorNotificationData} />
         </div>
       ))}
     </div>

@@ -14,6 +14,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
 const DATABASE_FOLDER_NAME = "users";
+const POSTS_COLLECTION = "Posts";
 async function addUser(
   userID,
   firstName,
@@ -40,11 +41,11 @@ async function isDatabaseExist() {
 }
 
 async function isUsernameUnique(username) {
-  const databaseExists = await isDatabaseExist("users");
+  const databaseExists = await isDatabaseExist(DATABASE_FOLDER_NAME);
   if (databaseExists === false) {
     return true;
   }
-  const usersCollection = collection(database, "users");
+  const usersCollection = collection(database, DATABASE_FOLDER_NAME);
   const check = query(usersCollection, where("UserName", "==", username));
   const querySnapshot = await getDocs(check);
   return querySnapshot.empty;
@@ -80,7 +81,7 @@ const uploadPostImage = async (serviceCategory, imageUpload) => {
   }
 };
 
-const createPost = async (formData, imageUpload, userId, userData) => {
+const createPost = async (formData, imageUpload, userID, userData) => {
   try {
     const imageURL = await uploadPostImage(
       formData.serviceCategories[0],
@@ -95,12 +96,12 @@ const createPost = async (formData, imageUpload, userId, userData) => {
       vendorUsername,
     };
 
-    if (userId === null) {
+    if (userID === null) {
       throw new Error(`Invalid user ID: ${error.message}`);
     }
 
-    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userId);
-    const postsCollectionRef = collection(userDocRef, "Posts");
+    const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
+    const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
     const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
     await setDoc(postDocRef, formDataWithImage);
   } catch (error) {
@@ -108,10 +109,15 @@ const createPost = async (formData, imageUpload, userId, userData) => {
   }
 };
 
-const fetchUserPosts = (userId, callback) => {
-  if (userId === null) return;
+const fetchUserPosts = (userID, callback) => {
+  if (userID === null) {
+    return;
+  }
   const q = query(
-    collection(database, `${DATABASE_FOLDER_NAME}/${userId}/Posts`)
+    collection(
+      database,
+      `${DATABASE_FOLDER_NAME}/${userID}/${POSTS_COLLECTION}`
+    )
   );
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     const postsData = [];
@@ -126,7 +132,9 @@ const fetchUserPosts = (userId, callback) => {
 };
 
 const fetchUserFeed = async (userID) => {
-  if (userID === null) return;
+  if (userID === null) {
+    return;
+  }
   const userData = await getUserData(userID);
   const userCategoryInterest = userData.selectedCategories || [];
 
@@ -138,7 +146,7 @@ const fetchUserFeed = async (userID) => {
     const userId = userDoc.id;
     const userPostsSnapshot = collection(
       database,
-      `${DATABASE_FOLDER_NAME}/${userId}/Posts`
+      `${DATABASE_FOLDER_NAME}/${userId}/${POSTS_COLLECTION}`
     );
     const postsSnapshot = await getDocs(userPostsSnapshot);
     postsSnapshot.forEach((postDoc) => {
@@ -179,5 +187,5 @@ export {
   getUserData,
   createPost,
   fetchUserPosts,
-  fetchUserFeed
+  fetchUserFeed,
 };

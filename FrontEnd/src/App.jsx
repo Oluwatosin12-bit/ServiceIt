@@ -8,6 +8,7 @@ import MainPage from "./HomePage/MainPage";
 import UserProfile from "./ProfilePage/UserProfile";
 import BookingForm from "./BookingPage/BookingPage";
 import NotificationsPage from "./Notifications/NotificationsPage";
+import AppointmentPage from "./Appointment/AppointmentPage";
 import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
@@ -48,6 +49,10 @@ function App() {
         <Route
           path="/NotificationsPage"
           element={<NotificationsPage userData={userData} />}
+        />
+        <Route
+          path="/AppointmentPage"
+          element={<AppointmentPage userData={userData} />}
         />
       </Routes>
     </Router>
