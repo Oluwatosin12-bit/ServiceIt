@@ -1,6 +1,10 @@
 import { useNavigate } from "react-router-dom";
+import {useState} from "react";
+
 import "./PostFullDisplay.css";
-function PostFullDisplay({ userUID, post, isShown, onClose }) {
+
+function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) {
+  const [favorited, setFavorited] = useState(false)
   const navigate = useNavigate();
   const handleBookingFormOpen = () => {
     navigate("/BookingPage", { state: { post, userUID } });
@@ -9,6 +13,16 @@ function PostFullDisplay({ userUID, post, isShown, onClose }) {
     return null;
   }
   const createdAt = post.createdAt.toDate();
+
+  const handleNotification = (type) =>{
+    setFavorited(true);
+    socket.emit("sendNotification", {
+      senderName: userUID,
+      receiverName: post.userId,
+      type,
+    })
+  }
+
   return (
     <div className="modalOverlay" onClick={onClose}>
       <div
@@ -34,7 +48,7 @@ function PostFullDisplay({ userUID, post, isShown, onClose }) {
               </p>
               <button onClick={handleBookingFormOpen}>Book Now</button>
               <span>
-                <i className="fa-regular fa-heart"></i>
+                {favorited ? (<i className="fa-solid fa-heart hearted" ></i>) : (<i className="fa-regular fa-heart" onClick={()=>handleNotification(1)}></i>)}
               </span>
               <p className="fullDisplayTimestamp">
                 Created at: {createdAt.toLocaleString()}

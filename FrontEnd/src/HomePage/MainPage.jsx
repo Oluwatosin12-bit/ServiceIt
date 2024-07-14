@@ -5,7 +5,7 @@ import PostsPreview from "./PostsPreview";
 import PostFullDisplay from "../PostFullDisplay";
 import "./MainPage.css";
 
-function MainPage({ userUID, userData }) {
+function MainPage({ userUID, userData, socket }) {
   const [userFeed, setUserFeed] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
@@ -26,6 +26,7 @@ function MainPage({ userUID, userData }) {
     setSelectedPost(post);
     setIsPostDetailModalShown(!isPostDetailModalShown);
   };
+
 
   return (
     <div className="homePageList">
@@ -55,6 +56,8 @@ function MainPage({ userUID, userData }) {
               post={selectedPost}
               isShown={isPostDetailModalShown}
               onClose={toggleModal}
+              userData={userData}
+              socket={socket}
             />
           </div>
         )}

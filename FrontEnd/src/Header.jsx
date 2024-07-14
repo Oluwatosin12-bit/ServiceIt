@@ -1,7 +1,36 @@
 import { NavLink } from "react-router-dom";
-import {useState} from "react"
+import { useEffect, useState } from "react";
 import "./Header.css";
-function Header({ userData }) {
+import NotificationsPage from "./Notifications/NotificationsPage";
+function Header({ userData, socket}) {
+  const [notifications, setNotifications] = useState([])
+  const [invisibleComponent, setInvisibleComponent] = useState(false)
+  useEffect(()=>{
+    if(socket){
+      socket.on("getNotification", data=>{
+        setNotifications((prev)=>[...prev, data])
+      })
+    }
+  },[socket])
+  const displayNotification = ({senderName, type})=>{
+    let action;
+
+    if (type===1){
+      action="favorited"
+    } else if(type===2){
+      action="added"
+    } else if(type===3){
+      action="accepted"
+    } else if(type===4){
+      action="declined"
+    }
+    return(
+      <span>{`${senderName} ${action} your appointment`}</span>
+    )
+  }
+
+  console.log(notifications)
+  console.log(socket)
   return (
     <div className="headerSection">
       <div>
@@ -33,13 +62,10 @@ function Header({ userData }) {
             </NavLink>
           </li>
           <li>
-            <NavLink to="">
-              <p>About Us</p>
-            </NavLink>
-          </li>
-          <li>
             <NavLink to="/NotificationsPage">
               <i className="fa-solid fa-bell profileIcon"></i>
+              {notifications.length>0 && <div className="counter">0</div>}
+
             </NavLink>
           </li>
           <li>
@@ -49,6 +75,10 @@ function Header({ userData }) {
           </li>
         </ul>
       </nav>
+      {invisibleComponent &&(
+        <NotificationsPage notifications={notifications}/>
+      )}
+      {notifications.map((n)=> displayNotification(n))}
     </div>
   );
 }

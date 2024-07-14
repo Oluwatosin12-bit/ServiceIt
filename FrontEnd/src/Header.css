@@ -32,14 +32,22 @@
 .navigationList li {
   margin-right: 10px;
   color: var(--color6);
+  position: relative;
 }
-.activeLink {
-  color: red;
-  font-weight: bold;
-}
-.navigationList li a.activeLink {
-  color: red !important;
-  font-weight: bold !important;
+
+.counter{
+  width: 5px;
+  height: 5px;
+  background-color: red;
+  border-radius: 50%;
+  padding: 5px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -5px;
+  right: -5px;
 }
 
 @media (max-width: 1000px) {

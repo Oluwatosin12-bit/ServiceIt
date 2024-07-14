@@ -9,14 +9,14 @@ import {
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
-function BookingForm({ userData }) {
+function BookingForm({ userData, socket }) {
   const location = useLocation();
   const { post, userUID } = location.state || {};
   const invisibleComponent = false;
   const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
   const [isRequestPending, setIsRequestPending] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
-  const [popUpMessage, setPopUpMessage] = useState("");
+  const [modalPopUpMessage, setModalPopUpMessage] = useState("");
   const [appointmentData, setAppointmentData] = useState({
     appointmentTitle: "",
     appointmentDescription: "",
@@ -53,11 +53,14 @@ function BookingForm({ userData }) {
       setIsFormValid(false)
     }
   }, [appointmentData]);
+
+
+
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
       if (userUID === post.userId) {
-        setPopUpMessage("You cannot book an appointment with yourself");
+        setModalPopUpMessage("You cannot book an appointment with yourself");
       } else {
         setIsRequestPending(true);
         await sendAppointmentRequest(
@@ -76,9 +79,12 @@ function BookingForm({ userData }) {
           appointmentTime: "",
           appointmentAdditionalNote: "",
         });
-        setPopUpMessage(
-          `Your appointment request has been sent to ${post.vendorUsername}`
-        );
+        setModalPopUpMessage(`Your appointment request has been sent to ${post.vendorUsername}`);
+        socket.emit("sendNotification", {
+          senderName: userUID,
+          receiverName: post.userId,
+          type: "request",
+        });
       }
       toggleModal();
     } catch (error) {
@@ -150,7 +156,7 @@ function BookingForm({ userData }) {
         <button type="submit" disabled={!isFormValid}>Send Request</button>
       </form>
       <Modal isShown={isBookingFormModalShown} onClose={toggleModal}>
-        <p className="popUpMessage">{popUpMessage}</p>
+        <p className="modalPopUpMessage">{modalPopUpMessage}</p>
       </Modal>
       {invisibleComponent && <NotificationsPage vendorID={post.userId} />}
     </div>

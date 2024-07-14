@@ -3,9 +3,15 @@ import { fetchNotifications } from "../BookingPage/BookingDB";
 import { useState, useEffect } from "react";
 import "./NotificationPage.css";
 
-function NotificationsPage({ userData, vendorID }) {
+function NotificationsPage({ userData, vendorID, notifications }) {
   const userID = userData?.userID;
   const [userNotificationData, setUserNotificationData] = useState([]);
+  const [allNotifications, setAllNotifications] = useState([])
+
+  // useEffect(()=>{
+  //   setAllNotiifcations[...allNotifications, notifications]
+  // }, [notiifications])
+  console.log(notifications)
 
   useEffect(() => {
     if (userID === undefined){
@@ -22,12 +28,12 @@ function NotificationsPage({ userData, vendorID }) {
   return (
     <div className="notificationsSection">
       <h2>User Notifications:</h2>
-      {userNotificationData.map((appointment, index) => (
+      {/* {userNotificationData.map((appointment, index) => (
         <div key={index}>
           <p>{appointment.message}</p>
           <NotificationsPreview notificationData={userNotificationData} />
         </div>
-      ))}
+      ))} */}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-:root {
+.light {
     --color1: rgb(254, 218, 117); /* Yellow */
     --color2: rgb(250, 126, 30); /*Orange */
     --color3: rgb(214, 41, 118); /* Pink */
@@ -6,6 +6,13 @@
     --color5: rgb(79, 91, 213); /* Blue */
     --color6: rgb(255, 255, 255); /* White */
     --color7: black; /* Black */
+    --mainColor: #64bcf4; /* Sky Blue*/
+    --backgroundColor: #f1f8fc;
+    --hoverColor: #5bacdf; /*Slightly darker blue*/
+    --darkOne: #312f3a;
+    --darkTwo: #45424b;
+    --lightOne: #919191;
+    --lightTwo: #aaa;
     --buttonColor: linear-gradient(
       45deg,
       blue 0%,
@@ -13,4 +20,21 @@
       rgb(230, 70, 182) 0%,
       rgb(255, 102, 102) 100%
     );
-  }
+}
+
+.dark {
+  --color1: rgb(254, 218, 117); /* Yellow */
+  --color2: rgb(250, 126, 30); /*Orange */
+  --color3: rgb(214, 41, 118); /* Pink */
+  --color4: rgb(150, 47, 191); /* Purple */
+  --color5: rgb(79, 91, 213); /* Blue */
+  --color6: rgb(255, 255, 255); /* White */
+  --color7: black; /* Black */
+  --mainColor: #64bcf4;
+  --hoverColor: #5bacdf;
+  --backgroundColor: #192e3a;
+  --darkOne: #f3f3f3;
+  --darkTwo: #fff;
+  --lightOne: #ccc;
+  --lightTwo: #e7e3e3;
+}
