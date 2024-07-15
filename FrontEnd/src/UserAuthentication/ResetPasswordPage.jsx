@@ -20,10 +20,11 @@ function ResetPasswordPage() {
   };
 
   return (
-    <div>
-      <div className="loginPageContent">
-      <h3>Reset Password</h3>
-      <label>
+    <div className="alternate-signup">
+      <div>
+        <form>
+        <h3 className="resetTitle">Reset Password</h3>
+        <label>
           <span>Email Address</span>
           <input
             type="email"
@@ -32,25 +33,15 @@ function ResetPasswordPage() {
             onChange={(event) => setEmail(event.target.value)}
           />
         </label>
-        <button className="submit login-button"  type="button" onClick={handleResetPassword}> Reset Password </button>
-        <div>
-          <form className="loginForm" onSubmit={handleResetPassword}>
-            <div className="loginEmail">
-              <label htmlFor="email">Email</label>
-              <input
-                name="email"
-                required="required"
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="Enter Email address..."
-              />
-            </div>
-            <div>
-              <button className="sendLoginButton" type="submit">
-                Reset
-              </button>
-            </div>
-          </form>
-        </div>
+        <button
+          className="submit reset-submit"
+          type="submit"
+          onClick={handleResetPassword}
+        >
+          {" "}
+          Reset Password{" "}
+        </button>
+        </form>
       </div>
     </div>
   );
