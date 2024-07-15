@@ -2,6 +2,7 @@ import LoginPage from "./LoginPage";
 import SignUpPage from "./SignUpPage";
 import { useRef } from "react";
 import { useTheme } from "../UseContext";
+import "./EntryPage.css"
 
 function EntryPage() {
   const { theme } = useTheme();

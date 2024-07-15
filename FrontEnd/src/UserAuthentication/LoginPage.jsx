@@ -1,6 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { loginUser } from "./Auth";
+import "./EntryPage.css"
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ function LoginPage() {
   return (
     <div className="form sign-in">
       <div className="login-content">
-      <a href="/LoginPages">signup</a>
         <h2>Login</h2>
         <label>
           <span>Email Address</span>
@@ -56,8 +56,9 @@ function LoginPage() {
             </span>
           </div>
         </label>
-        <div className="linkOut">
-          <a href="/ResetPasswordPage">Forgot Password?</a>
+        <div className="link-out">
+          <a href="/ResetPasswordPage" className="redirect1">Forgot Password?</a>
+          <a href="/SignUpPages" className="redirect2">Sign Up</a>
         </div>
         <button
           className="submit login-button"

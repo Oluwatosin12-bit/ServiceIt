@@ -15,6 +15,7 @@ import UserProfile from "./ProfilePage/UserProfile";
 import BookingForm from "./BookingPage/BookingPage";
 import NotificationsPage from "./Notifications/NotificationsPage";
 import AppointmentPage from "./Appointment/AppointmentPage";
+import AlternateSignUp from "./UserAuthentication/AlternateSignUp"
 import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
@@ -70,6 +71,7 @@ function App() {
           <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
           <Route path="/LoginPage" element={<LoginPage />} />
           <Route path="/SignUpPage" element={<SignUpPage theme={theme} />} />
+          <Route path="/SignUpPages" element={<AlternateSignUp theme={theme} />} />
           <Route path="/ResetPasswordPage" element={<ResetPasswordPage />} />
           <Route element={<Layout userData={userData} socket={socket} />}>
             <Route

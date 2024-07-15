@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { recoverPassword } from "./Auth";
+import "./EntryPage.css";
 
 function ResetPasswordPage() {
   const navigate = useNavigate();
@@ -20,14 +21,20 @@ function ResetPasswordPage() {
 
   return (
     <div>
-      <button className="backButton" onClick={() => navigate(-1)}>
-        {" "}
-        ⬅{" "}
-      </button>
       <div className="loginPageContent">
+      <h3>Reset Password</h3>
+      <label>
+          <span>Email Address</span>
+          <input
+            type="email"
+            name="email"
+            required="required"
+            onChange={(event) => setEmail(event.target.value)}
+          />
+        </label>
+        <button className="submit login-button"  type="button" onClick={handleResetPassword}> Reset Password </button>
         <div>
           <form className="loginForm" onSubmit={handleResetPassword}>
-            <h3>Reset Password</h3>
             <div className="loginEmail">
               <label htmlFor="email">Email</label>
               <input
@@ -43,12 +50,6 @@ function ResetPasswordPage() {
               </button>
             </div>
           </form>
-        </div>
-        <div>
-          <img
-            className="loginImage"
-            src="src/Images/coworking-woman-doing-online-shopping-at-home.gif"
-          />
         </div>
       </div>
     </div>

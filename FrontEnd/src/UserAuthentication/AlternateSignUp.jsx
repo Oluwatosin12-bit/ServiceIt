@@ -71,7 +71,8 @@ function SignUpPage({ theme }) {
   };
 
   return (
-    <div className="form sign-up">
+    <div className="alternate-signup">
+       <div className="new-form sign-ups">
       <h2>Sign Up</h2>
       <label>
         <span>Name</span>
@@ -144,6 +145,9 @@ function SignUpPage({ theme }) {
           ))}
         </select>
       </div>
+      <div className="link-out">
+        <a href="/EntryPage" className="redirect3">Already have an account? Login here</a>
+      </div>
       <button
         type="button"
         className="submit sendSignUpButton"
@@ -153,6 +157,7 @@ function SignUpPage({ theme }) {
         Sign Up Now
       </button>
       {errorMessage && <p className="errorMessage">{errorMessage}</p>}
+    </div>
     </div>
   );
 }

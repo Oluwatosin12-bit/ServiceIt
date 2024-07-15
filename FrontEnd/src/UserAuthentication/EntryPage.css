@@ -327,7 +327,7 @@ button {
 
 .sign-up {
   padding: 30px;
-  background-color: ;
+  background-color: var(--backgroundColor);
   -webkit-transform: translate3d(-900px, 0, 0);
   transform: translate3d(-900px, 0, 0);
 }
@@ -412,6 +412,18 @@ button {
   color: var(--alert);
 }
 
+.link-out{
+  display: flex;
+  justify-content: space-between;
+}
+.redirect1, .redirect2 {
+  color: var(--darkONE);
+  margin-top: 5px;
+}
+.redirect2{
+  display: none;
+}
+
 @media screen and (max-width: 950px) {
   .form{
     width:200px;
@@ -421,12 +433,31 @@ button {
     flex-wrap: wrap;
   }
   .cont{
-    width: 500px;
+    width: 400px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
   }
   .img{
     width: 110px;
   }
   .sub-cont{
     width: 400px;
+  }
+  .redirect2{
+    display:contents;
+  }
+  .sign-in{
+    margin-left: 50px;
+  }
+  #root{
+    display: flex;
+    justify-content: center;
+  }
+  .redirect3{
+    margin: 25px auto 0;
+    font-size: 15px;
+    color: var(--darkONE);
+    text-decoration: underline;
   }
 }
