@@ -1,38 +1,42 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTheme } from './UseContext';
 import "./Header.css";
 import NotificationsPage from "./Notifications/NotificationsPage";
-function Header({ userData, socket}) {
-  const [notifications, setNotifications] = useState([])
-  const [invisibleComponent, setInvisibleComponent] = useState(false)
-  useEffect(()=>{
-    if(socket){
-      socket.on("getNotification", data=>{
-        setNotifications((prev)=>[...prev, data])
-      })
+function Header({ userData, socket }) {
+  const [notifications, setNotifications] = useState([]);
+  const [invisibleComponent, setInvisibleComponent] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const handleThemeChange = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("getNotification", (data) => {
+        setNotifications((prev) => [...prev, data]);
+      });
     }
-  },[socket])
-  const displayNotification = ({senderName, type})=>{
+  }, [socket]);
+  const displayNotification = ({ senderName, type }) => {
     let action;
 
-    if (type===1){
-      action="favorited"
-    } else if(type===2){
-      action="added"
-    } else if(type===3){
-      action="accepted"
-    } else if(type===4){
-      action="declined"
+    if (type === 1) {
+      action = "favorited";
+    } else if (type === 2) {
+      action = "added";
+    } else if (type === 3) {
+      action = "accepted";
+    } else if (type === 4) {
+      action = "declined";
     }
-    return(
-      <span>{`${senderName} ${action} your appointment`}</span>
-    )
-  }
+    return <span>{`${senderName} ${action} your appointment`}</span>;
+  };
 
-  console.log(notifications)
-  console.log(socket)
+  console.log(notifications);
+  console.log(socket);
   return (
-    <div className="headerSection">
+    <div className={`headerSection ${theme}`}>
       <div>
         <h2>ServiceIt</h2>
       </div>
@@ -64,8 +68,7 @@ function Header({ userData, socket}) {
           <li>
             <NavLink to="/NotificationsPage">
               <i className="fa-solid fa-bell profileIcon"></i>
-              {notifications.length>0 && <div className="counter">0</div>}
-
+              {notifications.length > 0 && <div className="counter">0</div>}
             </NavLink>
           </li>
           <li>
@@ -73,12 +76,17 @@ function Header({ userData, socket}) {
               <i className="fa-solid fa-user profileIcon"></i>
             </NavLink>
           </li>
+          <li>
+            <button className="toggleBtn" onClick={handleThemeChange}>
+              <i className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}></i>
+            </button>
+          </li>
         </ul>
       </nav>
-      {invisibleComponent &&(
-        <NotificationsPage notifications={notifications}/>
+      {invisibleComponent && (
+        <NotificationsPage notifications={notifications} />
       )}
-      {notifications.map((n)=> displayNotification(n))}
+      {notifications.map((n) => displayNotification(n))}
     </div>
   );
 }

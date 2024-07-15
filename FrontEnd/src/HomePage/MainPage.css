@@ -8,6 +8,7 @@ p {
   flex: 1;
   flex-direction: column;
   overflow: hidden;
+  background-color: var(--backgroundColor);
 }
 .categorySection {
   width: 250px;

@@ -1,8 +1,9 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
 import { loginUser } from "./Auth";
+import "./SignUpPage.css"
 
-function LoginPage() {
+function LoginPages() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +25,6 @@ function LoginPage() {
   return (
     <div className="form sign-in">
       <div className="login-content">
-      <a href="/LoginPages">signup</a>
         <h2>Login</h2>
         <label>
           <span>Email Address</span>
@@ -86,4 +86,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default LoginPages;

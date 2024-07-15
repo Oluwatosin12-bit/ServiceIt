@@ -1,7 +1,37 @@
-.notificationsSection {
-  margin-top: 100px;
+#root{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
-p,
-h2 {
-  color: white;
+.notificationsSection{
+  margin-top: 100px;
+  margin-top: 100px;
+  background-color: var(--backgroundColor);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.notificationTitle{
+  margin-bottom: 1rem;
+  color: var(--darkTwo);
+}
+.notificationTab {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--lightOne);
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.firstNotification {
+  background-color: var(--darkOne);
+  color: var(--lightOne);
+}
+
+.stackedNotifications {
+  display: flex;
+  flex-direction: column;
 }

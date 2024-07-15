@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { recoverPassword } from "./Auth";
-import "./LoginPage.css";
 
 function ResetPasswordPage() {
   const navigate = useNavigate();

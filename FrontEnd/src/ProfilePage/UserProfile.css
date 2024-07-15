@@ -1,19 +1,35 @@
 @import "../Colors.css";
+#root{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 .userProfileSection {
   display: flex;
   flex-direction: column;
   margin-top: 100px;
+  background-color: var(--backgroundColor);
+  flex: 1;
+  z-index: 500;
 }
 
 .welcomePlace {
-  color: var(--color6);
+  color: var(--darkOne);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  max-width: 81rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 3rem;
+  z-index: 10;
 }
 
 .userInfo {
-  border-bottom: 1px solid var(--color6);
+  border-bottom: 1px solid var(--darkOne);
+  min-height: 250px;
+  margin: 0 5px;
 }
 
 .postForm {
@@ -67,10 +83,19 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.userPosts{
+  flex: 1;
+  margin: 20px auto;
+}
+
 .userPostsPreview {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
+}
+
+.eachPost{
+  margin: 5px ;
 }
 
 .userPostsPreview img {
@@ -78,8 +103,58 @@ button:disabled {
   height: 300px;
 }
 
+.nameContainer, .bioContainer{
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.ellipsisIcon, .editIcon  {
+  margin-left: 10px;
+  cursor: pointer;
+}
+.dropdownMenu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: var(--lightOne);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdownMenu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdownMenu li {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.dropdownMenu li:hover {
+  background-color: var(--hoverColor);
+}
+
+.shortcut {
+  float: right;
+}
+p{
+  color: var(--darkOne);
+}
+.createButton{
+  width: 200px;
+  margin-left: 5px;
+}
+
 @media (max-width: 1000px) {
   .userPostsPreview img {
     width: 200px;
+  }
+  .createButton{
+    width: 130px
   }
 }

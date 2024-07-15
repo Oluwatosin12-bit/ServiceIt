@@ -3,6 +3,7 @@ import { fetchUserFeed } from "../UserAuthentication/FirestoreDB";
 import CategoryList from "./CategoryList";
 import PostsPreview from "./PostsPreview";
 import PostFullDisplay from "../PostFullDisplay";
+import { useTheme } from '../UseContext';
 import "./MainPage.css";
 
 function MainPage({ userUID, userData, socket }) {
@@ -10,6 +11,7 @@ function MainPage({ userUID, userData, socket }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const { theme } = useTheme();
 
   const fetchFeed = async () => {
     if (userUID !== null) {
@@ -27,9 +29,9 @@ function MainPage({ userUID, userData, socket }) {
     setIsPostDetailModalShown(!isPostDetailModalShown);
   };
 
-
+  console.log(theme)
   return (
-    <div className="homePageList">
+    <div className={`homePageList ${theme}`}>
       <div className="categorySection">
         <CategoryList />
       </div>

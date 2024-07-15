@@ -4,7 +4,7 @@ import Header from "./Header";
 const Layout = ({userData, socket}) => {
   return (
     <>
-      <Header userData={userData} socket={socket}/>
+      <Header userData={userData} socket={socket} />
       <Outlet />
     </>
   );

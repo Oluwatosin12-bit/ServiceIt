@@ -13,6 +13,7 @@
     --darkTwo: #45424b;
     --lightOne: #919191;
     --lightTwo: #aaa;
+    --alert: red;
     --buttonColor: linear-gradient(
       45deg,
       blue 0%,
@@ -37,4 +38,12 @@
   --darkTwo: #fff;
   --lightOne: #ccc;
   --lightTwo: #e7e3e3;
+  --alert: red;
+  --buttonColor: linear-gradient(
+      45deg,
+      blue 0%,
+      purple 0%,
+      rgb(230, 70, 182) 0%,
+      rgb(255, 102, 102) 100%
+    );
 }

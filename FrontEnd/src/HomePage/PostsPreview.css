@@ -3,7 +3,7 @@
   height: 450px;
 }
 .postHeader {
-  color: var(--color6);
+  color: var(--darkOne);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -19,7 +19,7 @@
 .feedTitle,
 .feedDescription,
 .feedTimestamp {
-  color: var(--color6);
+  color: var(--darkOne);
 }
 
 .feedTimestamp {

@@ -1,13 +1,25 @@
 @import "../Colors.css";
+.categorySection{
+  display: flex;
+}
+.categories{
+  background-color: var(--backgroundColor);
+  flex: 1;
+}
 .categoriesList {
-  color: var(--color6);
+  color: var(--darkOne);
   text-align: center;
 }
 
 .categories ul li {
   list-style: none;
-  margin-bottom: 10px;
-  color: var(--color6);
+  margin: 20px auto;
+  color: var(--darkOne);
+}
+.categories nav{
+  display: flex;
+  justify-content: center;
+  height: 100vh;
 }
 
 @media (max-width: 1000px) {
@@ -19,5 +31,9 @@
   }
   .categories ul li {
     font-size: 10px;
+  }
+
+  .categoriesList{
+    font-size: 1rem;
   }
 }

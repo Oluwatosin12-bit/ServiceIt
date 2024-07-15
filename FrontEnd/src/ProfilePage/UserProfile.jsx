@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { logOutUser } from "../UserAuthentication/Auth";
 import { createPost, fetchUserPosts } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
 import { CATEGORIES } from "../Categories";
+import { useTheme } from "../UseContext";
 import "./UserProfile.css";
+import "https://kit.fontawesome.com/61795c539b.js";
 
 function UserProfilePage({ userUID, userData }) {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [imageUpload, setImageUpload] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
@@ -14,6 +17,24 @@ function UserProfilePage({ userUID, userData }) {
   const [isFormValid, setIsFormValid] = useState(false);
   const [serviceCategories, setSelectedCategories] = useState([]);
   const [availableCategories] = useState(CATEGORIES);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!isDropdownVisible);
+  };
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setDropdownVisible(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const removeCategory = (category) => {
     setSelectedCategories(
       serviceCategories.filter(
@@ -88,16 +109,34 @@ function UserProfilePage({ userUID, userData }) {
   };
 
   return (
-    <div className="userProfileSection">
+    <div className={`userProfileSection ${theme}`}>
       <div className="userInfo">
         <div className="welcomePlace">
           <div>
-            <h1>{userData?.UserName} </h1>
-            <p>Bio:</p>
+            <img src="src/Images/Profile.jpeg" alt="profile avatar" />
+            <div className="nameContainer" ref={dropdownRef}>
+              <h1>{userData?.UserName} </h1>
+              <span className="icon ellipsisIcon" onClick={toggleDropdown}>
+                <i className="fa-solid fa-ellipsis-vertical"></i>
+              </span>
+              {isDropdownVisible && (
+                <div className="dropdownMenu">
+                  <ul>
+                    <li onClick={handleLogOut}>Sign Out</li>
+                  </ul>
+                </div>
+              )}
+            </div>
+            <div className="bioContainer">
+              <p>Bio:</p>
+              <span className="icon editIcon">
+                <i className="fa-solid fa-pen-to-square"></i>
+              </span>
+            </div>
+            <p>I am an amazing service provider</p>
           </div>
           <div>
-            <button onClick={toggleModal}>Create a Post</button>
-            <button onClick={handleLogOut}> Sign Out </button>
+            <button className="createButton" onClick={toggleModal}>Create a Post</button>
           </div>
         </div>
 
@@ -198,15 +237,17 @@ function UserProfilePage({ userUID, userData }) {
           </form>
         </Modal>
       </div>
-      <div className="userPostsPreview">
-        {userPosts.map((post, index) => {
-          return (
-            <div key={index}>
-              <p>{post.serviceTitle}</p>
-              <img src={post.imageURL} />
-            </div>
-          );
-        })}
+      <div className="userPosts">
+        <div className="userPostsPreview">
+          {userPosts.map((post, index) => {
+            return (
+              <div key={index} className="eachPost">
+                <p>{post.serviceTitle}</p>
+                <img src={post.imageURL} />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

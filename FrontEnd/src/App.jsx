@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import Layout from "./Layout";
 import Header from "./Header";
 import LoginPage from "./UserAuthentication/LoginPage";
@@ -14,11 +19,14 @@ import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { ThemeProvider } from "./UseContext";
+import EntryPage from "./UserAuthentication/EntryPage"
 
 function App() {
   const userUID = useUID();
   const [userData, setUserData] = useState(null);
-  const [socket, setSocket] = useState(null)
+  const [socket, setSocket] = useState(null);
+  const [theme, setTheme] = useState("dark");
 
   const fetchData = async () => {
     if (userUID !== null) {
@@ -38,12 +46,12 @@ function App() {
     }
   }, [socket]);
 
-  console.log(socket)
-  useEffect(()=>{
+  console.log(socket);
+  useEffect(() => {
     if (socket && userUID) {
-      socket.emit("newUser", userUID)
+      socket.emit("newUser", userUID);
     }
-  },[socket, userUID])
+  }, [socket, userUID]);
 
   useEffect(() => {
     const socket = io("http://localhost:5000");
@@ -56,36 +64,51 @@ function App() {
 
   return (
     <Router>
-      {/* <Header userData={userData} socket={socket}/> */}
-
-      <Routes>
-        <Route path="/" element={<LandingPage socket={socket}/>} />
-        <Route path="/LoginPage" element={<LoginPage />} />
-        <Route path="/SignUpPage" element={<SignUpPage />} />
-        <Route element={<Layout userData={userData} socket={socket}/>}>
-          <Route
-            path="/MainPage"
-            element={<MainPage userUID={userUID} userData={userData} socket={socket}/>}
-          />
+      <ThemeProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage socket={socket} />} />
+          <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
+          <Route path="/LoginPage" element={<LoginPage />} />
+          <Route path="/SignUpPage" element={<SignUpPage theme={theme} />} />
           <Route path="/ResetPasswordPage" element={<ResetPasswordPage />} />
-          <Route
-            path="/UserProfile"
-            element={<UserProfile userUID={userUID} userData={userData} socket={socket} />}
-          />
-          <Route
-            path="/BookingPage"
-            element={<BookingForm userData={userData} socket={socket}/>}
-          />
-          <Route
-            path="/NotificationsPage"
-            element={<NotificationsPage userData={userData} socket={socket}/>}
-          />
-          <Route
-            path="/AppointmentPage"
-            element={<AppointmentPage userData={userData} />}
-          />
-        </Route>
-      </Routes>
+          <Route element={<Layout userData={userData} socket={socket} />}>
+            <Route
+              path="/MainPage"
+              element={
+                <MainPage
+                  userUID={userUID}
+                  userData={userData}
+                  socket={socket}
+                />
+              }
+            />
+            <Route
+              path="/UserProfile"
+              element={
+                <UserProfile
+                  userUID={userUID}
+                  userData={userData}
+                  socket={socket}
+                />
+              }
+            />
+            <Route
+              path="/BookingPage"
+              element={<BookingForm userData={userData} socket={socket} />}
+            />
+            <Route
+              path="/NotificationsPage"
+              element={
+                <NotificationsPage userData={userData} socket={socket} />
+              }
+            />
+            <Route
+              path="/AppointmentPage"
+              element={<AppointmentPage userData={userData} />}
+            />
+          </Route>
+        </Routes>
+      </ThemeProvider>
     </Router>
   );
 }

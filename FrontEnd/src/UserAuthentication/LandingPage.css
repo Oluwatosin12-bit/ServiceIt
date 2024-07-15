@@ -9,6 +9,9 @@
 body{
   font-family: "Poppins", sans-serif;
 }
+#root{
+  width: 100%;
+}
 .stopScrolling{
   height: 100%;
   overflow: hidden;

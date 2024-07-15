@@ -1,8 +1,10 @@
 import React, { useRef, useState } from 'react';
+import {Link} from "react-router-dom";
+import { useTheme } from '../UseContext';
 import './LandingPage.css';
 
 function LandingPage() {
-  const [theme, setTheme] = useState('light');
+  const { theme, setTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const landingPageContentRef = useRef(null);
@@ -17,8 +19,7 @@ function LandingPage() {
   };
 
   return (
-    <body className='stopScrolling'>
-      <main>
+      <main className='stopScrolling'>
         <div ref={landingPageContentRef} className={`landingPageContent ${theme} ${menuOpen ? 'active' : ''}`}>
           <img src="src/Images/shape.png" alt="shape" className="shape" />
           <header>
@@ -36,16 +37,16 @@ function LandingPage() {
                   <li>
                     <a href="#">Testimonials</a>
                   </li>
-                  <li>
-                    <a href="/SignUpPage" className="btn">
-                      Sign Up
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/LoginPage" className="btn">
-                      Login
-                    </a>
-                  </li>
+                    <li>
+                      <a href="/EntryPage" className="btn">
+                        Sign Up
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/EntryPage" className="btn">
+                        Login
+                      </a>
+                    </li>
                 </ul>
               </div>
 
@@ -69,9 +70,9 @@ function LandingPage() {
                   the perfect professional for any task
                 </p>
                 <div className="cta">
-                  <a href="#" className="btn">
-                    Get started
-                  </a>
+                    <a href="/EntryPage" className="btn">
+                      Get started
+                    </a>
                 </div>
               </div>
               <div className="right">
@@ -93,7 +94,6 @@ function LandingPage() {
           </div>
         </div>
       </main>
-    </body>
   );
 }
 
