@@ -30,6 +30,7 @@ function BookingForm({ userData, socket }) {
     setAppointmentData({ ...appointmentData, [name]: value });
   };
 
+  console.log(post)
   const sendAppointmentRequest = async (
     userUID,
     vendorUID,
@@ -56,7 +57,7 @@ function BookingForm({ userData, socket }) {
 
 
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event, type) => {
     try {
       event.preventDefault();
       if (userUID === post.userId) {
@@ -70,8 +71,16 @@ function BookingForm({ userData, socket }) {
           appointmentData,
           userData
         );
-        userAppointmentChanges(userUID);
-        vendorAppointmentChanges(post.userId);
+        await socket.emit("sendNotification", {
+          userID: userUID,
+          senderID: userUID,
+          receiverID: post.userId,
+          senderName: userData?.UserName,
+          receiverName: post?.vendorUsername,
+          appointmentDate: appointmentData.appointmentDate,
+          appointmentTitle: appointmentData.appointmentTitle,
+          type,
+        });
         setAppointmentData({
           appointmentTitle: "",
           appointmentDescription: "",
@@ -80,11 +89,6 @@ function BookingForm({ userData, socket }) {
           appointmentAdditionalNote: "",
         });
         setModalPopUpMessage(`Your appointment request has been sent to ${post.vendorUsername}`);
-        socket.emit("sendNotification", {
-          senderName: userUID,
-          receiverName: post.userId,
-          type: "request",
-        });
       }
       toggleModal();
     } catch (error) {
@@ -110,7 +114,7 @@ function BookingForm({ userData, socket }) {
   }
   return (
     <div className="bookingPage">
-      <form className="bookingForm" onSubmit={handleSubmit}>
+      <form className="bookingForm" onSubmit={() =>handleSubmit(event, 2)}>
         <h2 className="vendorUsername">
           Book an appointment with {post.vendorUsername}
         </h2>

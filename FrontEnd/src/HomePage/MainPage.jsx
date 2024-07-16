@@ -29,7 +29,6 @@ function MainPage({ userUID, userData, socket }) {
     setIsPostDetailModalShown(!isPostDetailModalShown);
   };
 
-  console.log(theme)
   return (
     <div className={`homePageList ${theme}`}>
       <div className="categorySection">

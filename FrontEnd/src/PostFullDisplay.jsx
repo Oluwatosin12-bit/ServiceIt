@@ -17,11 +17,16 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
   const handleNotification = (type) =>{
     setFavorited(true);
     socket.emit("sendNotification", {
-      senderName: userUID,
-      receiverName: post.userId,
+      userID: userUID,
+      senderID: userUID,
+      receiverID: post.userId,
+      senderName: userData?.UserName,
+      receiverName: post.vendorUsername,
+      postTitle: post.serviceTitle,
       type,
     })
   }
+  console.log(favorited)
 
   return (
     <div className="modalOverlay" onClick={onClose}>

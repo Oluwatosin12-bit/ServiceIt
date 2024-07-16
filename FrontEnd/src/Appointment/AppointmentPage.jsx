@@ -21,23 +21,46 @@ function AppointmentPage({ userData }) {
   const { theme} = useTheme();
 
   const handleAcceptedAppointment = async (
+    appointment,
     vendorID,
     customerID,
-    appointmentID
+    appointmentID, type
   ) => {
     await acceptAppointment(customerID, vendorID, appointmentID);
-    userAppointmentChanges(customerID);
-    vendorAppointmentChanges(vendorID);
+    socket.emit("sendNotification", {
+      senderName: vendorID,
+      receiverName: post.userId,
+      type,
+    })
+    await socket.emit("sendNotification", {
+      userID: userData?.userID,
+      senderID: userData?.userID,
+      receiverID: appointment.customerUID,
+      senderName: userData?.UserName,
+      receiverName: appointment.customerUsername,
+      appointmentDate: appointment.appointmentDate,
+      appointmentTitle: appointment.appointmentTitle,
+      type,
+    });
   };
 
   const handleDeclinedAppointment = async (
+    appointment,
     vendorID,
     customerID,
-    appointmentID
+    appointmentID, type
   ) => {
     await declineAppointment(customerID, vendorID, appointmentID);
-    userAppointmentChanges(customerID);
-    vendorAppointmentChanges(vendorID);
+    await socket.emit("sendNotification", {
+      userID: userData?.userID,
+      senderID: userData?.userID,
+      receiverID: appointment.customerUID,
+      senderName: userData?.UserName,
+      receiverName: appointment.customerUsername,
+      appointmentDate: appointment.appointmentDate,
+      appointmentTitle: appointment.appointmentTitle,
+      type,
+    });
   };
 
   useEffect(() => {
@@ -107,6 +130,7 @@ function AppointmentPage({ userData }) {
                  className="appointmentButtons"
                   onClick={() =>
                     handleAcceptedAppointment(
+                      appointment,
                       appointment.customerUID,
                       appointment.vendorUID,
                       appointment.docID
@@ -121,7 +145,8 @@ function AppointmentPage({ userData }) {
                     handleDeclinedAppointment(
                       appointment.customerUID,
                       appointment.vendorUID,
-                      appointment.docID
+                      appointment.docID,
+                      3
                     )
                   }
                 >
@@ -153,9 +178,11 @@ function AppointmentPage({ userData }) {
                className="appointmentButtons"
                 onClick={() =>
                   handleDeclinedAppointment(
+                    appointment,
                     appointment.customerUID,
                     userID,
-                    appointment.docID
+                    appointment.docID,
+                    4
                   )
                 }
               >

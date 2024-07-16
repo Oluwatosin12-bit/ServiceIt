@@ -30,6 +30,7 @@ function Header({ userData, socket }) {
     } else if (type === 4) {
       action = "declined";
     }
+    
     return <span>{`${senderName} ${action} your appointment`}</span>;
   };
 
