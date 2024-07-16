@@ -43,7 +43,7 @@ function BookingForm({ userData, socket }) {
 
   useEffect(() => {
     const isFormValid = Object.values(appointmentData).every(
-      (val) => val !== ""
+      (value) => value !== ""
     );
     setIsFormValid(isFormValid);
     if (userUID === post.userId) {

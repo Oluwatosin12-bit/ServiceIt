@@ -65,7 +65,7 @@ const requestAppointment = async (
 
 const generateRandomID = () => {
   return Math.random().toString(36).substring(2);
-};
+}
 
 const fetchNotifications = (userID, callback) => {
   try {
