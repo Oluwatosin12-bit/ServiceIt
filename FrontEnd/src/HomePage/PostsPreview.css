@@ -1,0 +1,33 @@
+.feedPreview {
+  width: 250px;
+  height: 450px;
+}
+.postHeader {
+  color: var(--darkOne);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.moreOptions {
+  align-self: center;
+}
+.moreOptions:hover {
+  cursor: pointer;
+}
+
+.feedPrice,
+.feedTitle,
+.feedDescription,
+.feedTimestamp {
+  color: var(--darkOne);
+}
+
+.feedTimestamp {
+  font-size: 13px;
+  opacity: 0.5;
+}
+
+.feedImage {
+  width: 250px;
+  height: 200px;
+}
