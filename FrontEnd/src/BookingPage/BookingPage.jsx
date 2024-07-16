@@ -30,7 +30,6 @@ function BookingForm({ userData, socket }) {
     setAppointmentData({ ...appointmentData, [name]: value });
   };
 
-  console.log(post)
   const sendAppointmentRequest = async (
     userUID,
     vendorUID,

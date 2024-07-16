@@ -12,7 +12,7 @@ import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
 import Modal from "../Modal";
 
-function AppointmentPage({ userData }) {
+function AppointmentPage({ userData, socket }) {
   const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] =
     useState(false);
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
@@ -27,11 +27,11 @@ function AppointmentPage({ userData }) {
     appointmentID, type
   ) => {
     await acceptAppointment(customerID, vendorID, appointmentID);
-    socket.emit("sendNotification", {
-      senderName: vendorID,
-      receiverName: post.userId,
-      type,
-    })
+    // socket.emit("sendNotification", {
+    //   senderName: vendorID,
+    //   receiverName: post.userId,
+    //   type,
+    // })
     await socket.emit("sendNotification", {
       userID: userData?.userID,
       senderID: userData?.userID,
@@ -133,7 +133,8 @@ function AppointmentPage({ userData }) {
                       appointment,
                       appointment.customerUID,
                       appointment.vendorUID,
-                      appointment.docID
+                      appointment.docID,
+                      3
                     )
                   }
                 >
@@ -146,7 +147,7 @@ function AppointmentPage({ userData }) {
                       appointment.customerUID,
                       appointment.vendorUID,
                       appointment.docID,
-                      3
+                      4
                     )
                   }
                 >

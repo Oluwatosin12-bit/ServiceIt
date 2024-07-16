@@ -40,6 +40,31 @@ function App() {
   }, [userUID]);
 
   useEffect(() => {
+    const newSocket = io("http://localhost:5000");
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log("Connected to server with socket ID:", newSocket.id);
+    });
+
+    newSocket.on("disconnect", (reason) => {
+      console.log("Disconnected from server:", reason);
+    });
+
+    newSocket.on("reconnect", (attemptNumber) => {
+      console.log("Reconnected to server after", attemptNumber, "attempts");
+    });
+
+    newSocket.on("firstEvent", (msg) => {
+      console.log(msg);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
     if (socket) {
       socket.on("firstEvent", (msg) => {
         console.log(msg);
@@ -54,14 +79,15 @@ function App() {
     }
   }, [socket, userUID]);
 
-  useEffect(() => {
-    const socket = io("http://localhost:5000");
-    setSocket(socket);
+  // useEffect(() => {
+  //   const socket = io("http://localhost:5000");
+  //   setSocket(socket);
 
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
+
 
   return (
     <Router>
@@ -106,7 +132,7 @@ function App() {
             />
             <Route
               path="/AppointmentPage"
-              element={<AppointmentPage userData={userData} />}
+              element={<AppointmentPage userData={userData} socket={socket}/>}
             />
           </Route>
         </Routes>

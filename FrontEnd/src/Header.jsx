@@ -1,10 +1,11 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useTheme } from './UseContext';
+import { useTheme } from "./UseContext";
 import "./Header.css";
 import NotificationsPage from "./Notifications/NotificationsPage";
 function Header({ userData, socket }) {
   const [notifications, setNotifications] = useState([]);
+  const [openNotifications, setOpenNotifications] = useState(true);
   const [invisibleComponent, setInvisibleComponent] = useState(false);
   const { theme, setTheme } = useTheme();
   const handleThemeChange = () => {
@@ -18,21 +19,10 @@ function Header({ userData, socket }) {
       });
     }
   }, [socket]);
-  const displayNotification = ({ senderName, type }) => {
-    let action;
-
-    if (type === 1) {
-      action = "favorited";
-    } else if (type === 2) {
-      action = "added";
-    } else if (type === 3) {
-      action = "accepted";
-    } else if (type === 4) {
-      action = "declined";
-    }
-    
-    return <span>{`${senderName} ${action} your appointment`}</span>;
-  };
+  const handleRead = () =>{
+    setNotifications([])
+    setOpenNotifications(false)
+  }
 
   console.log(notifications);
   console.log(socket);
@@ -69,7 +59,7 @@ function Header({ userData, socket }) {
           <li>
             <NavLink to="/NotificationsPage">
               <i className="fa-solid fa-bell profileIcon"></i>
-              {notifications.length > 0 && <div className="counter">0</div>}
+              {notifications.length > 0 && <div className="counter">{notifications.length}</div>}
             </NavLink>
           </li>
           <li>
@@ -79,15 +69,24 @@ function Header({ userData, socket }) {
           </li>
           <li>
             <button className="toggleBtn" onClick={handleThemeChange}>
-              <i className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}></i>
+              <i
+                className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
+              ></i>
             </button>
           </li>
         </ul>
       </nav>
+            {openNotifications && (
+        <div className="popNotifications">
+          {notifications.map((n) => (
+            <p>{n.message}</p>
+          ))}
+          <button className="notificationButton" onClick={handleRead}>Mark as read</button>
+        </div>
+      )}
       {invisibleComponent && (
         <NotificationsPage notifications={notifications} />
       )}
-      {notifications.map((n) => displayNotification(n))}
     </div>
   );
 }

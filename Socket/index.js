@@ -12,6 +12,8 @@ const io = new Server({
       "http://localhost:5173/UserProfile",
       "http://localhost:5173/NotificationsPage",
     ],
+    pingInterval: 25000,
+    pingTimeout: 60000,
   },
 });
 
@@ -60,11 +62,16 @@ const constructMessage = (userID, receivee, senderName, receiverName, appointmen
     }
   } else if (type === 4) {
     action = "declined";
+    if (userID === receivee){
+      return `Your appointment with ${receiverName} for ${appointmentTitle} has been ${action}`
+    } else{
+      return `You ${action} an appointment with ${senderName} for ${appointmentTitle}`
+    }
   }
-  return `${senderName} ${action} your appointment`;
 };
 
 io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
   socket.on("newUser", (userID) => {
     addNewUser(userID, socket.id);
   });
@@ -72,6 +79,11 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("Someone has left");
     removeUser(socket.id);
+  });
+
+  socket.on("error", (err) => {
+    console.error("Socket encountered error:", err.message, "Closing socket");
+    socket.close();
   });
 
   socket.on(
@@ -91,6 +103,7 @@ io.on("connection", (socket) => {
       const sender = getUser(senderID)
       const senderMessage = constructMessage(userID, senderID, senderName, receiverName, appointmentDate, appointmentTitle, postTitle, type);
       const receiverMessage = constructMessage(userID, receiverID, senderName, receiverName, appointmentDate, appointmentTitle, postTitle, type);
+
       const status = "read";
       const senderNotification = {
         message: senderMessage,
