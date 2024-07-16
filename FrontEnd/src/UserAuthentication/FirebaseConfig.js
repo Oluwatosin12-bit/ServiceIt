@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getMessaging, getToken } from "firebase/messaging";
 import {
   VITE_API_KEY,
   VITE_AUTH_DOMAIN,
@@ -27,8 +26,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getFirestore(app);
 const storage = getStorage(app);
-const messaging = getMessaging(app)
 
 
-
-export { app, auth, database, storage, messaging, getToken };
+export { app, auth, database, storage };

@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, updateDoc, query, where, orderBy, getDocs } from "firebase/firestore";
 
 const io = new Server({
   cors: {
@@ -71,18 +71,17 @@ const constructMessage = (userID, receivee, senderName, receiverName, appointmen
 };
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-  socket.on("newUser", (userID) => {
+  socket.on("newUser", async(userID) => {
     addNewUser(userID, socket.id);
+
+
   });
 
   socket.on("disconnect", () => {
-    console.log("Someone has left");
     removeUser(socket.id);
   });
 
   socket.on("error", (err) => {
-    console.error("Socket encountered error:", err.message, "Closing socket");
     socket.close();
   });
 
@@ -104,7 +103,7 @@ io.on("connection", (socket) => {
       const senderMessage = constructMessage(userID, senderID, senderName, receiverName, appointmentDate, appointmentTitle, postTitle, type);
       const receiverMessage = constructMessage(userID, receiverID, senderName, receiverName, appointmentDate, appointmentTitle, postTitle, type);
 
-      const status = "read";
+      const status = "unread";
       const senderNotification = {
         message: senderMessage,
         timestamp: Timestamp.now(),
@@ -117,16 +116,12 @@ io.on("connection", (socket) => {
         status,
       };
 
-      if (receiver) {
+      if (receiver !== undefined) {
         io.to(receiver.socketID).emit("getNotification", receiverNotification);
-      } else {
-        console.log(`User ${receiverName} is not online`);
       }
 
-      if (sender) {
+      if (sender !== undefined) {
         io.to(sender.socketID).emit("getNotification", senderNotification);
-      } else {
-        console.log(`User ${senderName} is not online`);
       }
 
       try {
@@ -138,9 +133,8 @@ io.on("connection", (socket) => {
           collection(database, "users", senderID, "Notifications"),
           senderNotification
         );
-        console.log("Notification stored in Firestore");
       } catch (error) {
-        console.error("Error storing notification:", error);
+        throw new Error (`Error storing notification:" ${error}`);
       }
     }
   );
@@ -149,32 +143,3 @@ io.on("connection", (socket) => {
 });
 
 io.listen(5000);
-console.log(onlineUsers);
-
-//  let onlineUsers = []
-//  const addNewUser = (userID, socketID) =>{
-//     !onlineUsers.some(user=>user.userID === userID) && onlineUsers.push({userID, socketID});
-//  }
-
-//  const removeUser = (socketID)=>{
-//   onlineUsers.filter((user)=>user.socketID !== socketID);
-//  }
-
-//  const getUser = (userID) =>{
-//   return onlineUsers.find((user)=>user.userID === userID);
-//  }
-
-// io.on("connection", (socket) => {
-//   socket.on("newUser", (userID)=>{
-//     addNewUser(userID,socket.id)
-//   })
-
-//   io.emit("firstEvent", "hello, this is test")
-
-//   socket.on("disconnect", ()=>{
-//     console.log("Someone has left");
-//     removeUser(socket.id);
-//   })
-// });
-
-// io.listen(5000);

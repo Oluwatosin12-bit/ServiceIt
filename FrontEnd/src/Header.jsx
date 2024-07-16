@@ -19,13 +19,11 @@ function Header({ userData, socket }) {
       });
     }
   }, [socket]);
-  const handleRead = () =>{
-    setNotifications([])
-    setOpenNotifications(false)
-  }
+  const handleRead = () => {
+    setNotifications([]);
+    setOpenNotifications(false);
+  };
 
-  console.log(notifications);
-  console.log(socket);
   return (
     <div className={`headerSection ${theme}`}>
       <div>
@@ -59,7 +57,9 @@ function Header({ userData, socket }) {
           <li>
             <NavLink to="/NotificationsPage">
               <i className="fa-solid fa-bell profileIcon"></i>
-              {notifications.length > 0 && <div className="counter">{notifications.length}</div>}
+              {notifications.length > 0 && (
+                <div className="counter">{notifications.length}</div>
+              )}
             </NavLink>
           </li>
           <li>
@@ -76,12 +76,16 @@ function Header({ userData, socket }) {
           </li>
         </ul>
       </nav>
-            {openNotifications && (
+      {openNotifications && notifications.length > 0 && (
         <div className="popNotifications">
-          {notifications.map((n) => (
-            <p>{n.message}</p>
+          {notifications.map((notification, index) => (
+            <div key={index}>
+              <p>{notification.message}</p>
+            </div>
           ))}
-          <button className="notificationButton" onClick={handleRead}>Mark as read</button>
+          <button className="notificationButton" onClick={handleRead}>
+            Mark as read
+          </button>
         </div>
       )}
       {invisibleComponent && (

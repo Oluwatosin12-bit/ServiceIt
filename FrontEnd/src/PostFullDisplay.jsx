@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import {useState} from "react";
-
 import "./PostFullDisplay.css";
 
 function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) {
@@ -9,7 +8,7 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
   const handleBookingFormOpen = () => {
     navigate("/BookingPage", { state: { post, userUID } });
   };
-  if (!isShown) {
+  if (isShown === false) {
     return null;
   }
   const createdAt = post.createdAt.toDate();
@@ -26,7 +25,6 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
       type,
     })
   }
-  console.log(favorited)
 
   return (
     <div className="modalOverlay" onClick={onClose}>

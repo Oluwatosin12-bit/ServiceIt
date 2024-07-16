@@ -4,23 +4,17 @@ import { useState, useEffect } from "react";
 import "./NotificationPage.css";
 import { useTheme } from "../UseContext";
 
-function NotificationsPage({ userData, vendorID, notifications }) {
+function NotificationsPage({ userData }) {
   const userID = userData?.userID;
   const [userNotificationData, setUserNotificationData] = useState([]);
-  const [allNotifications, setAllNotifications] = useState([])
-  const { theme} = useTheme();
-
-  // useEffect(()=>{
-  //   setAllNotiifcations[...allNotifications, notifications]
-  // }, [notiifications])
-  console.log(notifications)
+  const { theme } = useTheme();
 
   useEffect(() => {
-    if (userID === undefined){
+    if (userID === undefined) {
       return;
     }
     const unsubscribe = fetchNotifications(userID, (notificationData) => {
-      const userNotifications = notificationData
+      const userNotifications = notificationData;
       setUserNotificationData(userNotifications);
     });
 
@@ -30,7 +24,7 @@ function NotificationsPage({ userData, vendorID, notifications }) {
     return (
       <div className={`appointmentPage ${theme}`}>
         <div className="appointments">
-        <i class="fa-solid fa-bell"></i>
+          <i class="fa-solid fa-bell"></i>
           <h2>No Notifications yet.</h2>
           <p>When you get notifications, they will show up here</p>
         </div>
@@ -42,12 +36,12 @@ function NotificationsPage({ userData, vendorID, notifications }) {
     <div className={`notificationsSection ${theme}`}>
       <h2 className="notificationTitle">User Notifications:</h2>
       <div className="stackedNotifications">
-      {userNotificationData.map((appointment, index) => (
-        <div key={index} className="notificationTab">
-          <p>{appointment.message}</p>
-          <NotificationsPreview notificationData={userNotificationData} />
-        </div>
-      ))}
+        {userNotificationData.map((appointment, index) => (
+          <div key={index} className="notificationTab">
+            <p>{appointment.message}</p>
+            <NotificationsPreview notificationData={userNotificationData} />
+          </div>
+        ))}
       </div>
     </div>
   );

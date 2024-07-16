@@ -44,19 +44,15 @@ function App() {
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
-      console.log("Connected to server with socket ID:", newSocket.id);
     });
 
     newSocket.on("disconnect", (reason) => {
-      console.log("Disconnected from server:", reason);
     });
 
     newSocket.on("reconnect", (attemptNumber) => {
-      console.log("Reconnected to server after", attemptNumber, "attempts");
     });
 
     newSocket.on("firstEvent", (msg) => {
-      console.log(msg);
     });
 
     return () => {
@@ -67,26 +63,16 @@ function App() {
   useEffect(() => {
     if (socket) {
       socket.on("firstEvent", (msg) => {
-        console.log(msg);
       });
     }
   }, [socket]);
 
-  console.log(socket);
+
   useEffect(() => {
     if (socket && userUID) {
       socket.emit("newUser", userUID);
     }
   }, [socket, userUID]);
-
-  // useEffect(() => {
-  //   const socket = io("http://localhost:5000");
-  //   setSocket(socket);
-
-  //   return () => {
-  //     socket.disconnect();
-  //   };
-  // }, []);
 
 
   return (

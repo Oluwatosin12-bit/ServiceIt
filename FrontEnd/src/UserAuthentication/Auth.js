@@ -13,8 +13,7 @@ const registerUser = async (
   email,
   password,
   username,
-  firstName,
-  lastName,
+  name,
   selectedCategories
 ) => {
   try {
@@ -27,8 +26,7 @@ const registerUser = async (
     const userAddedToDB = await addUser(
       userId,
       firstName,
-      lastName,
-      username,
+      name,
       email,
       selectedCategories || []
     );

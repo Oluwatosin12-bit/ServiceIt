@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { registerUser } from "./Auth";
 import { CATEGORIES } from "../Categories";
@@ -20,7 +20,7 @@ function SignUpPage({ theme }) {
   const MIN_PASSWORD_LENGTH = 6;
 
   const removeCategory = (category) => {
-    setSelectedCategories(selectedCategories.filter((cat) => cat !== category));
+    setSelectedCategories(selectedCategories.filter((selectedCategory) => selectedCategory !== category));
   };
   const handleCategoryChange = (event) => {
     const selectedOptions = Array.from(
@@ -56,8 +56,7 @@ function SignUpPage({ theme }) {
         email,
         password,
         userName,
-        firstName,
-        lastName,
+        name,
         selectedCategories
       );
       if (userCredential !== null) {

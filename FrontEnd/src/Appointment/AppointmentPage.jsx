@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import {
   fetchPendingAppointments,
   fetchUpcomingAppointments,
-  userAppointmentChanges,
-  vendorAppointmentChanges,
   acceptAppointment,
   declineAppointment,
 } from "../BookingPage/BookingDB";
@@ -18,20 +16,16 @@ function AppointmentPage({ userData, socket }) {
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
   const userID = userData?.userID;
-  const { theme} = useTheme();
+  const { theme } = useTheme();
 
   const handleAcceptedAppointment = async (
     appointment,
     vendorID,
     customerID,
-    appointmentID, type
+    appointmentID,
+    type
   ) => {
     await acceptAppointment(customerID, vendorID, appointmentID);
-    // socket.emit("sendNotification", {
-    //   senderName: vendorID,
-    //   receiverName: post.userId,
-    //   type,
-    // })
     await socket.emit("sendNotification", {
       userID: userData?.userID,
       senderID: userData?.userID,
@@ -48,7 +42,8 @@ function AppointmentPage({ userData, socket }) {
     appointment,
     vendorID,
     customerID,
-    appointmentID, type
+    appointmentID,
+    type
   ) => {
     await declineAppointment(customerID, vendorID, appointmentID);
     await socket.emit("sendNotification", {
@@ -109,7 +104,9 @@ function AppointmentPage({ userData, socket }) {
           <div key={index} className="appointmentTab">
             <div className="appointmentInfo">
               {appointment.vendorUID === userID && (
-                <p className="appointmentUser">{appointment.customerUsername}</p>
+                <p className="appointmentUser">
+                  {appointment.customerUsername}
+                </p>
               )}
               {appointment.customerUID === userID && (
                 <p className="appointmentUser">{appointment.vendorUsername}</p>
@@ -127,7 +124,7 @@ function AppointmentPage({ userData, socket }) {
             {appointment.vendorUID === userID && (
               <div className="appointmentActions">
                 <button
-                 className="appointmentButtons"
+                  className="appointmentButtons"
                   onClick={() =>
                     handleAcceptedAppointment(
                       appointment,
@@ -141,7 +138,7 @@ function AppointmentPage({ userData, socket }) {
                   Accept
                 </button>
                 <button
-                 className="appointmentButtons"
+                  className="appointmentButtons"
                   onClick={() =>
                     handleDeclinedAppointment(
                       appointment.customerUID,
@@ -174,9 +171,11 @@ function AppointmentPage({ userData, socket }) {
               </div>
             </div>
             <div className="appointmentActions">
-              <button className="appointmentButtons">Add to Google Calendar</button>
+              <button className="appointmentButtons">
+                Add to Google Calendar
+              </button>
               <button
-               className="appointmentButtons"
+                className="appointmentButtons"
                 onClick={() =>
                   handleDeclinedAppointment(
                     appointment,

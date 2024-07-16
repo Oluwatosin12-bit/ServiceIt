@@ -20,7 +20,7 @@ function SignUpPage({ theme }) {
   const MIN_PASSWORD_LENGTH = 6;
 
   const removeCategory = (category) => {
-    setSelectedCategories(selectedCategories.filter((cat) => cat !== category));
+    setSelectedCategories(selectedCategories.filter((selectedCategory) => selectedCategory !== category));
   };
   const handleCategoryChange = (event) => {
     const selectedOptions = Array.from(
@@ -72,92 +72,93 @@ function SignUpPage({ theme }) {
 
   return (
     <div className="alternate-signup">
-       <div className="new-form sign-ups">
-      <h2>Sign Up</h2>
-      <label>
-        <span>Name</span>
-        <input
-          name="name"
-          id="name"
-          onChange={(event) => setName(event.target.value)}
-          required="required"
-        />
-      </label>
-      <label>
-        <span>Email</span>
-        <input
-          type="email"
-          name="email"
-          onChange={(event) => setEmail(event.target.value)}
-          required="required"
-        />
-      </label>
-      <label>
-        <span>Username</span>
-        <input
-
-          name="username"
-          onChange={(event) => setUserName(event.target.value)}
-          required="required"
-        />
-      </label>
-      <label className="password-input">
-        <span>Password</span>
-        <div className="input-container">
-        <input
-          name="password"
-          type={isPasswordVisible ? "text" : "password"}
-          onChange={(event) => setPassword(event.target.value)}
-        />
-        <span
-          className="icon"
-          onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-        >
-          {isPasswordVisible ? (
-            <i className="fa-solid fa-eye"></i>
-          ) : (
-            <i className="fa-solid fa-eye-slash"></i>
-          )}
-        </span>
-        </div>
-      </label>
-      <div className="selectedCategories">
-        {selectedCategories.map((category, index) => (
-          <div className="categoryTag" key={index}>
-            {category}
+      <div className="new-form sign-ups">
+        <h2>Sign Up</h2>
+        <label>
+          <span>Name</span>
+          <input
+            name="name"
+            id="name"
+            onChange={(event) => setName(event.target.value)}
+            required="required"
+          />
+        </label>
+        <label>
+          <span>Email</span>
+          <input
+            type="email"
+            name="email"
+            onChange={(event) => setEmail(event.target.value)}
+            required="required"
+          />
+        </label>
+        <label>
+          <span>Username</span>
+          <input
+            name="username"
+            onChange={(event) => setUserName(event.target.value)}
+            required="required"
+          />
+        </label>
+        <label className="password-input">
+          <span>Password</span>
+          <div className="input-container">
+            <input
+              name="password"
+              type={isPasswordVisible ? "text" : "password"}
+              onChange={(event) => setPassword(event.target.value)}
+            />
             <span
-              className="cancelIcon"
-              onClick={() => removeCategory(category)}
+              className="icon"
+              onClick={() => setIsPasswordVisible(!isPasswordVisible)}
             >
-              ×
+              {isPasswordVisible ? (
+                <i className="fa-solid fa-eye"></i>
+              ) : (
+                <i className="fa-solid fa-eye-slash"></i>
+              )}
             </span>
           </div>
-        ))}
-      </div>
-
-      <div className="availableCategories">
-        <label htmlFor="categoryDropdown">Select Categories:</label>
-        <select id="categoryDropdown" onChange={handleCategoryChange}>
-          {availableCategories.map((category) => (
-            <option key={category} value={category}>
+        </label>
+        <div className="selectedCategories">
+          {selectedCategories.map((category, index) => (
+            <div className="categoryTag" key={index}>
               {category}
-            </option>
+              <span
+                className="cancelIcon"
+                onClick={() => removeCategory(category)}
+              >
+                ×
+              </span>
+            </div>
           ))}
-        </select>
+        </div>
+
+        <div className="availableCategories">
+          <label htmlFor="categoryDropdown">Select Categories:</label>
+          <select id="categoryDropdown" onChange={handleCategoryChange}>
+            {availableCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="link-out">
+          <a href="/EntryPage" className="redirect3">
+            Already have an account? Login here
+          </a>
+        </div>
+        <button
+          type="button"
+          className="submit sendSignUpButton"
+          onClick={handleSignUp}
+          disabled={!isFormValid}
+        >
+          Sign Up Now
+        </button>
+        {errorMessage && <p className="errorMessage">{errorMessage}</p>}
       </div>
-      <div className="link-out">
-        <a href="/EntryPage" className="redirect3">Already have an account? Login here</a>
-      </div>
-      <button
-        type="button"
-        className="submit sendSignUpButton"
-        onClick={handleSignUp}
-        disabled={!isFormValid}
-      >
-        Sign Up Now
-      </button>
-      {errorMessage && <p className="errorMessage">{errorMessage}</p>}
-    </div>
     </div>
   );
 }

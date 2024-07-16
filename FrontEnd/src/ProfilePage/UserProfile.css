@@ -1,5 +1,5 @@
 @import "../Colors.css";
-#root{
+#root {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -83,7 +83,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.userPosts{
+.userPosts {
   flex: 1;
   margin: 20px auto;
 }
@@ -94,8 +94,8 @@ button:disabled {
   flex-wrap: wrap;
 }
 
-.eachPost{
-  margin: 5px ;
+.eachPost {
+  margin: 5px;
 }
 
 .userPostsPreview img {
@@ -103,13 +103,15 @@ button:disabled {
   height: 300px;
 }
 
-.nameContainer, .bioContainer{
+.nameContainer,
+.bioContainer {
   display: flex;
   align-items: center;
   position: relative;
 }
 
-.ellipsisIcon, .editIcon  {
+.ellipsisIcon,
+.editIcon {
   margin-left: 10px;
   cursor: pointer;
 }
@@ -142,10 +144,10 @@ button:disabled {
 .shortcut {
   float: right;
 }
-p{
+p {
   color: var(--darkOne);
 }
-.createButton{
+.createButton {
   width: 200px;
   margin-left: 5px;
 }
@@ -154,17 +156,17 @@ p{
   .userPostsPreview img {
     width: 200px;
   }
-  .createButton{
-    width: 130px
+  .createButton {
+    width: 130px;
   }
 }
 
-@media (max-width: 839px){
+@media (max-width: 839px) {
   .userProfileSection {
     margin-top: 350px;
   }
 }
-@media (max-width: 469px){
+@media (max-width: 469px) {
   .userProfileSection {
     margin-top: 320px;
   }

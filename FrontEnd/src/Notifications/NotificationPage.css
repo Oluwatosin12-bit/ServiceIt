@@ -1,12 +1,12 @@
-html{
+html {
   height: 100vh;
 }
-#root{
+#root {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-.notificationsSection{
+.notificationsSection {
   margin-top: 100px;
   margin-top: 100px;
   background-color: var(--backgroundColor);
@@ -17,7 +17,7 @@ html{
   align-items: center;
 }
 
-.notificationTitle{
+.notificationTitle {
   margin-bottom: 1rem;
   color: var(--darkTwo);
 }

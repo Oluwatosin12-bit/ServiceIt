@@ -29,9 +29,9 @@ function UserProfilePage({ userUID, userData }) {
     }
   };
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -136,7 +136,9 @@ function UserProfilePage({ userUID, userData }) {
             <p>I am an amazing service provider</p>
           </div>
           <div>
-            <button className="createButton" onClick={toggleModal}>Create a Post</button>
+            <button className="createButton" onClick={toggleModal}>
+              Create a Post
+            </button>
           </div>
         </div>
 

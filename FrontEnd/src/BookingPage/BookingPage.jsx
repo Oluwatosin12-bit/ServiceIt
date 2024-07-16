@@ -1,18 +1,13 @@
 import "./BookingPage.css";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import {
-  requestAppointment,
-  userAppointmentChanges,
-  vendorAppointmentChanges,
-} from "./BookingDB";
+import { requestAppointment } from "./BookingDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
 function BookingForm({ userData, socket }) {
   const location = useLocation();
   const { post, userUID } = location.state || {};
-  const invisibleComponent = false;
   const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
   const [isRequestPending, setIsRequestPending] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
@@ -47,14 +42,14 @@ function BookingForm({ userData, socket }) {
   };
 
   useEffect(() => {
-    const isFormValid = Object.values(appointmentData).every((val) => val !== "");
+    const isFormValid = Object.values(appointmentData).every(
+      (val) => val !== ""
+    );
     setIsFormValid(isFormValid);
-    if (userUID === post.userId){
-      setIsFormValid(false)
+    if (userUID === post.userId) {
+      setIsFormValid(false);
     }
   }, [appointmentData]);
-
-
 
   const handleSubmit = async (event, type) => {
     try {
@@ -87,7 +82,9 @@ function BookingForm({ userData, socket }) {
           appointmentTime: "",
           appointmentAdditionalNote: "",
         });
-        setModalPopUpMessage(`Your appointment request has been sent to ${post.vendorUsername}`);
+        setModalPopUpMessage(
+          `Your appointment request has been sent to ${post.vendorUsername}`
+        );
       }
       toggleModal();
     } catch (error) {
@@ -113,7 +110,7 @@ function BookingForm({ userData, socket }) {
   }
   return (
     <div className="bookingPage">
-      <form className="bookingForm" onSubmit={() =>handleSubmit(event, 2)}>
+      <form className="bookingForm" onSubmit={() => handleSubmit(event, 2)}>
         <h2 className="vendorUsername">
           Book an appointment with {post.vendorUsername}
         </h2>
@@ -156,12 +153,13 @@ function BookingForm({ userData, socket }) {
           value={appointmentData.appointmentAdditionalNote}
           onChange={(event) => handleChange(event)}
         />
-        <button type="submit" disabled={!isFormValid}>Send Request</button>
+        <button type="submit" disabled={!isFormValid}>
+          Send Request
+        </button>
       </form>
       <Modal isShown={isBookingFormModalShown} onClose={toggleModal}>
         <p className="modalPopUpMessage">{modalPopUpMessage}</p>
       </Modal>
-      {invisibleComponent && <NotificationsPage vendorID={post.userId} />}
     </div>
   );
 }
