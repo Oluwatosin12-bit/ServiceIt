@@ -217,4 +217,5 @@ export {
   fetchUpcomingAppointments,
   acceptAppointment,
   declineAppointment,
+  generateRandomID
 };

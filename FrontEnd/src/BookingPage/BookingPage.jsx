@@ -2,7 +2,7 @@ import "./BookingPage.css";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { requestAppointment } from "./BookingDB";
-import { feedCategory } from "./HomePage/RecommendationDB";
+import { feedCategory } from "../HomePage/RecommendationDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 

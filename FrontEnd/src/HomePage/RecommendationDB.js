@@ -1,6 +1,7 @@
 import { database } from "../UserAuthentication/FirebaseConfig";
-import { query, where, collection, getDocs, doc, setDoc, updateDoc, arrayUnion, deleteDoc } from "firebase/firestore";
+import { query, where, collection, getDocs, doc, setDoc, updateDoc, arrayUnion, deleteDoc, getDoc } from "firebase/firestore";
 import { getUserData } from "../UserAuthentication/FirestoreDB";
+import {generateRandomID} from "../BookingPage/BookingDB"
 
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
@@ -77,19 +78,17 @@ const feedCategory = async (userID, categories) => {
 };
 
 const addToFavoriteDocs = async(userUID, favorited, post) =>{
-  const favoritesRef = doc(database, 'users', `${userUID}`);
+  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, `${userUID}`, 'Favorites');
+  const postDocRef = doc(favoritesRef, post.postID);
 
   if (favorited === true) {
-    await deleteDoc(favoritesRef);
+    await deleteDoc(postDocRef);
   } else {
-    await setDoc(favoritesRef, {
-      userUID,
-      postUserId: post.userId,
-      postTitle: post.serviceTitle,
+    await setDoc(postDocRef, {
+      post,
       likedAt: new Date(),
     });
   }
-
 }
 
 export { fetchUserFeed, feedCategory, addToFavoriteDocs };

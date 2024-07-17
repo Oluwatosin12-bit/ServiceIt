@@ -11,6 +11,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {generateRandomID} from "../BookingPage/BookingDB"
 import { v4 } from "uuid";
 
 const DATABASE_FOLDER_NAME = "users";
@@ -87,6 +88,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       formData.serviceCategories[0],
       imageUpload
     );
+    const generatedID = generateRandomID();
     const createdAt = Timestamp.now();
     const vendorUsername = userData.UserName;
     const formDataWithImage = {
@@ -94,6 +96,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       imageURL,
       createdAt,
       vendorUsername,
+      postID: generatedID,
     };
 
     if (userID === null) {
@@ -102,7 +105,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
 
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
     const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
-    const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
+    const postDocRef = doc(postsCollectionRef, formDataWithImage.postID);
     await setDoc(postDocRef, formDataWithImage);
   } catch (error) {
     throw new Error(`Error creating post: ${error.message}`);

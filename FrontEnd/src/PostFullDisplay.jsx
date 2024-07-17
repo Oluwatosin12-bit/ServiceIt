@@ -59,7 +59,7 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
               </p>
               <button onClick={handleBookingFormOpen}>Book Now</button>
               <span>
-                {favorited ? (<i className="fa-solid fa-heart hearted" ></i>) : (<i className="fa-regular fa-heart" onClick={()=>handleNotification(1)}></i>)}
+                {favorited ? (<i className="fa-solid fa-heart hearted" onClick={()=>handleNotification(1)}></i>) : (<i className="fa-regular fa-heart" onClick={()=>handleNotification(1)}></i>)}
               </span>
               <p className="fullDisplayTimestamp">
                 Created at: {createdAt.toLocaleString()}
