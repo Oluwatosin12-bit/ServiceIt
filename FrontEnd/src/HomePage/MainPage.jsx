@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchUserFeed } from "../UserAuthentication/FirestoreDB";
+import { fetchUserFeed } from "./RecommendationDB";
 import CategoryList from "./CategoryList";
 import PostsPreview from "./PostsPreview";
 import PostFullDisplay from "../PostFullDisplay";

@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import {useState} from "react";
+import { feedCategory, addToFavoriteDocs } from "./HomePage/RecommendationDB";
 import "./PostFullDisplay.css";
 
 function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) {
   const [favorited, setFavorited] = useState(false)
+  const [notificationSent, setNotificationSent] = useState(false)
   const navigate = useNavigate();
   const handleBookingFormOpen = () => {
     navigate("/BookingPage", { state: { post, userUID } });
@@ -13,17 +15,23 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
   }
   const createdAt = post.createdAt.toDate();
 
+  //add to favorites document, extract post category for recommendation
   const handleNotification = (type) =>{
-    setFavorited(true);
-    socket.emit("sendNotification", {
-      userID: userUID,
-      senderID: userUID,
-      receiverID: post.userId,
-      senderName: userData?.UserName,
-      receiverName: post.vendorUsername,
-      postTitle: post.serviceTitle,
-      type,
-    })
+    setFavorited(!favorited);
+    feedCategory(userUID, post.serviceCategories)
+    addToFavoriteDocs(userUID, favorited, post)
+    if(notificationSent === false) {
+      socket.emit("sendNotification", {
+        userID: userUID,
+        senderID: userUID,
+        receiverID: post.userId,
+        senderName: userData?.UserName,
+        receiverName: post.vendorUsername,
+        postTitle: post.serviceTitle,
+        type,
+      })
+    }
+    setNotificationSent(true)
   }
 
   return (

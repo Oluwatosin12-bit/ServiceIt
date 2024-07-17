@@ -30,7 +30,7 @@ async function addUser(
     LastName: lastName,
     UserName: userName,
     Email: signUpEmail,
-    selectedCategories: selectedCategories || [],
+    feedCategories: selectedCategories || [],
   });
 }
 
@@ -131,61 +131,10 @@ const fetchUserPosts = (userID, callback) => {
   return unsubscribe;
 };
 
-const fetchUserFeed = async (userID) => {
-  if (userID === null) {
-    return;
-  }
-  const userData = await getUserData(userID);
-  const userCategoryInterest = userData.selectedCategories || [];
-
-  const usersSnapshot = await getDocs(
-    collection(database, DATABASE_FOLDER_NAME)
-  );
-  const allPosts = [];
-  for (const userDoc of usersSnapshot.docs) {
-    const userId = userDoc.id;
-    const userPostsSnapshot = collection(
-      database,
-      `${DATABASE_FOLDER_NAME}/${userId}/${POSTS_COLLECTION}`
-    );
-    const postsSnapshot = await getDocs(userPostsSnapshot);
-    postsSnapshot.forEach((postDoc) => {
-      if (postDoc.exists) {
-        const postData = postDoc.data();
-        if (
-          !userData ||
-          !userData.selectedCategories ||
-          userData.selectedCategories.length === 0
-        ) {
-          allPosts.push({
-            userId: userId,
-            postId: postDoc.id,
-            ...postData,
-          });
-        } else {
-          if (
-            postData.serviceCategories.some((category) =>
-              userCategoryInterest.includes(category)
-            )
-          ) {
-            allPosts.push({
-              userId: userId,
-              postId: postDoc.id,
-              ...postData,
-            });
-          }
-        }
-      }
-    });
-  }
-  return allPosts;
-};
-
 export {
   addUser,
   isUsernameUnique,
   getUserData,
   createPost,
   fetchUserPosts,
-  fetchUserFeed,
 };
