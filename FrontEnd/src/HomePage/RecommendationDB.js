@@ -1,5 +1,5 @@
 import { database } from "../UserAuthentication/FirebaseConfig";
-import { query, where, collection, getDocs, doc, setDoc, updateDoc, arrayUnion, deleteDoc, getDoc } from "firebase/firestore";
+import { query, where, collection, getDocs, doc, setDoc, updateDoc, arrayUnion, deleteDoc, getDoc, onSnapshot } from "firebase/firestore";
 import { getUserData } from "../UserAuthentication/FirestoreDB";
 
 const DATABASE_FOLDER_NAME = "users";
@@ -42,31 +42,30 @@ const addToFavoriteDocs = async(userUID, favorited, post) =>{
   }
 }
 
+const checkLike = (userUID, postID, callback) =>{
+  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION)
+  const q = query(favoritesRef, where("post.postID", "==", postID));
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    callback(!querySnapshot.empty);
+});
+
+return unsubscribe
+}
+
 const postsFromFavorites = async(userUID) =>{
   try{
     const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION)
     const favoritePosts = await getDocs(favoritesRef)
-    const postsFromFavoriteVendors = []
+    const favoriteVendorsID = []
+
     for (const favoriteDoc of favoritePosts.docs){
       const vendorID = favoriteDoc.data().userId
       if (vendorID !== null){
-        const vendorDatabaseRef = collection(database, DATABASE_FOLDER_NAME, vendorID, POSTS_COLLECTION)
-        const vendorPosts = await getDocs(vendorDatabaseRef)
-        vendorPosts.forEach((postDoc) =>{
-          if (postDoc.exists()){
-            const postData = postDoc.data();
-            postsFromFavoriteVendors.push({
-              userId: vendorID,
-              postId: postDoc.id,
-              ...postData,
-            });
-          }
-        })
+        favoriteVendorsID.push(vendorID)
       }
       }
-    // console.log(postsFromFavoriteVendors)
-    postsFromFavoriteVendors.sort((a, b) => b.createdAt - a.createdAt);
-    return postsFromFavoriteVendors;
+
+    return favoriteVendorsID ;
   } catch(error){
     throw new Error(`Error fetching posts from favorite vendors ${error.message}`)
   }
@@ -124,4 +123,4 @@ const fetchUserFeed = async (userID) => {
 };
 
 
-export { fetchUserFeed, feedCategory, addToFavoriteDocs, postsFromFavorites };
+export { fetchUserFeed, feedCategory, addToFavoriteDocs, postsFromFavorites, checkLike };

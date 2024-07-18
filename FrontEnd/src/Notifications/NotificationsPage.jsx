@@ -1,4 +1,3 @@
-import NotificationsPreview from "./NotificationPreview";
 import { fetchNotifications } from "../BookingPage/BookingDB";
 import { useState, useEffect } from "react";
 import "./NotificationPage.css";
@@ -24,7 +23,7 @@ function NotificationsPage({ userData }) {
     return (
       <div className={`appointmentPage ${theme}`}>
         <div className="appointments">
-          <i class="fa-solid fa-bell"></i>
+          <i className="fa-solid fa-bell"></i>
           <h2>No Notifications yet.</h2>
           <p>When you get notifications, they will show up here</p>
         </div>
@@ -36,10 +35,9 @@ function NotificationsPage({ userData }) {
     <div className={`notificationsSection ${theme}`}>
       <h2 className="notificationTitle">User Notifications:</h2>
       <div className="stackedNotifications">
-        {userNotificationData.map((appointment, index) => (
+        {userNotificationData.map((notification, index) => (
           <div key={index} className="notificationTab">
-            <p>{appointment.message}</p>
-            <NotificationsPreview notificationData={userNotificationData} />
+            <p>{notification.message}</p>
           </div>
         ))}
       </div>

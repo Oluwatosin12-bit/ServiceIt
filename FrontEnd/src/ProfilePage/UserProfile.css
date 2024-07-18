@@ -151,6 +151,10 @@ p {
   width: 200px;
   margin-left: 5px;
 }
+.postHeading {
+  display: flex;
+  justify-content: space-between;
+}
 
 @media (max-width: 1000px) {
   .userPostsPreview img {

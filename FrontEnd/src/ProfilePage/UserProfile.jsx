@@ -1,7 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { logOutUser } from "../UserAuthentication/Auth";
-import { createPost, fetchUserPosts } from "../UserAuthentication/FirestoreDB";
+import {
+  createPost,
+  fetchUserPosts,
+  deletePost,
+} from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
 import { CATEGORIES } from "../Categories";
 import { useTheme } from "../UseContext";
@@ -17,15 +21,32 @@ function UserProfilePage({ userUID, userData }) {
   const [isFormValid, setIsFormValid] = useState(false);
   const [serviceCategories, setSelectedCategories] = useState([]);
   const [availableCategories] = useState(CATEGORIES);
-  const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownRef = useRef(null);
+  const [isSignOutDropdownVisible, setisSignOutDropdownVisible] =
+    useState(false);
+  const [isDeletePostDropdownVisible, setisDeletePostDropdownVisible] =
+    useState(false);
+  const signOutDropdownRef = useRef(null);
+  const deletePostDropdownRef = useRef([]);
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!isDropdownVisible);
+  const toggleSignOutDropdown = () => {
+    setisSignOutDropdownVisible(!isSignOutDropdownVisible);
+  };
+  const toggleDeletePostDropdown = (index) => {
+    setisDeletePostDropdownVisible(
+      isDeletePostDropdownVisible === index ? null : index
+    );
   };
   const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setDropdownVisible(false);
+    if (
+      signOutDropdownRef.current &&
+      !signOutDropdownRef.current.contains(event.target)
+    ) {
+      setisSignOutDropdownVisible(false);
+    } else if (
+      deletePostDropdownRef.current &&
+      !deletePostDropdownRef.current.contains(event.target)
+    ) {
+      setisDeletePostDropdownVisible(false);
     }
   };
   useEffect(() => {
@@ -98,6 +119,19 @@ function UserProfilePage({ userUID, userData }) {
     }
   };
 
+  const handleDeletePost = async (userUID, postID) => {
+    try {
+      const deletePostConfirmation = window.confirm(
+        "Are you sure you want to delete this post?"
+      );
+      if (deletePostConfirmation === true) {
+        await deletePost(userUID, postID);
+      }
+    } catch (error) {
+      throw new Error(`Error deleting Post ${error.message}`);
+    }
+  };
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -114,12 +148,15 @@ function UserProfilePage({ userUID, userData }) {
         <div className="welcomePlace">
           <div>
             <img src="src/Images/Profile.jpeg" alt="profile avatar" />
-            <div className="nameContainer" ref={dropdownRef}>
+            <div className="nameContainer" ref={signOutDropdownRef}>
               <h1>{userData?.UserName} </h1>
-              <span className="icon ellipsisIcon" onClick={toggleDropdown}>
+              <span
+                className="icon ellipsisIcon"
+                onClick={toggleSignOutDropdown}
+              >
                 <i className="fa-solid fa-ellipsis-vertical"></i>
               </span>
-              {isDropdownVisible && (
+              {isSignOutDropdownVisible && (
                 <div className="dropdownMenu">
                   <ul>
                     <li onClick={handleLogOut}>Sign Out</li>
@@ -244,8 +281,30 @@ function UserProfilePage({ userUID, userData }) {
           {userPosts.map((post, index) => {
             return (
               <div key={index} className="eachPost">
-                <p>{post.serviceTitle}</p>
-                <img src={post.imageURL} />
+                <div
+                  className="postHeading"
+                  ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
+                >
+                  <p>{post.serviceTitle}</p>
+                  <span
+                    className="icon ellipsisIcon"
+                    onClick={() => toggleDeletePostDropdown(index)}
+                  >
+                    <i className="fa-solid fa-ellipsis-vertical"></i>
+                  </span>
+                  {isDeletePostDropdownVisible === index && (
+                    <div className="dropdownMenu">
+                      <ul>
+                        <li
+                          onClick={() => handleDeletePost(userUID, post.postID)}
+                        >
+                          Delete Post
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                <img src={post.imageURL} alt="post photo" />
               </div>
             );
           })}

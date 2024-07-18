@@ -45,7 +45,7 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <NavLink to="">
+            <NavLink to="/FavoritesPage">
               <p>Favorites</p>
             </NavLink>
           </li>

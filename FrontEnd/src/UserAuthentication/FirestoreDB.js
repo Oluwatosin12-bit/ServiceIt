@@ -9,6 +9,7 @@ import {
   getDoc,
   onSnapshot,
   Timestamp,
+  deleteDoc
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import {generateRandomID} from "../BookingPage/BookingDB"
@@ -112,6 +113,12 @@ const createPost = async (formData, imageUpload, userID, userData) => {
   }
 };
 
+const deletePost = (userUID, postID) =>{
+  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, POSTS_COLLECTION);
+  const postDocRef = doc(favoritesRef, postID);
+  deleteDoc(postDocRef);
+}
+
 const fetchUserPosts = (userID, callback) => {
   if (userID === null) {
     return;
@@ -140,4 +147,5 @@ export {
   getUserData,
   createPost,
   fetchUserPosts,
+  deletePost
 };

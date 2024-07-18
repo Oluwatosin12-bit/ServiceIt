@@ -1,13 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import {useState} from "react";
-import { feedCategory, addToFavoriteDocs, postsFromFavorites } from "./RecommendationDB";
+import {useState, useEffect} from "react";
+import { feedCategory, addToFavoriteDocs, postsFromFavorites, checkLike } from "./RecommendationDB";
 import "./PostFullDisplay.css";
 
 function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) {
-  const [favorited, setFavorited] = useState(false)
+  const [favorited, setFavorited] = useState("")
   const [notificationSent, setNotificationSent] = useState(false)
+
+  useEffect(() => {
+    const postID = post?.postID;
+    const unsubscribe = checkLike(userUID, postID, (liked) => {
+        setFavorited(liked);
+    });
+    return () => unsubscribe();
+}, [post.postID]);
+
   const navigate = useNavigate();
-  const [array, setArray] = useState("")
   const handleBookingFormOpen = () => {
     navigate("/BookingPage", { state: { post, userUID } });
   };
@@ -22,8 +30,6 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
       setFavorited(!favorited);
       feedCategory(userUID, post.serviceCategories)
       await addToFavoriteDocs(userUID, favorited, post)
-      const updatedPosts = await postsFromFavorites(userUID)
-      setArray(updatedPosts)
       if(notificationSent === false) {
         socket.emit("sendNotification", {
           userID: userUID,
@@ -36,13 +42,11 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
         })
       }
       setNotificationSent(true)
-      console.log("Posts from favorites:", updatedPosts)
     } catch(error){
       throw new Error(`Error updating likes: ${error.message}`)
     }
 
   }
-  console.log("Posts from favorites:", array)
 
   return (
     <div className="modalOverlay" onClick={onClose}>

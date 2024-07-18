@@ -100,6 +100,34 @@ const fetchNotifications = (userID, callback) => {
   }
 };
 
+const fetchUserFavorites = (userID, callback) => {
+  try {
+    if (userID === undefined) {
+      throw new Error(`Invalid userID: ${error.message}`);
+    }
+    const userFavoritesRef = query(
+      collection(
+        database,
+        DATABASE_FOLDER_NAME,
+        userID,
+        "Favorites"
+      ),
+      orderBy("timestamp", "desc")
+    );
+    const unsubscribe = onSnapshot(userFavoritesRef, (snapshot) => {
+      const favorites = [];
+      snapshot.forEach((doc) => {
+        const favorite = doc.data();
+        favorites.push(favorite);
+      });
+      callback(favorites);
+    });
+    return unsubscribe;
+  } catch (error) {
+    throw new Error(`Error sending appointment notification: ${error.message}`);
+  }
+};
+
 const fetchPendingAppointments = (userID, callback) => {
   try {
     if (userID === null) {
@@ -213,6 +241,7 @@ const declineAppointment = async (userID, vendorID, appointmentID) => {
 export {
   requestAppointment,
   fetchNotifications,
+  fetchUserFavorites,
   fetchPendingAppointments,
   fetchUpcomingAppointments,
   acceptAppointment,
