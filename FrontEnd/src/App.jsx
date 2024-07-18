@@ -75,12 +75,11 @@ function App() {
 
 
   return (
-    <>
       <Router>
       <ThemeProvider>
         <Routes>
           <Route path="/home" element={<LandingPage socket={socket} />} />
-          <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
+          <Route path="/" element={<EntryPage socket={socket} />} />
           <Route path="/LoginPage" element={<LoginPage />} />
           <Route path="/SignUpPage" element={<SignUpPage theme={theme} />} />
           <Route path="/SignUpPages" element={<AlternateSignUp theme={theme} />} />
@@ -128,7 +127,6 @@ function App() {
         </Routes>
       </ThemeProvider>
     </Router>
-    </>
   );
 }
 
