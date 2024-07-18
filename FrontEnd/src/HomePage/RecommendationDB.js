@@ -1,10 +1,76 @@
 import { database } from "../UserAuthentication/FirebaseConfig";
 import { query, where, collection, getDocs, doc, setDoc, updateDoc, arrayUnion, deleteDoc, getDoc } from "firebase/firestore";
 import { getUserData } from "../UserAuthentication/FirestoreDB";
-import {generateRandomID} from "../BookingPage/BookingDB"
 
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
+const FAVORITES_COLLECTION = "Favorites";
+
+
+const feedCategory = async (userID, categories) => {
+  const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
+
+  const docSnap = await getDoc(userDocRef);
+  let currentCategories = [];
+  if (docSnap.exists()) {
+    const userData = docSnap.data();
+    currentCategories = userData.feedCategories || [];
+  }
+
+  categories.forEach((category) => {
+    if (currentCategories.includes(category) === false) {
+      currentCategories.push(category);
+    }
+  });
+
+  return await setDoc(userDocRef, {
+    feedCategories: currentCategories,
+  }, {merge: true})
+};
+
+const addToFavoriteDocs = async(userUID, favorited, post) =>{
+  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION);
+  const postDocRef = doc(favoritesRef, post.postId);
+
+  if (favorited === true) {
+    await deleteDoc(postDocRef);
+  } else {
+    await setDoc(postDocRef, {
+      post,
+      likedAt: new Date(),
+    });
+  }
+}
+
+const postsFromFavorites = async(userUID) =>{
+  try{
+    const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION)
+    const favoritePosts = await getDocs(favoritesRef)
+    const postsFromFavoriteVendors = []
+    for (const favoriteDoc of favoritePosts.docs){
+      const vendorID = favoriteDoc.data().userId
+      if (vendorID !== null){
+        const vendorDatabaseRef = collection(database, DATABASE_FOLDER_NAME, vendorID, POSTS_COLLECTION)
+        const vendorPosts = await getDocs(vendorDatabaseRef)
+        vendorPosts.forEach((postDoc) =>{
+          if (postDoc.exists()){
+            const postData = postDoc.data();
+            postsFromFavoriteVendors.push({
+              userId: vendorID,
+              postId: postDoc.id,
+              ...postData,
+            });
+          }
+        })
+      }
+      }
+    // console.log(postsFromFavoriteVendors)
+    postsFromFavoriteVendors.sort((a, b) => b.createdAt - a.createdAt);
+    return postsFromFavoriteVendors;
+  } catch(error){
+    throw new Error(`Error fetching posts from favorite vendors ${error.message}`)
+  }
+}
 
 const fetchUserFeed = async (userID) => {
   if (userID === null) {
@@ -53,42 +119,9 @@ const fetchUserFeed = async (userID) => {
       }
     });
   }
+  allPosts.sort((a, b) => b.createdAt - a.createdAt);
   return allPosts;
 };
 
-const feedCategory = async (userID, categories) => {
-  const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
 
-  const docSnap = await getDoc(userDocRef);
-  let currentCategories = [];
-  if (docSnap.exists()) {
-    const userData = docSnap.data();
-    currentCategories = userData.feedCategories || [];
-  }
-
-  categories.forEach((category) => {
-    if (currentCategories.includes(category) === false) {
-      currentCategories.push(category);
-    }
-  });
-
-  return await setDoc(userDocRef, {
-    feedCategories: currentCategories,
-  }, {merge: true})
-};
-
-const addToFavoriteDocs = async(userUID, favorited, post) =>{
-  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, `${userUID}`, 'Favorites');
-  const postDocRef = doc(favoritesRef, post.postID);
-
-  if (favorited === true) {
-    await deleteDoc(postDocRef);
-  } else {
-    await setDoc(postDocRef, {
-      post,
-      likedAt: new Date(),
-    });
-  }
-}
-
-export { fetchUserFeed, feedCategory, addToFavoriteDocs };
+export { fetchUserFeed, feedCategory, addToFavoriteDocs, postsFromFavorites };

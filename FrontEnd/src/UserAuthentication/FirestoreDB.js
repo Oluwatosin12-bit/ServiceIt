@@ -96,7 +96,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       imageURL,
       createdAt,
       vendorUsername,
-      postID: generatedID,
+      vendorUID: userID,
     };
 
     if (userID === null) {
@@ -105,7 +105,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
 
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
     const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
-    const postDocRef = doc(postsCollectionRef, formDataWithImage.postID);
+    const postDocRef = doc(postsCollectionRef, generatedID);
     await setDoc(postDocRef, formDataWithImage);
   } catch (error) {
     throw new Error(`Error creating post: ${error.message}`);

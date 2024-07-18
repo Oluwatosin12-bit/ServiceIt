@@ -161,12 +161,7 @@ p {
   }
 }
 
-@media (max-width: 839px) {
-  .userProfileSection {
-    margin-top: 350px;
-  }
-}
-@media (max-width: 469px) {
+@media (max-width: 629px) {
   .userProfileSection {
     margin-top: 320px;
   }
