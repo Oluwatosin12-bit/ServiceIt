@@ -3,24 +3,24 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import Layout from "./Layout";
-import Header from "./Header";
-import LoginPage from "./UserAuthentication/LoginPage";
-import SignUpPage from "./UserAuthentication/SignUpPage";
-import LandingPage from "./UserAuthentication/LandingPage";
-import ResetPasswordPage from "./UserAuthentication/ResetPasswordPage";
-import MainPage from "./HomePage/MainPage";
-import UserProfile from "./ProfilePage/UserProfile";
-import BookingForm from "./BookingPage/BookingPage";
-import NotificationsPage from "./Notifications/NotificationsPage";
-import AppointmentPage from "./Appointment/AppointmentPage";
-import AlternateSignUp from "./UserAuthentication/AlternateSignUp"
-import { getUserData } from "./UserAuthentication/FirestoreDB";
-import { useUID } from "./UserAuthentication/Auth";
+import Layout from "../Layout";
+import Header from "../Header";
+import LoginPage from "./LoginPage";
+import SignUpPage from "./SignUpPage";
+import LandingPage from "./LandingPage";
+import ResetPasswordPage from "./ResetPasswordPage";
+import MainPage from "../HomePage/MainPage";
+import UserProfile from "../ProfilePage/UserProfile";
+import BookingForm from "../BookingPage/BookingPage";
+import NotificationsPage from "../Notifications/NotificationsPage";
+import AppointmentPage from "../Appointment/AppointmentPage";
+import AlternateSignUp from "./AlternateSignUp"
+import { getUserData } from "./FirestoreDB";
+import { useUID } from "./Auth";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { ThemeProvider } from "./UseContext";
-import EntryPage from "./UserAuthentication/EntryPage"
+import { ThemeProvider } from "../UseContext";
+import EntryPage from "./EntryPage"
 
 function App() {
   const userUID = useUID();
