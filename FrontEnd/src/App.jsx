@@ -79,7 +79,7 @@ function App() {
       <Router>
       <ThemeProvider>
         <Routes>
-          <Route path="/" element={<LandingPage socket={socket} />} />
+          <Route path="/home" element={<LandingPage socket={socket} />} />
           <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
           <Route path="/LoginPage" element={<LoginPage />} />
           <Route path="/SignUpPage" element={<SignUpPage theme={theme} />} />
