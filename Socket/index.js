@@ -1,7 +1,17 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
 import { collection, addDoc, Timestamp, updateDoc, query, where, orderBy, getDocs } from "firebase/firestore";
+const express = require("express");
+const serverless = require("serverless-http");
+const app = express();
+const router = express.Router();
 
+router.get("/", (req, res) => {
+    res.send("App is running..");
+});
+
+app.use("/.netlify/functions/app", router);
+module.exports.handler = serverless(app);
 const io = new Server({
   cors: {
     origin: [
