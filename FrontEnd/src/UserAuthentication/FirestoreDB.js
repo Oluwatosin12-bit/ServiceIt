@@ -98,6 +98,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       createdAt,
       vendorUsername,
       vendorUID: userID,
+      postID: generatedID
     };
 
     if (userID === null) {

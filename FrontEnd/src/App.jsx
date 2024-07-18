@@ -39,7 +39,7 @@ function App() {
   }, [userUID]);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io("https://serviceitbackend.onrender.com");
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
