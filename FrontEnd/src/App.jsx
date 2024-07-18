@@ -76,7 +76,8 @@ function App() {
 
 
   return (
-    <Router>
+    <>
+      <Router>
       <ThemeProvider>
         <Routes>
           <Route path="/" element={<LandingPage socket={socket} />} />
@@ -124,6 +125,7 @@ function App() {
         </Routes>
       </ThemeProvider>
     </Router>
+    </>
   );
 }
 
