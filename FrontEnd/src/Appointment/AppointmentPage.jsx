@@ -103,7 +103,7 @@ function AppointmentPage({ userData, socket }) {
       <div className="appointments">
         <h2>Pending Appointments</h2>
         {pendingAppointmentData.map((appointment) => (
-          <div key={appointment.id} className="appointmentTab">
+          <div key={appointment.docID} className="appointmentTab">
             <div className="appointmentInfo">
               {appointment.vendorUID === userID && (
                 <p className="appointmentUser">
@@ -143,6 +143,7 @@ function AppointmentPage({ userData, socket }) {
                   className="appointmentButtons"
                   onClick={() =>
                     handleDeclinedAppointment(
+                      appointment,
                       appointment.customerUID,
                       appointment.vendorUID,
                       appointment.docID,
@@ -159,7 +160,7 @@ function AppointmentPage({ userData, socket }) {
 
         <h2>Upcoming Appointments</h2>
         {upcomingAppointmentData.map((appointment) => (
-          <div key={appointment.id} className="appointmentTab">
+          <div key={appointment.docID} className="appointmentTab">
             <div className="appointmentInfo">
               <p className="appointmentUser">{appointment.vendorUsername}</p>
               <p className="appointmentTitle">{appointment.appointmentTitle}</p>
@@ -182,9 +183,9 @@ function AppointmentPage({ userData, socket }) {
                   handleDeclinedAppointment(
                     appointment,
                     appointment.customerUID,
-                    userID,
+                    appointment.vendorUID,
                     appointment.docID,
-                    4
+                    DECLINED_ACTION_TYPE
                   )
                 }
               >

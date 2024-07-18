@@ -19,6 +19,7 @@ function FavoritesPage({ userData }) {
 
     return () => unsubscribe();
   }, [userID]);
+
   if (userFavoritesData.length === 0) {
     return (
       <div className={`appointmentPage ${theme}`}>
@@ -36,7 +37,7 @@ function FavoritesPage({ userData }) {
       <div className="stackedNotifications">
         {userFavoritesData.map((favorite, index) => (
           <div key={index} className="notificationTab">
-            <p>{favorite.post.postID}</p>
+            <p>{favorite.post.serviceTitle}</p>
           </div>
         ))}
       </div>

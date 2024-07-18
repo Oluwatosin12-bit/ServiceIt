@@ -4,7 +4,7 @@ import {
   feedCategory,
   addToFavoriteDocs,
   postsFromFavorites,
-  checkLike,
+  isLiked,
 } from "./RecommendationDB";
 import "./PostFullDisplay.css";
 
@@ -21,7 +21,7 @@ function PostFullDisplay({
 
   useEffect(() => {
     const postID = post?.postID;
-    const unsubscribe = checkLike(userUID, postID, (liked) => {
+    const unsubscribe = isLiked(userUID, postID, (liked) => {
       setFavorited(liked);
     });
     return () => unsubscribe();

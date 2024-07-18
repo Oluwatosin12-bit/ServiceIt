@@ -42,7 +42,7 @@ const addToFavoriteDocs = async(userUID, favorited, post) =>{
   }
 }
 
-const checkLike = (userUID, postID, callback) =>{
+const isLiked = (userUID, postID, callback) =>{
   const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION)
   const q = query(favoritesRef, where("post.postID", "==", postID));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -123,4 +123,4 @@ const fetchUserFeed = async (userID) => {
 };
 
 
-export { fetchUserFeed, feedCategory, addToFavoriteDocs, postsFromFavorites, checkLike };
+export { fetchUserFeed, feedCategory, addToFavoriteDocs, postsFromFavorites, isLiked};

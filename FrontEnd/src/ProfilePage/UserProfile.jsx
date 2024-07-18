@@ -39,7 +39,7 @@ function UserProfilePage({ userUID, userData }) {
 
   const handleClickOutside = (event) => {
     if (
-      signOutDropdownRef.current &&
+      signOutDropdownRef.current !==null &&
       !signOutDropdownRef.current.contains(event.target)
     ) {
       setisSignOutDropdownVisible(false);
@@ -47,7 +47,7 @@ function UserProfilePage({ userUID, userData }) {
 
     for (let postId in deletePostDropdownRef.current) {
       if (
-        deletePostDropdownRef.current[postId] &&
+        deletePostDropdownRef.current[postId] !==null &&
         !deletePostDropdownRef.current[postId].contains(event.target)
       ) {
         setisDeletePostDropdownVisible(null);
