@@ -4,8 +4,7 @@ import "./LandingPage.css";
 
 function LandingPage() {
   const { theme, setTheme } = useTheme();
-  const [menuOpen, setMenuOpen] = useState(false);
-
+  const [ismenuOpen, setIsMenuOpen] = useState(false);
   const landingPageContentRef = useRef(null);
 
   const handleThemeChange = () => {
@@ -13,7 +12,7 @@ function LandingPage() {
   };
 
   const handleMenuToggle = () => {
-    setMenuOpen(!menuOpen);
+    setIsMenuOpen(!ismenuOpen);
     document.body.classList.toggle("stopScrolling");
   };
 
@@ -21,7 +20,7 @@ function LandingPage() {
     <main className="stopScrolling">
       <div
         ref={landingPageContentRef}
-        className={`landingPageContent ${theme} ${menuOpen ? "active" : ""}`}
+        className={`landingPageContent ${theme} ${ismenuOpen ? "active" : ""}`}
       >
         <img src="src/Images/shape.png" alt="shape" className="shape" />
         <header>
@@ -32,7 +31,7 @@ function LandingPage() {
             </div>
 
             <div className="links">
-              <ul className={menuOpen ? "active" : ""}>
+              <ul className={ismenuOpen ? "active" : ""}>
                 <li>
                   <a href="#">About Us</a>
                 </li>
@@ -53,7 +52,7 @@ function LandingPage() {
             </div>
 
             <div
-              className={`overlay ${menuOpen ? "active" : ""}`}
+              className={`overlay ${ismenuOpen ? "active" : ""}`}
               onClick={handleMenuToggle}
             ></div>
 

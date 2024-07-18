@@ -1,19 +1,31 @@
 import { useNavigate } from "react-router-dom";
-import {useState, useEffect} from "react";
-import { feedCategory, addToFavoriteDocs, postsFromFavorites, checkLike } from "./RecommendationDB";
+import { useState, useEffect } from "react";
+import {
+  feedCategory,
+  addToFavoriteDocs,
+  postsFromFavorites,
+  checkLike,
+} from "./RecommendationDB";
 import "./PostFullDisplay.css";
 
-function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) {
-  const [favorited, setFavorited] = useState("")
-  const [notificationSent, setNotificationSent] = useState(false)
+function PostFullDisplay({
+  userUID,
+  post,
+  isShown,
+  onClose,
+  userData,
+  socket,
+}) {
+  const [favorited, setFavorited] = useState("");
+  const [notificationSent, setNotificationSent] = useState(false);
 
   useEffect(() => {
     const postID = post?.postID;
     const unsubscribe = checkLike(userUID, postID, (liked) => {
-        setFavorited(liked);
+      setFavorited(liked);
     });
     return () => unsubscribe();
-}, [post.postID]);
+  }, [post.postID]);
 
   const navigate = useNavigate();
   const handleBookingFormOpen = () => {
@@ -25,12 +37,12 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
   const createdAt = post.createdAt.toDate();
 
   //add to favorites document, extract post category for recommendation
-  const handleNotification = async(type) =>{
-    try{
+  const handleNotification = async (type) => {
+    try {
       setFavorited(!favorited);
-      feedCategory(userUID, post.serviceCategories)
-      await addToFavoriteDocs(userUID, favorited, post)
-      if(notificationSent === false) {
+      feedCategory(userUID, post.serviceCategories);
+      await addToFavoriteDocs(userUID, favorited, post);
+      if (notificationSent === false) {
         socket.emit("sendNotification", {
           userID: userUID,
           senderID: userUID,
@@ -39,14 +51,13 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
           receiverName: post.vendorUsername,
           postTitle: post.serviceTitle,
           type,
-        })
+        });
       }
-      setNotificationSent(true)
-    } catch(error){
-      throw new Error(`Error updating likes: ${error.message}`)
+      setNotificationSent(true);
+    } catch (error) {
+      throw new Error(`Error updating likes: ${error.message}`);
     }
-
-  }
+  };
 
   return (
     <div className="modalOverlay" onClick={onClose}>
@@ -73,7 +84,17 @@ function PostFullDisplay({ userUID, post, isShown, onClose, userData, socket }) 
               </p>
               <button onClick={handleBookingFormOpen}>Book Now</button>
               <span>
-                {favorited ? (<i className="fa-solid fa-heart hearted" onClick={()=>handleNotification(1)}></i>) : (<i className="fa-regular fa-heart" onClick={()=>handleNotification(1)}></i>)}
+                {favorited ? (
+                  <i
+                    className="fa-solid fa-heart hearted"
+                    onClick={() => handleNotification(1)}
+                  />
+                ) : (
+                  <i
+                    className="fa-regular fa-heart"
+                    onClick={() => handleNotification(1)}
+                  />
+                )}
               </span>
               <p className="fullDisplayTimestamp">
                 Created at: {createdAt.toLocaleString()}

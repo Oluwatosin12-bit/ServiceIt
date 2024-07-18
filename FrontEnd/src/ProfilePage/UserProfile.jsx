@@ -26,7 +26,7 @@ function UserProfilePage({ userUID, userData }) {
   const [isDeletePostDropdownVisible, setisDeletePostDropdownVisible] =
     useState(false);
   const signOutDropdownRef = useRef(null);
-  const deletePostDropdownRef = useRef([]);
+  const deletePostDropdownRef = useRef({});
 
   const toggleSignOutDropdown = () => {
     setisSignOutDropdownVisible(!isSignOutDropdownVisible);
@@ -36,17 +36,22 @@ function UserProfilePage({ userUID, userData }) {
       isDeletePostDropdownVisible === index ? null : index
     );
   };
+
   const handleClickOutside = (event) => {
     if (
       signOutDropdownRef.current &&
       !signOutDropdownRef.current.contains(event.target)
     ) {
       setisSignOutDropdownVisible(false);
-    } else if (
-      deletePostDropdownRef.current &&
-      !deletePostDropdownRef.current.contains(event.target)
-    ) {
-      setisDeletePostDropdownVisible(false);
+    }
+
+    for (let postId in deletePostDropdownRef.current) {
+      if (
+        deletePostDropdownRef.current[postId] &&
+        !deletePostDropdownRef.current[postId].contains(event.target)
+      ) {
+        setisDeletePostDropdownVisible(null);
+      }
     }
   };
   useEffect(() => {
@@ -125,7 +130,7 @@ function UserProfilePage({ userUID, userData }) {
         "Are you sure you want to delete this post?"
       );
       if (deletePostConfirmation === true) {
-        await deletePost(userUID, postID);
+        deletePost(userUID, postID);
       }
     } catch (error) {
       throw new Error(`Error deleting Post ${error.message}`);
@@ -154,7 +159,7 @@ function UserProfilePage({ userUID, userData }) {
                 className="icon ellipsisIcon"
                 onClick={toggleSignOutDropdown}
               >
-                <i className="fa-solid fa-ellipsis-vertical"></i>
+                <i className="fa-solid fa-ellipsis-vertical" />
               </span>
               {isSignOutDropdownVisible && (
                 <div className="dropdownMenu">
@@ -167,7 +172,7 @@ function UserProfilePage({ userUID, userData }) {
             <div className="bioContainer">
               <p>Bio:</p>
               <span className="icon editIcon">
-                <i className="fa-solid fa-pen-to-square"></i>
+                <i className="fa-solid fa-pen-to-square" />
               </span>
             </div>
             <p>I am an amazing service provider</p>
@@ -277,39 +282,33 @@ function UserProfilePage({ userUID, userData }) {
         </Modal>
       </div>
       <div className="userPosts">
-        <div className="userPostsPreview">
-          {userPosts.map((post, index) => {
-            return (
-              <div key={index} className="eachPost">
+      <div className="userPostsPreview">
+        {userPosts.map((post, index) => (
+          <div key={index} className="eachPost">
+            <div className="postHeading">
+              <p>{post.serviceTitle}</p>
+              <span
+                className="icon ellipsisIcon"
+                onClick={() => toggleDeletePostDropdown(index)}
+              >
+                <i className="fa-solid fa-ellipsis-vertical" />
+              </span>
+              {isDeletePostDropdownVisible === index && (
                 <div
-                  className="postHeading"
                   ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
+                  className="deleteDropDown"
                 >
-                  <p>{post.serviceTitle}</p>
-                  <span
-                    className="icon ellipsisIcon"
-                    onClick={() => toggleDeletePostDropdown(index)}
-                  >
-                    <i className="fa-solid fa-ellipsis-vertical"></i>
-                  </span>
-                  {isDeletePostDropdownVisible === index && (
-                    <div className="dropdownMenu">
-                      <ul>
-                        <li
-                          onClick={() => handleDeletePost(userUID, post.postID)}
-                        >
-                          Delete Post
-                        </li>
-                      </ul>
-                    </div>
-                  )}
+                  <ul>
+                    <li onClick={() => handleDeletePost(userUID, post.postID)}>Delete Post</li>
+                  </ul>
                 </div>
-                <img src={post.imageURL} alt="post photo" />
-              </div>
-            );
-          })}
-        </div>
+              )}
+            </div>
+            <img src={post.imageURL} alt="post photo" />
+          </div>
+        ))}
       </div>
+    </div>
     </div>
   );
 }

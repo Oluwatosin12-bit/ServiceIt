@@ -60,7 +60,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (socket) {
+    if (socket !==null) {
       socket.on("firstEvent", (msg) => {
       });
     }
@@ -68,7 +68,7 @@ function App() {
 
 
   useEffect(() => {
-    if (socket && userUID) {
+    if (socket !==null && userUID !==null) {
       socket.emit("newUser", userUID);
     }
   }, [socket, userUID]);
@@ -81,8 +81,8 @@ function App() {
           <Route path="/" element={<LandingPage socket={socket} />} />
           <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
           <Route path="/LoginPage" element={<LoginPage />} />
-          <Route path="/SignUpPage" element={<SignUpPage theme={theme} />} />
-          <Route path="/SignUpPages" element={<AlternateSignUp theme={theme} />} />
+          <Route path="/SignUpPage" element={<SignUpPage />} />
+          <Route path="/SignUpPages" element={<AlternateSignUp />} />
           <Route path="/ResetPasswordPage" element={<ResetPasswordPage />} />
           <Route element={<Layout userData={userData} socket={socket} />}>
             <Route

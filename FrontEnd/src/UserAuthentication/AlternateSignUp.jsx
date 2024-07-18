@@ -2,9 +2,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { registerUser } from "./Auth";
 import { CATEGORIES } from "../Categories";
+import { useTheme } from "../UseContext";
 import "./EntryPage.css";
 
-function SignUpPage({ theme }) {
+function SignUpPage() {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

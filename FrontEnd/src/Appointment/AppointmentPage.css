@@ -11,13 +11,14 @@
   flex: 1;
   align-items: center;
 }
-.appointments{
+.appointments {
   width: 100%;
   max-width: 81rem;
   padding: 0 1rem;
 }
 
-h2, p {
+h2,
+p {
   color: var(--darkTwo);
 }
 
@@ -56,7 +57,7 @@ h2, p {
   align-items: center;
   font-size: 0.9rem;
   margin: 0.2rem 0;
-  color: var(--lightOne)
+  color: var(--lightOne);
 }
 
 .appointmentDetail i {
@@ -86,33 +87,38 @@ h2, p {
 }
 
 @media (max-width: 1300px) {
-  .appointments, .appointmentTab {
+  .appointments,
+  .appointmentTab {
     max-width: 70rem;
   }
 }
 
 @media (max-width: 1100px) {
-  .appointments, .appointmentTab {
+  .appointments,
+  .appointmentTab {
     max-width: 60rem;
   }
 }
 
 @media (max-width: 900px) {
-  .appointments, .appointmentTab {
+  .appointments,
+  .appointmentTab {
     max-width: 50rem;
   }
 }
 
 @media (max-width: 700px) {
-  .appointments, .appointmentTab {
+  .appointments,
+  .appointmentTab {
     max-width: 40rem;
   }
 }
 
 @media (max-width: 500px) {
-  .appointments, .appointmentTab {
+  .appointments,
+  .appointmentTab {
     max-width: 30rem;
-    padding: 1rem; /* Reduce padding for smaller screens */
+    padding: 1rem;
   }
 
   .appointmentTab {
@@ -129,33 +135,3 @@ h2, p {
     width: 100%;
   }
 }
-
-
-/* .appointmentTab {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--lightOne);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  margin: 1rem 0;
-  border-radius: 8px;
-  max-width: 81rem;
-}
-
-.appointmentInfo {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.appointmentActions {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-.appointmentActions button {
-  margin-top: 0.5rem;
-} */

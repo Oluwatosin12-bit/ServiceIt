@@ -35,8 +35,8 @@ function NotificationsPage({ userData }) {
     <div className={`notificationsSection ${theme}`}>
       <h2 className="notificationTitle">User Notifications:</h2>
       <div className="stackedNotifications">
-        {userNotificationData.map((notification, index) => (
-          <div key={index} className="notificationTab">
+        {userNotificationData.map((notification) => (
+          <div key={notification.id} className="notificationTab">
             <p>{notification.message}</p>
           </div>
         ))}

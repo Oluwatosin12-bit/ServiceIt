@@ -78,8 +78,8 @@ function Header({ userData, socket }) {
       </nav>
       {isNotificationsOpen && notifications.length > 0 && (
         <div className="popNotifications">
-          {notifications.map((notification, index) => (
-            <div key={index}>
+          {notifications.map((notification) => (
+            <div key={notification.id}>
               <p>{notification.message}</p>
             </div>
           ))}
