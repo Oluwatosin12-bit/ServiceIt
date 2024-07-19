@@ -1,27 +1,42 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
+import cors from "cors";
+import express from "express";
 import { collection, addDoc, Timestamp, updateDoc, query, where, orderBy, getDocs } from "firebase/firestore";
 const PORT = process.env.PORT || 3000;
+const app = express();
 
-const io = new Server({
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "http://localhost:5173/BookingPage",
+    "http://localhost:5173/MainPage",
+    "http://localhost:5173/Header",
+    "http://localhost:5173/UserProfile",
+    "http://localhost:5173/NotificationsPage",
+    "https://serviceitt.netlify.app",
+    "https://serviceitt.netlify.app/BookingPage",
+    "https://serviceitt.netlify.app/MainPage",
+    "https://serviceitt.netlify.app/Header",
+    "https://serviceitt.netlify.app/UserProfile",
+    "https://serviceitt.netlify.app/NotificationsPage",
+    "https://serviceitbackend.onrender.com"
+  ],
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+
+const server = app.listen(PORT, () => {
+
+});
+
+const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:5173/BookingPage",
-      "http://localhost:5173/MainPage",
-      "http://localhost:5173/Header",
-      "http://localhost:5173/UserProfile",
-      "http://localhost:5173/NotificationsPage",
-      "https://serviceitt.netlify.app/BookingPage",
-      "https://serviceitt.netlify.app/MainPage",
-      "https://serviceitt.netlify.app/Header",
-      "https://serviceitt.netlify.app/UserProfile",
-      "https://serviceitt.netlify.app/NotificationsPage",
-      "https://serviceitbackend.onrender.com"
-    ],
+    origin: "*",
+    methods: ["GET", "POST"],
     pingInterval: 25000,
     pingTimeout: 60000,
-  },
+  }
 });
 
 let onlineUsers = [];
@@ -147,7 +162,4 @@ io.on("connection", (socket) => {
   );
 
   io.emit("firstEvent", "hello, this is test");
-});
-
-io.listen(PORT, () => {
 });
