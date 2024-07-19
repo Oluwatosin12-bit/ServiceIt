@@ -25,8 +25,8 @@ const registerUser = async (
     const userId = newUser.user.uid;
     const userAddedToDB = await addUser(
       userId,
-      firstName,
       name,
+      username,
       email,
       selectedCategories || []
     );

@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
 import { collection, addDoc, Timestamp, updateDoc, query, where, orderBy, getDocs } from "firebase/firestore";
+const PORT = process.env.PORT || 3000;
 
 const io = new Server({
   cors: {
@@ -11,6 +12,11 @@ const io = new Server({
       "http://localhost:5173/Header",
       "http://localhost:5173/UserProfile",
       "http://localhost:5173/NotificationsPage",
+      "https://serviceitt.netlify.app/BookingPage",
+      "https://serviceitt.netlify.app/MainPage",
+      "https://serviceitt.netlify.app/Header",
+      "https://serviceitt.netlify.app/UserProfile",
+      "https://serviceitt.netlify.app/NotificationsPage",
       "https://serviceitbackend.onrender.com"
     ],
     pingInterval: 25000,
@@ -141,4 +147,7 @@ io.on("connection", (socket) => {
   );
 
   io.emit("firstEvent", "hello, this is test");
+});
+
+io.listen(PORT, () => {
 });

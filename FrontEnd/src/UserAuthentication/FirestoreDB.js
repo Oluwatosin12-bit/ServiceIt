@@ -19,8 +19,7 @@ const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
 async function addUser(
   userID,
-  firstName,
-  lastName,
+  name,
   userName,
   signUpEmail,
   selectedCategories
@@ -28,8 +27,7 @@ async function addUser(
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
   return await setDoc(userDocRef, {
     userID: userID,
-    FirstName: firstName,
-    LastName: lastName,
+    Name: name,
     UserName: userName,
     Email: signUpEmail,
     feedCategories: selectedCategories || [],

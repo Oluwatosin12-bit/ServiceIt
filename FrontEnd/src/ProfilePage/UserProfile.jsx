@@ -21,6 +21,7 @@ function UserProfilePage({ userUID, userData }) {
   const [isFormValid, setIsFormValid] = useState(false);
   const [serviceCategories, setSelectedCategories] = useState([]);
   const [availableCategories] = useState(CATEGORIES);
+  const [newCategory, setNewCategory] = useState('');
   const [isSignOutDropdownVisible, setisSignOutDropdownVisible] =
     useState(false);
   const [isDeletePostDropdownVisible, setisDeletePostDropdownVisible] =
@@ -39,7 +40,7 @@ function UserProfilePage({ userUID, userData }) {
 
   const handleClickOutside = (event) => {
     if (
-      signOutDropdownRef.current &&
+      signOutDropdownRef.current !== null &&
       !signOutDropdownRef.current.contains(event.target)
     ) {
       setisSignOutDropdownVisible(false);
@@ -47,7 +48,7 @@ function UserProfilePage({ userUID, userData }) {
 
     for (let postId in deletePostDropdownRef.current) {
       if (
-        deletePostDropdownRef.current[postId] &&
+        deletePostDropdownRef.current[postId] !== null &&
         !deletePostDropdownRef.current[postId].contains(event.target)
       ) {
         setisDeletePostDropdownVisible(null);
@@ -77,6 +78,12 @@ function UserProfilePage({ userUID, userData }) {
       (category) => !serviceCategories.includes(category)
     );
     setSelectedCategories([...serviceCategories, ...newCategories]);
+  };
+  const addCategory = () => {
+    if (newCategory.trim() !== '' && !setSelectedCategories.includes(newCategory)) {
+      setSelectedCategories([...serviceCategories, newCategory]);
+      setNewCategory('');
+    }
   };
   const [formData, setFormData] = useState({
     serviceCategories: [],
@@ -187,6 +194,7 @@ function UserProfilePage({ userUID, userData }) {
         <Modal isShown={isCreatePostModalShown} onClose={toggleModal}>
           <form onSubmit={handleFormSubmit} className="postForm">
             <div className="formGroup">
+              <h2 className="formHeading">Create Post</h2>
               <label htmlFor="serviceTitle">Title:</label>
               <input
                 type="text"
@@ -221,6 +229,17 @@ function UserProfilePage({ userUID, userData }) {
                   </option>
                 ))}
               </select>
+              <input
+                type="text"
+                placeholder="Type new category..."
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    addCategory();
+                  }
+                }}
+              />
             </div>
             <div>
               <label htmlFor="serviceLocations">Serviceable Location(s):</label>
@@ -282,33 +301,37 @@ function UserProfilePage({ userUID, userData }) {
         </Modal>
       </div>
       <div className="userPosts">
-      <div className="userPostsPreview">
-        {userPosts.map((post, index) => (
-          <div key={index} className="eachPost">
-            <div className="postHeading">
-              <p>{post.serviceTitle}</p>
-              <span
-                className="icon ellipsisIcon"
-                onClick={() => toggleDeletePostDropdown(index)}
-              >
-                <i className="fa-solid fa-ellipsis-vertical" />
-              </span>
-              {isDeletePostDropdownVisible === index && (
-                <div
-                  ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
-                  className="deleteDropDown"
+        <div className="userPostsPreview">
+          {userPosts.map((post, index) => (
+            <div key={index} className="eachPost">
+              <div className="postHeading">
+                <p>{post.serviceTitle}</p>
+                <span
+                  className="icon ellipsisIcon"
+                  onClick={() => toggleDeletePostDropdown(index)}
                 >
-                  <ul>
-                    <li onClick={() => handleDeletePost(userUID, post.postID)}>Delete Post</li>
-                  </ul>
-                </div>
-              )}
+                  <i className="fa-solid fa-ellipsis-vertical" />
+                </span>
+                {isDeletePostDropdownVisible === index && (
+                  <div
+                    ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
+                    className="deleteDropDown"
+                  >
+                    <ul>
+                      <li
+                        onClick={() => handleDeletePost(userUID, post.postID)}
+                      >
+                        Delete Post
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <img src={post.imageURL} alt="post photo" />
             </div>
-            <img src={post.imageURL} alt="post photo" />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   );
 }

@@ -32,6 +32,10 @@
   margin: 0 5px;
 }
 
+.formHeading{
+  text-align: center;
+}
+
 .postForm {
   max-width: 600px;
   margin: 0 auto;

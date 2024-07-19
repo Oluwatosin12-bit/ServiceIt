@@ -51,9 +51,6 @@ function App() {
     newSocket.on("reconnect", (attemptNumber) => {
     });
 
-    newSocket.on("firstEvent", (msg) => {
-    });
-
     return () => {
       newSocket.disconnect();
     };
