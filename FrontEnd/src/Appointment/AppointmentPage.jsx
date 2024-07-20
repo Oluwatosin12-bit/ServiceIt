@@ -16,6 +16,8 @@ function AppointmentPage({ userData, socket }) {
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
   const userID = userData?.userID;
+  const ACCEPTED_ACTION_TYPE = 3
+  const DECLINED_ACTION_TYPE = 4
   const { theme } = useTheme();
 
   const handleAcceptedAppointment = async (
@@ -100,8 +102,8 @@ function AppointmentPage({ userData, socket }) {
     <div className={`appointmentPage ${theme}`}>
       <div className="appointments">
         <h2>Pending Appointments</h2>
-        {pendingAppointmentData.map((appointment, index) => (
-          <div key={index} className="appointmentTab">
+        {pendingAppointmentData.map((appointment) => (
+          <div key={appointment.docID} className="appointmentTab">
             <div className="appointmentInfo">
               {appointment.vendorUID === userID && (
                 <p className="appointmentUser">
@@ -131,7 +133,7 @@ function AppointmentPage({ userData, socket }) {
                       appointment.customerUID,
                       appointment.vendorUID,
                       appointment.docID,
-                      3
+                      ACCEPTED_ACTION_TYPE
                     )
                   }
                 >
@@ -141,10 +143,11 @@ function AppointmentPage({ userData, socket }) {
                   className="appointmentButtons"
                   onClick={() =>
                     handleDeclinedAppointment(
+                      appointment,
                       appointment.customerUID,
                       appointment.vendorUID,
                       appointment.docID,
-                      4
+                      DECLINED_ACTION_TYPE
                     )
                   }
                 >
@@ -156,8 +159,8 @@ function AppointmentPage({ userData, socket }) {
         ))}
 
         <h2>Upcoming Appointments</h2>
-        {upcomingAppointmentData.map((appointment, index) => (
-          <div key={index} className="appointmentTab">
+        {upcomingAppointmentData.map((appointment) => (
+          <div key={appointment.docID} className="appointmentTab">
             <div className="appointmentInfo">
               <p className="appointmentUser">{appointment.vendorUsername}</p>
               <p className="appointmentTitle">{appointment.appointmentTitle}</p>
@@ -180,9 +183,9 @@ function AppointmentPage({ userData, socket }) {
                   handleDeclinedAppointment(
                     appointment,
                     appointment.customerUID,
-                    userID,
+                    appointment.vendorUID,
                     appointment.docID,
-                    4
+                    DECLINED_ACTION_TYPE
                   )
                 }
               >

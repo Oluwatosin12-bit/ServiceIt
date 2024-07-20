@@ -96,6 +96,7 @@ button:disabled {
 
 .eachPost {
   margin: 5px;
+  position: relative;
 }
 
 .userPostsPreview img {
@@ -126,18 +127,18 @@ button:disabled {
   z-index: 1;
 }
 
-.dropdownMenu ul {
+.dropdownMenu ul, .deleteDropDown ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.dropdownMenu li {
+.dropdownMenu li, .deleteDropDown li {
   padding: 8px 16px;
   cursor: pointer;
 }
 
-.dropdownMenu li:hover {
+.dropdownMenu li:hover, .deleteDropDown li:hover{
   background-color: var(--hoverColor);
 }
 
@@ -151,6 +152,21 @@ p {
   width: 200px;
   margin-left: 5px;
 }
+.postHeading {
+  display: flex;
+  justify-content: space-between;
+}
+
+.deleteDropDown{
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: var(--lightOne);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
 
 @media (max-width: 1000px) {
   .userPostsPreview img {
@@ -161,12 +177,7 @@ p {
   }
 }
 
-@media (max-width: 839px) {
-  .userProfileSection {
-    margin-top: 350px;
-  }
-}
-@media (max-width: 469px) {
+@media (max-width: 629px) {
   .userProfileSection {
     margin-top: 320px;
   }

@@ -65,7 +65,7 @@ const requestAppointment = async (
 
 const generateRandomID = () => {
   return Math.random().toString(36).substring(2);
-}
+};
 
 const fetchNotifications = (userID, callback) => {
   try {
@@ -93,6 +93,29 @@ const fetchNotifications = (userID, callback) => {
         }
       });
       callback(notifications);
+    });
+    return unsubscribe;
+  } catch (error) {
+    throw new Error(`Error sending appointment notification: ${error.message}`);
+  }
+};
+
+const fetchUserFavorites = (userID, callback) => {
+  try {
+    if (userID === undefined) {
+      throw new Error(`Invalid userID: ${error.message}`);
+    }
+    const userFavoritesRef = query(
+      collection(database, DATABASE_FOLDER_NAME, userID, "Favorites"),
+      
+    );
+    const unsubscribe = onSnapshot(userFavoritesRef, (snapshot) => {
+      const favorites = [];
+      snapshot.forEach((doc) => {
+        const favorite = doc.data();
+        favorites.push(favorite);
+      });
+      callback(favorites);
     });
     return unsubscribe;
   } catch (error) {
@@ -149,6 +172,12 @@ const fetchUpcomingAppointments = (userID, callback) => {
       const upcomingAppointmentsData = [];
       querySnapshot.forEach((doc) => {
         upcomingAppointmentsData.push({ docID: doc.id, ...doc.data() });
+      });
+
+      upcomingAppointmentsData.sort((a, b) => {
+        const dateA = new Date(a.appointmentDate);
+        const dateB = new Date(b.appointmentDate);
+        return dateA - dateB;
       });
 
       callback(upcomingAppointmentsData);
@@ -213,8 +242,10 @@ const declineAppointment = async (userID, vendorID, appointmentID) => {
 export {
   requestAppointment,
   fetchNotifications,
+  fetchUserFavorites,
   fetchPendingAppointments,
   fetchUpcomingAppointments,
   acceptAppointment,
   declineAppointment,
+  generateRandomID,
 };

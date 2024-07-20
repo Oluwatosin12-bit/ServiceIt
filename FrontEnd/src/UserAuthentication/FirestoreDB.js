@@ -9,8 +9,10 @@ import {
   getDoc,
   onSnapshot,
   Timestamp,
+  deleteDoc
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {generateRandomID} from "../BookingPage/BookingDB"
 import { v4 } from "uuid";
 
 const DATABASE_FOLDER_NAME = "users";
@@ -30,7 +32,7 @@ async function addUser(
     LastName: lastName,
     UserName: userName,
     Email: signUpEmail,
-    selectedCategories: selectedCategories || [],
+    feedCategories: selectedCategories || [],
   });
 }
 
@@ -87,6 +89,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       formData.serviceCategories[0],
       imageUpload
     );
+    const generatedID = generateRandomID();
     const createdAt = Timestamp.now();
     const vendorUsername = userData.UserName;
     const formDataWithImage = {
@@ -94,6 +97,8 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       imageURL,
       createdAt,
       vendorUsername,
+      vendorUID: userID,
+      postID: generatedID
     };
 
     if (userID === null) {
@@ -102,12 +107,18 @@ const createPost = async (formData, imageUpload, userID, userData) => {
 
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
     const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
-    const postDocRef = doc(postsCollectionRef, formDataWithImage.serviceTitle);
+    const postDocRef = doc(postsCollectionRef, generatedID);
     await setDoc(postDocRef, formDataWithImage);
   } catch (error) {
     throw new Error(`Error creating post: ${error.message}`);
   }
 };
+
+const deletePost = (userUID, postID) =>{
+  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, POSTS_COLLECTION);
+  const postDocRef = doc(favoritesRef, postID);
+  deleteDoc(postDocRef);
+}
 
 const fetchUserPosts = (userID, callback) => {
   if (userID === null) {
@@ -131,61 +142,11 @@ const fetchUserPosts = (userID, callback) => {
   return unsubscribe;
 };
 
-const fetchUserFeed = async (userID) => {
-  if (userID === null) {
-    return;
-  }
-  const userData = await getUserData(userID);
-  const userCategoryInterest = userData.selectedCategories || [];
-
-  const usersSnapshot = await getDocs(
-    collection(database, DATABASE_FOLDER_NAME)
-  );
-  const allPosts = [];
-  for (const userDoc of usersSnapshot.docs) {
-    const userId = userDoc.id;
-    const userPostsSnapshot = collection(
-      database,
-      `${DATABASE_FOLDER_NAME}/${userId}/${POSTS_COLLECTION}`
-    );
-    const postsSnapshot = await getDocs(userPostsSnapshot);
-    postsSnapshot.forEach((postDoc) => {
-      if (postDoc.exists) {
-        const postData = postDoc.data();
-        if (
-          !userData ||
-          !userData.selectedCategories ||
-          userData.selectedCategories.length === 0
-        ) {
-          allPosts.push({
-            userId: userId,
-            postId: postDoc.id,
-            ...postData,
-          });
-        } else {
-          if (
-            postData.serviceCategories.some((category) =>
-              userCategoryInterest.includes(category)
-            )
-          ) {
-            allPosts.push({
-              userId: userId,
-              postId: postDoc.id,
-              ...postData,
-            });
-          }
-        }
-      }
-    });
-  }
-  return allPosts;
-};
-
 export {
   addUser,
   isUsernameUnique,
   getUserData,
   createPost,
   fetchUserPosts,
-  fetchUserFeed,
+  deletePost
 };

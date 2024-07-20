@@ -2,20 +2,19 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  useLocation,
 } from "react-router-dom";
 import Layout from "./Layout";
-import Header from "./Header";
 import LoginPage from "./UserAuthentication/LoginPage";
 import SignUpPage from "./UserAuthentication/SignUpPage";
 import LandingPage from "./UserAuthentication/LandingPage";
+import AlternateSignUp from "./UserAuthentication/AlternateSignUp"
 import ResetPasswordPage from "./UserAuthentication/ResetPasswordPage";
 import MainPage from "./HomePage/MainPage";
 import UserProfile from "./ProfilePage/UserProfile";
 import BookingForm from "./BookingPage/BookingPage";
 import NotificationsPage from "./Notifications/NotificationsPage";
 import AppointmentPage from "./Appointment/AppointmentPage";
-import AlternateSignUp from "./UserAuthentication/AlternateSignUp"
+import FavoritesPage from "./Favorites/FavoritesPage";
 import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
@@ -40,7 +39,7 @@ function App() {
   }, [userUID]);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io("https://serviceitbackend.onrender.com");
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
@@ -61,7 +60,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (socket) {
+    if (socket !==null) {
       socket.on("firstEvent", (msg) => {
       });
     }
@@ -69,21 +68,21 @@ function App() {
 
 
   useEffect(() => {
-    if (socket && userUID) {
+    if (socket !==null && userUID !==null) {
       socket.emit("newUser", userUID);
     }
   }, [socket, userUID]);
 
 
   return (
-    <Router>
+      <Router>
       <ThemeProvider>
         <Routes>
           <Route path="/" element={<LandingPage socket={socket} />} />
           <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
           <Route path="/LoginPage" element={<LoginPage />} />
-          <Route path="/SignUpPage" element={<SignUpPage theme={theme} />} />
-          <Route path="/SignUpPages" element={<AlternateSignUp theme={theme} />} />
+          <Route path="/SignUpPage" element={<SignUpPage />} />
+          <Route path="/SignUpPages" element={<AlternateSignUp />} />
           <Route path="/ResetPasswordPage" element={<ResetPasswordPage />} />
           <Route element={<Layout userData={userData} socket={socket} />}>
             <Route
@@ -119,6 +118,10 @@ function App() {
             <Route
               path="/AppointmentPage"
               element={<AppointmentPage userData={userData} socket={socket}/>}
+            />
+            <Route
+              path="/FavoritesPage"
+              element={<FavoritesPage userData={userData} socket={socket}/>}
             />
           </Route>
         </Routes>

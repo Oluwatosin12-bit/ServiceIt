@@ -11,6 +11,7 @@ const io = new Server({
       "http://localhost:5173/Header",
       "http://localhost:5173/UserProfile",
       "http://localhost:5173/NotificationsPage",
+      "https://serviceitbackend.onrender.com"
     ],
     pingInterval: 25000,
     pingTimeout: 60000,
@@ -141,5 +142,3 @@ io.on("connection", (socket) => {
 
   io.emit("firstEvent", "hello, this is test");
 });
-
-io.listen(5000);

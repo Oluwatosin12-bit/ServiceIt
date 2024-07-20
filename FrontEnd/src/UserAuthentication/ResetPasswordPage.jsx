@@ -38,8 +38,7 @@ function ResetPasswordPage() {
           type="submit"
           onClick={handleResetPassword}
         >
-          {" "}
-          Reset Password{" "}
+          Reset Password
         </button>
         </form>
       </div>

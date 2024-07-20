@@ -5,7 +5,7 @@ import "./Header.css";
 import NotificationsPage from "./Notifications/NotificationsPage";
 function Header({ userData, socket }) {
   const [notifications, setNotifications] = useState([]);
-  const [openNotifications, setOpenNotifications] = useState(true);
+  const [isNotificationsOpen, setisNotificationsOpen] = useState(true);
   const [invisibleComponent, setInvisibleComponent] = useState(false);
   const { theme, setTheme } = useTheme();
   const handleThemeChange = () => {
@@ -19,9 +19,9 @@ function Header({ userData, socket }) {
       });
     }
   }, [socket]);
-  const handleRead = () => {
+  const handleReadAll = () => {
     setNotifications([]);
-    setOpenNotifications(false);
+    setisNotificationsOpen(false);
   };
 
   return (
@@ -45,7 +45,7 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <NavLink to="">
+            <NavLink to="/FavoritesPage">
               <p>Favorites</p>
             </NavLink>
           </li>
@@ -76,14 +76,14 @@ function Header({ userData, socket }) {
           </li>
         </ul>
       </nav>
-      {openNotifications && notifications.length > 0 && (
+      {isNotificationsOpen && notifications.length > 0 && (
         <div className="popNotifications">
           {notifications.map((notification, index) => (
             <div key={index}>
               <p>{notification.message}</p>
             </div>
           ))}
-          <button className="notificationButton" onClick={handleRead}>
+          <button className="notificationButton" onClick={handleReadAll}>
             Mark as read
           </button>
         </div>
