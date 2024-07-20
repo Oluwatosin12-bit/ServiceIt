@@ -10,7 +10,6 @@ import Modal from "../Modal";
 import { CATEGORIES } from "../Categories";
 import { useTheme } from "../UseContext";
 import "./UserProfile.css";
-import "https://kit.fontawesome.com/61795c539b.js";
 
 function UserProfilePage({ userUID, userData }) {
   const { theme } = useTheme();
@@ -19,9 +18,12 @@ function UserProfilePage({ userUID, userData }) {
   const [userPosts, setUserPosts] = useState([]);
   const [isCreatePostModalShown, setIsCreatePostModalShown] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [serviceCategories, setSelectedCategories] = useState([]);
+  const [serviceCategories, setServiceCategories] = useState([]);
   const [availableCategories] = useState(CATEGORIES);
   const [newCategory, setNewCategory] = useState("");
+  const [searchLocationTerm, setSearchLocationTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedLocations, setSelectedLocations] = useState([]);
   const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
   const [isDeletePostDropdownVisible, setIsDeletePostDropdownVisible] =
@@ -36,6 +38,33 @@ function UserProfilePage({ userUID, userData }) {
     setIsDeletePostDropdownVisible(
       isDeletePostDropdownVisible === index ? null : index
     );
+  };
+
+  useEffect(() => {
+    if (searchLocationTerm.length >= 2) {
+      fetchLocations(searchLocationTerm);
+    } else {
+      setSuggestions([]);
+    }
+  }, [searchLocationTerm]);
+  const fetchLocations = (query) => {
+    fetch(`https://your-api-url?q=${query}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSuggestions(data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+  const addLocation = (location) => {
+    setSelectedLocations([...selectedLocations, location]);
+    setSearchLocationTerm("");
+    setSuggestions([]);
+  };
+
+  const removeLocation = (index) => {
+    const updatedLocations = [...selectedLocations];
+    updatedLocations.splice(index, 1);
+    setSelectedLocations(updatedLocations);
   };
 
   const handleClickOutside = (event) => {
@@ -63,7 +92,7 @@ function UserProfilePage({ userUID, userData }) {
   }, []);
 
   const removeCategory = (category) => {
-    setSelectedCategories(
+    setServiceCategories(
       serviceCategories.filter(
         (serviceCategory) => serviceCategory !== category
       )
@@ -77,14 +106,11 @@ function UserProfilePage({ userUID, userData }) {
     const newCategories = selectedOptions.filter(
       (category) => !serviceCategories.includes(category)
     );
-    setSelectedCategories([...serviceCategories, ...newCategories]);
+    setServiceCategories([...serviceCategories, ...newCategories]);
   };
   const addCategory = () => {
-    if (
-      newCategory.trim() !== "" &&
-      !setSelectedCategories.includes(newCategory)
-    ) {
-      setSelectedCategories([...serviceCategories, newCategory]);
+    if (newCategory.trim() !== "" && !serviceCategories.includes(newCategory)) {
+      setServiceCategories([...serviceCategories, newCategory]);
       setNewCategory("");
     }
   };
@@ -233,6 +259,13 @@ function UserProfilePage({ userUID, userData }) {
                 ))}
               </select>
             </div>
+            <input
+              type="text"
+              placeholder="Add category not listed"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <button onClick={addCategory}>Add Category</button>
             <div>
               <label htmlFor="serviceLocations">Serviceable Location(s):</label>
               <input
@@ -240,9 +273,35 @@ function UserProfilePage({ userUID, userData }) {
                 placeholder="Example: Los Angeles, Birmingham"
                 name="serviceLocations"
                 id="serviceLocations"
-                value={formData.serviceLocations}
-                onChange={(event) => handleChange(event)}
+                value={searchLocationTerm}
+                onChange={(event) =>
+                  setSearchLocationTerm(event.target.value.trim())
+                }
               />
+              <div className="suggestions">
+                {suggestions.map((location, index) => (
+                  <div
+                    key={index}
+                    className="suggestion"
+                    onClick={() => addLocation(location)}
+                  >
+                    {`${location.city}, ${location.state}`}
+                  </div>
+                ))}
+              </div>
+              <div className="selected-locations">
+                {selectedLocations.map((location, index) => (
+                  <div key={index} className="selected-location">
+                    {`${location.city}, ${location.state}`}
+                    <span
+                      className="remove-location"
+                      onClick={() => removeLocation(index)}
+                    >
+                      x
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
             <div>
               <label htmlFor="serviceAvailability">Availability:</label>{" "}

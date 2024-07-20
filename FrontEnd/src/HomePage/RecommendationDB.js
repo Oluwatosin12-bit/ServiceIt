@@ -80,7 +80,7 @@ const addToFavoriteDocs = async (userUID, favorited, post) => {
   }
 };
 
-const checkLike = (userUID, postID, callback) => {
+const isLiked = (userUID, postID, callback) => {
   const favoritesRef = collection(
     database,
     DATABASE_FOLDER_NAME,
@@ -206,6 +206,6 @@ export {
   feedCategory,
   addToFavoriteDocs,
   postsFromFavorites,
-  checkLike,
+  isLiked,
   recommendedVendors
 };

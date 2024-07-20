@@ -117,8 +117,6 @@ const fetchUserFavorites = (userID, callback) => {
       const favorites = [];
       snapshot.forEach((doc) => {
         const favorite = doc.data();
-        console.log(doc.data())
-        console.log(favorite)
         favorites.push(favorite);
       });
       callback(favorites);

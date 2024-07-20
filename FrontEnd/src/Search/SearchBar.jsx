@@ -5,7 +5,7 @@ function SearchBar({filterPosts}) {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchWord(value);
-    filterPosts(value);
+    filterPosts([], value);
   };
   return (
     <div className="searchArea">

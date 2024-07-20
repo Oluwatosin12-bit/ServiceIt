@@ -15,35 +15,47 @@ function MainPage({ userUID, userData, socket }) {
   const [selectedPost, setSelectedPost] = useState(null);
   const { theme } = useTheme();
 
-
   const fetchFeed = async () => {
     if (userUID !== null) {
       const feedData = await fetchUserFeed(userUID);
       setUserFeed(feedData);
-      setFilteredPosts(userFeed);
+      setFilteredPosts(feedData);
       setIsLoading(false);
     }
   };
   useEffect(() => {
     fetchFeed();
-  }, [userUID, filteredPosts]);
+  }, [userUID]);
 
-  const filterPosts = (searchWord) => {
+  const filterPosts = (selectedCategories = [], searchWord = "") => {
+    let filtered = [...userFeed]
+    if (selectedCategories.length > 0){
+      filtered = userFeed.filter((post) =>
+      selectedCategories.some((category) =>
+        post.serviceCategories.includes(category)
+      )
+    );
+    }
+
     if (searchWord === "") {
       setFilteredPosts(userFeed);
       return;
+    } else if (searchWord !== "") {
+      const lowerCaseSearch = searchWord.toLowerCase();
+      filtered = userFeed.filter((post) => {
+        const categoryMatch = post.serviceCategories.some((category) =>
+          category.toLowerCase().includes(lowerCaseSearch)
+        );
+        const usernameMatch = post.vendorUsername
+          .toLowerCase()
+          .includes(lowerCaseSearch);
+        const locationMatch = post.serviceLocations
+          .toLowerCase()
+          .includes(lowerCaseSearch);
+
+        return categoryMatch || usernameMatch || locationMatch;
+      });
     }
-    const lowerCaseSearch = searchWord.toLowerCase();
-
-    const filtered = userFeed.filter((post) => {
-      const categoryMatch = post.serviceCategories.some((category) =>
-        category.toLowerCase().includes(lowerCaseSearch)
-      );
-      const usernameMatch = post.vendorUsername.toLowerCase().includes(lowerCaseSearch);
-      const locationMatch = post.serviceLocations.toLowerCase().includes(lowerCaseSearch);
-
-      return categoryMatch || usernameMatch || locationMatch
-    });
     setFilteredPosts(filtered);
   };
 
@@ -59,7 +71,7 @@ function MainPage({ userUID, userData, socket }) {
       </div>
       <div className="bodyArea">
         <div className="searchArea">
-          <SearchBar filterPosts={filterPosts}/>
+          <SearchBar filterPosts={filterPosts} />
         </div>
         <div className="feedSection">
           {isLoading ? (

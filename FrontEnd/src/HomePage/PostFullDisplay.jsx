@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   feedCategory,
   addToFavoriteDocs,
-  checkLike,
+  isLiked,
   recommendedVendors
 } from "./RecommendationDB";
 import "./PostFullDisplay.css";
