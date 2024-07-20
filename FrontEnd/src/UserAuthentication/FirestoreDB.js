@@ -17,12 +17,14 @@ import { v4 } from "uuid";
 
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
+const POST_CATEGORIES_FOLDER_NAME = "postCategories"
 async function addUser(
   userID,
   name,
   userName,
   signUpEmail,
-  selectedCategories
+  selectedCategories,
+  userLocation
 ) {
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
   return await setDoc(userDocRef, {
@@ -30,7 +32,9 @@ async function addUser(
     Name: name,
     UserName: userName,
     Email: signUpEmail,
+    selectedCategories: selectedCategories || [],
     feedCategories: selectedCategories || [],
+    UserLocation: userLocation,
   });
 }
 
@@ -102,11 +106,24 @@ const createPost = async (formData, imageUpload, userID, userData) => {
     if (userID === null) {
       throw new Error(`Invalid user ID: ${error.message}`);
     }
-
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
     const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
     const postDocRef = doc(postsCollectionRef, generatedID);
     await setDoc(postDocRef, formDataWithImage);
+
+    //add to postCategories collection
+    for (const category of formData.serviceCategories) {
+      const categoryDocRef = doc(database, POST_CATEGORIES_FOLDER_NAME, category);
+      const categoryDocSnap = await getDoc(categoryDocRef);
+
+      if (categoryDocSnap.exists() === false) {
+        await setDoc(categoryDocRef, { categoryName: category, Posts: [] });
+      }
+
+      const categoryPostsCollectionRef = collection(categoryDocRef, "Posts");
+      const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
+      await setDoc(categoryPostDocRef, formDataWithImage);
+    }
   } catch (error) {
     throw new Error(`Error creating post: ${error.message}`);
   }
@@ -136,7 +153,6 @@ const fetchUserPosts = (userID, callback) => {
 
     callback(postsData);
   });
-
   return unsubscribe;
 };
 

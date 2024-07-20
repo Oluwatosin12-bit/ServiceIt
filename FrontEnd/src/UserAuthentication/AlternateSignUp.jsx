@@ -10,9 +10,8 @@ function SignUpPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [name, setName] = useState("");
+  const [userLocation, setUserLocation] = useState("");
   const [userName, setUserName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -58,9 +57,9 @@ function SignUpPage() {
         email,
         password,
         userName,
-        firstName,
-        lastName,
-        selectedCategories
+        name,
+        selectedCategories,
+        userLocation
       );
       if (userCredential !== null) {
         navigate("/UserProfile");
@@ -68,7 +67,7 @@ function SignUpPage() {
         setErrorMessage("Username taken. Please choose a different one");
       }
     } catch (error) {
-      setErrorMessage("Invalid Input");
+      setErrorMessage("Invalid Input: one of the fields has an incorrect input");
     }
   };
 
@@ -146,6 +145,15 @@ function SignUpPage() {
             ))}
           </select>
         </div>
+        <label>
+        <span>Location</span>
+        <input
+          name="location"
+          onChange={(event) => setUserLocation(event.target.value)}
+          required="required"
+          placeholder="County, State"
+        />
+      </label>
         <div className="link-out">
           <a href="/EntryPage" className="redirect3">
             Already have an account? Login here

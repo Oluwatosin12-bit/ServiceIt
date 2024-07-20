@@ -19,6 +19,18 @@ p {
   background-color: var(--color7);
   border-right: 1px solid #cccccc;
 }
+
+.bodyArea{
+  margin-top: 100px;
+  overflow-y: auto;
+}
+.searchArea{
+  display: block;
+  margin-left: 290px;
+  margin-top: 20px;
+  text-align: center;
+  width: 200px;
+}
 .feedSection {
   flex-grow: 1;
   display: flex;
@@ -26,7 +38,6 @@ p {
   flex-wrap: wrap;
   padding: 10px;
   margin-left: 250px;
-  margin-top: 100px;
   flex: 1;
   padding: 20px;
   overflow-y: auto;
@@ -47,6 +58,9 @@ p {
 @media (max-width: 1000px) {
   .categorySection {
     width: 100px;
+  }
+  .searchArea{
+    margin-left: 125px;
   }
   .feedSection {
     margin-left: 100px;

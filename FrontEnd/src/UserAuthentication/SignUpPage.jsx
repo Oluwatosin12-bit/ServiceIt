@@ -10,8 +10,7 @@ function SignUpPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [userLocation, setUserLocation] = useState("");
   const [name, setName] = useState("");
   const [userName, setUserName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -59,7 +58,8 @@ function SignUpPage() {
         password,
         userName,
         name,
-        selectedCategories
+        selectedCategories,
+        userLocation
       );
       if (userCredential !== null) {
         navigate("/UserProfile");
@@ -79,6 +79,7 @@ function SignUpPage() {
         <input
           name="name"
           id="name"
+          placeholder="FirstName LastName"
           onChange={(event) => setName(event.target.value)}
           required="required"
         />
@@ -95,7 +96,6 @@ function SignUpPage() {
       <label>
         <span>Username</span>
         <input
-
           name="username"
           onChange={(event) => setUserName(event.target.value)}
           required="required"
@@ -145,6 +145,16 @@ function SignUpPage() {
           ))}
         </select>
       </div>
+
+      <label>
+        <span>Location</span>
+        <input
+          name="location"
+          onChange={(event) => setUserLocation(event.target.value)}
+          required="required"
+          placeholder="County, State"
+        />
+      </label>
       <button
         type="button"
         className="submit sendSignUpButton"

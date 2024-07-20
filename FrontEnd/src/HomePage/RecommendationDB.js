@@ -1,12 +1,23 @@
 import { database } from "../UserAuthentication/FirebaseConfig";
-import { query, where, collection, getDocs, doc, setDoc, updateDoc, arrayUnion, deleteDoc, getDoc, onSnapshot } from "firebase/firestore";
+import {
+  query,
+  where,
+  collection,
+  getDocs,
+  doc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  deleteDoc,
+  getDoc,
+  onSnapshot,
+} from "firebase/firestore";
 import { getUserData } from "../UserAuthentication/FirestoreDB";
 
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
 const FAVORITES_COLLECTION = "Favorites";
 const APPOINTMENT_COLLECTION = "Appointments";
-
 
 const feedCategory = async (userID, categories) => {
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
@@ -24,13 +35,39 @@ const feedCategory = async (userID, categories) => {
     }
   });
 
-  return await setDoc(userDocRef, {
-    feedCategories: currentCategories,
-  }, {merge: true})
+  return await setDoc(
+    userDocRef,
+    {
+      feedCategories: currentCategories,
+    },
+    { merge: true }
+  );
 };
 
-const addToFavoriteDocs = async(userUID, favorited, post) =>{
-  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION);
+const recommendedVendors = async(userID, vendorID) => {
+  const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
+  const docSnap = await getDoc(userDocRef);
+  let currentRecommendedVendors = [];
+  if (docSnap.exists()) {
+    const userData = docSnap.data();
+    currentRecommendedVendors = userData.recommendedVendors || [];
+
+    if (currentRecommendedVendors.includes(vendorID) === false) {
+      currentRecommendedVendors.push(vendorID);
+      await updateDoc(userDocRef, { recommendedVendors: currentRecommendedVendors });
+    }
+  } else{
+    await setDoc(userDocRef, { recommendedVendors: [vendorID] });
+  }
+}
+
+const addToFavoriteDocs = async (userUID, favorited, post) => {
+  const favoritesRef = collection(
+    database,
+    DATABASE_FOLDER_NAME,
+    userUID,
+    FAVORITES_COLLECTION
+  );
   const postDocRef = doc(favoritesRef, post.postId);
 
   if (favorited === true) {
@@ -41,55 +78,74 @@ const addToFavoriteDocs = async(userUID, favorited, post) =>{
       likedAt: new Date(),
     });
   }
-}
+};
 
-const checkLike = (userUID, postID, callback) =>{
-  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION)
+const checkLike = (userUID, postID, callback) => {
+  const favoritesRef = collection(
+    database,
+    DATABASE_FOLDER_NAME,
+    userUID,
+    FAVORITES_COLLECTION
+  );
   const q = query(favoritesRef, where("post.postID", "==", postID));
   const unsubscribe = onSnapshot(q, (querySnapshot) => {
     callback(!querySnapshot.empty);
-});
+  });
 
-return unsubscribe
-}
+  return unsubscribe;
+};
 
-const postsFromFavorites = async(userUID) =>{
-  try{
-    const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, FAVORITES_COLLECTION)
-    const favoritePosts = await getDocs(favoritesRef)
-    const favoriteVendorsID = []
+const postsFromFavorites = async (userUID) => {
+  try {
+    const favoritesRef = collection(
+      database,
+      DATABASE_FOLDER_NAME,
+      userUID,
+      FAVORITES_COLLECTION
+    );
+    const favoritePosts = await getDocs(favoritesRef);
+    const favoriteVendorsID = [];
 
-    for (const favoriteDoc of favoritePosts.docs){
-      const vendorID = favoriteDoc.data().post.vendorUID
-      if (vendorID !== null){
-        favoriteVendorsID.push(vendorID)
+    for (const favoriteDoc of favoritePosts.docs) {
+      const vendorID = favoriteDoc.data().post.vendorUID;
+      if (vendorID !== null) {
+        favoriteVendorsID.push(vendorID);
       }
     }
 
-    return favoriteVendorsID ;
-  } catch(error){
-    throw new Error(`Error fetching posts from favorite vendors ${error.message}`)
+    return favoriteVendorsID;
+  } catch (error) {
+    throw new Error(
+      `Error fetching posts from favorite vendors ${error.message}`
+    );
   }
-}
+};
 
-const postsFromAppointments = async(userUID) =>{
-  try{
-    const appointmentRef = collection(database, DATABASE_FOLDER_NAME, userUID, APPOINTMENT_COLLECTION)
-    const appointmentPosts = await getDocs(appointmentRef)
-    const scheduledAppointmentVendorsID = []
+const postsFromAppointments = async (userUID) => {
+  try {
+    const appointmentRef = collection(
+      database,
+      DATABASE_FOLDER_NAME,
+      userUID,
+      APPOINTMENT_COLLECTION
+    );
+    const appointmentPosts = await getDocs(appointmentRef);
+    const scheduledAppointmentVendorsID = [];
 
-    for (const appointmentDoc of appointmentPosts.docs){
-      const vendorID = appointmentDoc.data().vendorUID
-      if (vendorID !== null){
-        scheduledAppointmentVendorsID.push(vendorID)
+    for (const appointmentDoc of appointmentPosts.docs) {
+      const vendorID = appointmentDoc.data().vendorUID;
+      if (vendorID !== null) {
+        scheduledAppointmentVendorsID.push(vendorID);
       }
     }
 
-    return scheduledAppointmentVendorsID ;
-  } catch(error){
-    throw new Error(`Error fetching posts from scheduled appoinment vendors ${error.message}`)
+    return scheduledAppointmentVendorsID;
+  } catch (error) {
+    throw new Error(
+      `Error fetching posts from scheduled appoinment vendors ${error.message}`
+    );
   }
-}
+};
 
 const fetchUserFeed = async (userID) => {
   if (userID === null) {
@@ -97,15 +153,7 @@ const fetchUserFeed = async (userID) => {
   }
   const userData = await getUserData(userID);
   const userFeedCategory = userData.feedCategories || [];
-  const approvedVendorsID = []
-  const favoriteVendorsID = await postsFromFavorites(userID) || []
-  const scheduledAppointmentVendorsID = await postsFromAppointments(userID) || []
-  if (favoriteVendorsID !== null){
-    approvedVendorsID.push(...favoriteVendorsID);
-  }
-  if (scheduledAppointmentVendorsID !== null){
-    approvedVendorsID.push(...scheduledAppointmentVendorsID);
-  }
+  const approvedVendorsID =  userData.recommendedVendors || [];
 
   const usersSnapshot = await getDocs(
     collection(database, DATABASE_FOLDER_NAME)
@@ -132,12 +180,18 @@ const fetchUserFeed = async (userID) => {
             ...postData,
           });
         } else {
-          if (userId in approvedVendorsID || postData.serviceCategories.some(category => userFeedCategory.includes(category))){
+          if (
+            userId in approvedVendorsID ||
+            postData.serviceCategories.some((category) =>
+              userFeedCategory.includes(category)
+            )
+            || postData.serviceableLocations === userData.UserLocation
+          ) {
             allPosts.push({
               userId: userId,
-            postId: postDoc.id,
-            ...postData,
-            })
+              postId: postDoc.id,
+              ...postData,
+            });
           }
         }
       }
@@ -147,5 +201,11 @@ const fetchUserFeed = async (userID) => {
   return allPosts;
 };
 
-
-export { fetchUserFeed, feedCategory, addToFavoriteDocs, postsFromFavorites, checkLike };
+export {
+  fetchUserFeed,
+  feedCategory,
+  addToFavoriteDocs,
+  postsFromFavorites,
+  checkLike,
+  recommendedVendors
+};

@@ -19,15 +19,14 @@ import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { ThemeProvider } from "./UseContext";
+import { ThemeProvider, SearchWordProvider } from "./UseContext";
 import EntryPage from "./UserAuthentication/EntryPage"
 
 function App() {
   const userUID = useUID();
   const [userData, setUserData] = useState(null);
   const [socket, setSocket] = useState(null);
-  const [theme, setTheme] = useState("dark");
-
+  
   const fetchData = async () => {
     if (userUID !== null) {
       const data = await getUserData(userUID);
@@ -74,6 +73,7 @@ function App() {
   return (
       <Router>
       <ThemeProvider>
+      <SearchWordProvider>
         <Routes>
           <Route path="/" element={<LandingPage socket={socket} />} />
           <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
@@ -122,6 +122,7 @@ function App() {
             />
           </Route>
         </Routes>
+        </SearchWordProvider>
       </ThemeProvider>
     </Router>
   );

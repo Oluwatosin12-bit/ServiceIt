@@ -94,9 +94,7 @@ const constructMessage = (userID, receivee, senderName, receiverName, appointmen
 
 io.on("connection", (socket) => {
   socket.on("newUser", async(userID) => {
-    addNewUser(userID, socket.id);
-
-
+    addNewUser(userID, socket.id)
   });
 
   socket.on("disconnect", () => {

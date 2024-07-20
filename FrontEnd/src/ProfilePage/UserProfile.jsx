@@ -21,19 +21,19 @@ function UserProfilePage({ userUID, userData }) {
   const [isFormValid, setIsFormValid] = useState(false);
   const [serviceCategories, setSelectedCategories] = useState([]);
   const [availableCategories] = useState(CATEGORIES);
-  const [newCategory, setNewCategory] = useState('');
-  const [isSignOutDropdownVisible, setisSignOutDropdownVisible] =
+  const [newCategory, setNewCategory] = useState("");
+  const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
-  const [isDeletePostDropdownVisible, setisDeletePostDropdownVisible] =
+  const [isDeletePostDropdownVisible, setIsDeletePostDropdownVisible] =
     useState(false);
   const signOutDropdownRef = useRef(null);
   const deletePostDropdownRef = useRef({});
 
   const toggleSignOutDropdown = () => {
-    setisSignOutDropdownVisible(!isSignOutDropdownVisible);
+    setIsSignOutDropdownVisible(!isSignOutDropdownVisible);
   };
   const toggleDeletePostDropdown = (index) => {
-    setisDeletePostDropdownVisible(
+    setIsDeletePostDropdownVisible(
       isDeletePostDropdownVisible === index ? null : index
     );
   };
@@ -43,7 +43,7 @@ function UserProfilePage({ userUID, userData }) {
       signOutDropdownRef.current !== null &&
       !signOutDropdownRef.current.contains(event.target)
     ) {
-      setisSignOutDropdownVisible(false);
+      setIsSignOutDropdownVisible(false);
     }
 
     for (let postId in deletePostDropdownRef.current) {
@@ -51,7 +51,7 @@ function UserProfilePage({ userUID, userData }) {
         deletePostDropdownRef.current[postId] !== null &&
         !deletePostDropdownRef.current[postId].contains(event.target)
       ) {
-        setisDeletePostDropdownVisible(null);
+        setIsDeletePostDropdownVisible(null);
       }
     }
   };
@@ -80,9 +80,12 @@ function UserProfilePage({ userUID, userData }) {
     setSelectedCategories([...serviceCategories, ...newCategories]);
   };
   const addCategory = () => {
-    if (newCategory.trim() !== '' && !setSelectedCategories.includes(newCategory)) {
+    if (
+      newCategory.trim() !== "" &&
+      !setSelectedCategories.includes(newCategory)
+    ) {
       setSelectedCategories([...serviceCategories, newCategory]);
-      setNewCategory('');
+      setNewCategory("");
     }
   };
   const [formData, setFormData] = useState({
@@ -159,7 +162,7 @@ function UserProfilePage({ userUID, userData }) {
       <div className="userInfo">
         <div className="welcomePlace">
           <div>
-            <img src="src/Images/Profile.jpeg" alt="profile avatar" />
+            <img src="/Profile.jpeg" alt="profile avatar" />
             <div className="nameContainer" ref={signOutDropdownRef}>
               <h1>{userData?.UserName} </h1>
               <span
@@ -229,17 +232,6 @@ function UserProfilePage({ userUID, userData }) {
                   </option>
                 ))}
               </select>
-              <input
-                type="text"
-                placeholder="Type new category..."
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    addCategory();
-                  }
-                }}
-              />
             </div>
             <div>
               <label htmlFor="serviceLocations">Serviceable Location(s):</label>
@@ -253,10 +245,11 @@ function UserProfilePage({ userUID, userData }) {
               />
             </div>
             <div>
-              <label htmlFor="serviceAvailability">Availability:</label>
+              <label htmlFor="serviceAvailability">Availability:</label>{" "}
+              <span>when you are available to offer this service</span>
               <input
                 type="text"
-                placeholder=""
+                placeholder="Example: Every Thursday, through July 2024"
                 name="serviceAvailability"
                 id="serviceAvailability"
                 value={formData.serviceAvailability}

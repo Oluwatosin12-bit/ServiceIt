@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import {
   feedCategory,
   addToFavoriteDocs,
-  postsFromFavorites,
   checkLike,
+  recommendedVendors
 } from "./RecommendationDB";
 import "./PostFullDisplay.css";
 
@@ -41,12 +41,13 @@ function PostFullDisplay({
     try {
       setFavorited(!favorited);
       feedCategory(userUID, post.serviceCategories);
+      await recommendedVendors(userUID, post.vendorUID)
       await addToFavoriteDocs(userUID, favorited, post);
       if (notificationSent === false) {
         socket.emit("sendNotification", {
           userID: userUID,
           senderID: userUID,
-          receiverID: post.userId,
+          receiverID: post.vendorUID,
           senderName: userData?.UserName,
           receiverName: post.vendorUsername,
           postTitle: post.serviceTitle,

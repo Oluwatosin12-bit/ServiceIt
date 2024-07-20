@@ -111,13 +111,14 @@ const fetchUserFavorites = (userID, callback) => {
         DATABASE_FOLDER_NAME,
         userID,
         "Favorites"
-      ),
-      orderBy("timestamp", "desc")
+      )
     );
     const unsubscribe = onSnapshot(userFavoritesRef, (snapshot) => {
       const favorites = [];
       snapshot.forEach((doc) => {
         const favorite = doc.data();
+        console.log(doc.data())
+        console.log(favorite)
         favorites.push(favorite);
       });
       callback(favorites);

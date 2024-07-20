@@ -4,7 +4,7 @@ import "./LandingPage.css";
 
 function LandingPage() {
   const { theme, setTheme } = useTheme();
-  const [ismenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const landingPageContentRef = useRef(null);
 
   const handleThemeChange = () => {
@@ -12,7 +12,7 @@ function LandingPage() {
   };
 
   const handleMenuToggle = () => {
-    setIsMenuOpen(!ismenuOpen);
+    setIsMenuOpen(!isMenuOpen);
     document.body.classList.toggle("stopScrolling");
   };
 
@@ -20,18 +20,18 @@ function LandingPage() {
     <main className="stopScrolling">
       <div
         ref={landingPageContentRef}
-        className={`landingPageContent ${theme} ${ismenuOpen ? "active" : ""}`}
+        className={`landingPageContent ${theme} ${isMenuOpen ? "active" : ""}`}
       >
-        <img src="src/Images/shape.png" alt="shape" className="shape" />
+        <img src="/shape.png" alt="shape" className="shape" />
         <header>
           <div className="container">
             <div className="logo">
-              <img src="src/Images/logo.png" alt="logo" />
+              <img src="/logo.png" alt="logo" />
               <h3>ServiceIt</h3>
             </div>
 
             <div className="links">
-              <ul className={ismenuOpen ? "active" : ""}>
+              <ul className={isMenuOpen ? "active" : ""}>
                 <li>
                   <a href="#">About Us</a>
                 </li>
@@ -52,7 +52,7 @@ function LandingPage() {
             </div>
 
             <div
-              className={`overlay ${ismenuOpen ? "active" : ""}`}
+              className={`overlay ${isMenuOpen ? "active" : ""}`}
               onClick={handleMenuToggle}
             ></div>
 
@@ -81,7 +81,7 @@ function LandingPage() {
             </div>
             <div className="right">
               <img
-                src="src/Images/person.png"
+                src="/person.png"
                 alt="Person Image"
                 className="person"
               />

@@ -14,7 +14,8 @@ const registerUser = async (
   password,
   username,
   name,
-  selectedCategories
+  selectedCategories,
+  userLocation
 ) => {
   try {
     const isUnique = await isUsernameUnique(username);
@@ -28,7 +29,8 @@ const registerUser = async (
       name,
       username,
       email,
-      selectedCategories || []
+      selectedCategories || [],
+      userLocation,
     );
     if (newUser !== null && userAddedToDB !== false) {
       return newUser;
