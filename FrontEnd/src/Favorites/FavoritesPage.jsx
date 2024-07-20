@@ -19,6 +19,7 @@ function FavoritesPage({ userData }) {
 
     return () => unsubscribe();
   }, [userID]);
+
   if (userFavoritesData.length === 0) {
     return (
       <div className={`appointmentPage ${theme}`}>

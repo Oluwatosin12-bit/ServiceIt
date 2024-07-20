@@ -65,7 +65,7 @@ const requestAppointment = async (
 
 const generateRandomID = () => {
   return Math.random().toString(36).substring(2);
-}
+};
 
 const fetchNotifications = (userID, callback) => {
   try {
@@ -180,6 +180,12 @@ const fetchUpcomingAppointments = (userID, callback) => {
         upcomingAppointmentsData.push({ docID: doc.id, ...doc.data() });
       });
 
+      upcomingAppointmentsData.sort((a, b) => {
+        const dateA = new Date(a.appointmentDate);
+        const dateB = new Date(b.appointmentDate);
+        return dateA - dateB;
+      });
+
       callback(upcomingAppointmentsData);
     });
 
@@ -247,5 +253,5 @@ export {
   fetchUpcomingAppointments,
   acceptAppointment,
   declineAppointment,
-  generateRandomID
+  generateRandomID,
 };
