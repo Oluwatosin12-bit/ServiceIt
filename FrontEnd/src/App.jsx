@@ -11,6 +11,7 @@ import AlternateSignUp from "./UserAuthentication/AlternateSignUp"
 import ResetPasswordPage from "./UserAuthentication/ResetPasswordPage";
 import MainPage from "./HomePage/MainPage";
 import UserProfile from "./ProfilePage/UserProfile";
+import VendorProfile from "./ProfilePage/VendorsProfile";
 import BookingForm from "./BookingPage/BookingPage";
 import NotificationsPage from "./Notifications/NotificationsPage";
 import AppointmentPage from "./Appointment/AppointmentPage";
@@ -26,7 +27,7 @@ function App() {
   const userUID = useUID();
   const [userData, setUserData] = useState(null);
   const [socket, setSocket] = useState(null);
-  
+
   const fetchData = async () => {
     if (userUID !== null) {
       const data = await getUserData(userUID);
@@ -96,6 +97,16 @@ function App() {
               path="/UserProfile"
               element={
                 <UserProfile
+                  userUID={userUID}
+                  userData={userData}
+                  socket={socket}
+                />
+              }
+            />
+            <Route
+              path="/VendorProfile"
+              element={
+                <VendorProfile
                   userUID={userUID}
                   userData={userData}
                   socket={socket}

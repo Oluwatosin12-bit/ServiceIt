@@ -15,6 +15,7 @@ import {
 import { getUserData } from "../UserAuthentication/FirestoreDB";
 
 const DATABASE_FOLDER_NAME = "users";
+const POST_CATEGORIES_FOLDER = "postCategories";
 const POSTS_COLLECTION = "Posts";
 const FAVORITES_COLLECTION = "Favorites";
 const APPOINTMENT_COLLECTION = "Appointments";
@@ -44,7 +45,7 @@ const feedCategory = async (userID, categories) => {
   );
 };
 
-const recommendedVendors = async(userID, vendorID) => {
+const recommendedVendors = async (userID, vendorID) => {
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
   const docSnap = await getDoc(userDocRef);
   let currentRecommendedVendors = [];
@@ -54,12 +55,14 @@ const recommendedVendors = async(userID, vendorID) => {
 
     if (currentRecommendedVendors.includes(vendorID) === false) {
       currentRecommendedVendors.push(vendorID);
-      await updateDoc(userDocRef, { recommendedVendors: currentRecommendedVendors });
+      await updateDoc(userDocRef, {
+        recommendedVendors: currentRecommendedVendors,
+      });
     }
-  } else{
+  } else {
     await setDoc(userDocRef, { recommendedVendors: [vendorID] });
   }
-}
+};
 
 const addToFavoriteDocs = async (userUID, favorited, post) => {
   const favoritesRef = collection(
@@ -151,52 +154,48 @@ const fetchUserFeed = async (userID) => {
   if (userID === null) {
     return;
   }
-  const userData = await getUserData(userID);
-  const userFeedCategory = userData.feedCategories || [];
-  const approvedVendorsID =  userData.recommendedVendors || [];
-
-  const usersSnapshot = await getDocs(
-    collection(database, DATABASE_FOLDER_NAME)
-  );
   const allPosts = [];
-  for (const userDoc of usersSnapshot.docs) {
-    const userId = userDoc.id;
-    const userPostsSnapshot = collection(
-      database,
-      `${DATABASE_FOLDER_NAME}/${userId}/${POSTS_COLLECTION}`
-    );
-    const postsSnapshot = await getDocs(userPostsSnapshot);
-    postsSnapshot.forEach((postDoc) => {
-      if (postDoc.exists) {
-        const postData = postDoc.data();
-        if (
-          !userData ||
-          !userData.feedCategories ||
-          userData.feedCategories.length === 0
-        ) {
-          allPosts.push({
-            userId: userId,
-            postId: postDoc.id,
-            ...postData,
-          });
-        } else {
-          if (
-            userId in approvedVendorsID ||
-            postData.serviceCategories.some((category) =>
-              userFeedCategory.includes(category)
-            )
-            || postData.serviceableLocations === userData.UserLocation
-          ) {
-            allPosts.push({
-              userId: userId,
-              postId: postDoc.id,
-              ...postData,
-            });
-          }
+  const uniquePosts = new Set();
+  const userData = await getUserData(userID);
+  const userFeedCategories = userData.feedCategories || [];
+  const approvedVendorsID = userData.recommendedVendors || [];
+
+  //posts by recommended Category
+  for (const categoryID of userFeedCategories) {
+    const categoryRef = doc(database, POST_CATEGORIES_FOLDER, categoryID);
+    const categoryDoc = await getDoc(categoryRef);
+
+    if (categoryDoc.exists()) {
+      const postsQuery = query(collection(categoryRef, POSTS_COLLECTION));
+      const postsSnapshot = await getDocs(postsQuery);
+      postsSnapshot.forEach((postDoc) => {
+        const postID = postDoc.id
+        if(uniquePosts.has(postID) === false){
+          uniquePosts.add(postID)
+          allPosts.push(postDoc.data());
         }
+      });
+    }
+  }
+
+  //posts by recommended vendors
+  for (const vendorID of approvedVendorsID) {
+    const vendorCollectionRef = collection(
+      database,
+      DATABASE_FOLDER_NAME,
+      vendorID,
+      POSTS_COLLECTION
+    );
+    const vendorPosts = await getDocs(vendorCollectionRef);
+    vendorPosts.forEach((vendorPost) => {
+      const vendorPostID = vendorPost.id
+      if(uniquePosts.has(vendorPostID) === false){
+        uniquePosts.add(vendorPostID)
+        allPosts.push(vendorPost.data());
       }
     });
   }
+
   allPosts.sort((a, b) => b.createdAt - a.createdAt);
   return allPosts;
 };
@@ -207,5 +206,5 @@ export {
   addToFavoriteDocs,
   postsFromFavorites,
   isLiked,
-  recommendedVendors
+  recommendedVendors,
 };

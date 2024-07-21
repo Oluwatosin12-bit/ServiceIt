@@ -1,6 +1,7 @@
 import "./PostsPreview.css";
 function PostsPreview({ post }) {
   const createdAt = post.createdAt.toDate();
+  
   return (
     <div className="feedPreview">
       <div className="postHeader">

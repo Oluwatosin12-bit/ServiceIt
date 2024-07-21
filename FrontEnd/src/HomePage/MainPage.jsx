@@ -30,7 +30,7 @@ function MainPage({ userUID, userData, socket }) {
   const filterPosts = (selectedCategories = [], searchWord = "") => {
     let filtered = [...userFeed]
     if (selectedCategories.length > 0){
-      filtered = userFeed.filter((post) =>
+      filtered = filtered.filter((post) =>
       selectedCategories.some((category) =>
         post.serviceCategories.includes(category)
       )
@@ -38,11 +38,11 @@ function MainPage({ userUID, userData, socket }) {
     }
 
     if (searchWord === "") {
-      setFilteredPosts(userFeed);
+      setFilteredPosts(filtered);
       return;
     } else if (searchWord !== "") {
       const lowerCaseSearch = searchWord.toLowerCase();
-      filtered = userFeed.filter((post) => {
+      filtered = filtered.filter((post) => {
         const categoryMatch = post.serviceCategories.some((category) =>
           category.toLowerCase().includes(lowerCaseSearch)
         );
