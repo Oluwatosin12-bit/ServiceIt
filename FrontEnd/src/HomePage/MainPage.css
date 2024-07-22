@@ -20,7 +20,6 @@ p {
 
 .bodyArea{
   margin-top: 100px;
-  overflow-y: auto;
 }
 .searchArea {
   position: relative;
@@ -37,7 +36,7 @@ p {
 
 .searchIcon {
   position: absolute;
-  left: 8px; 
+  left: 8px;
   color: var(--primaryText);
 }
 

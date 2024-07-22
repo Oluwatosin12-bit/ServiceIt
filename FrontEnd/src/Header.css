@@ -40,6 +40,12 @@
 .navigationList a {
   color: var(--primaryText);
   text-decoration: none;
+  padding: 10px;
+}
+
+.navigationList .activeLink {
+  font-weight: bold;
+  color: red;
 }
 
 .navigationList li {
@@ -87,6 +93,7 @@
   width: 80%;
   margin-top: 10px;
   padding: 5px;
+  background: var(--buttonColor);
 }
 .toggleBtns {
   display: inline-block;

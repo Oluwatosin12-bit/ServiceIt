@@ -1,6 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useNavigate} from "react-router-dom";
 import { useTheme } from "./UseContext";
 import { logOutUser } from "./UserAuthentication/Auth";
 import "./Header.css";
@@ -22,10 +21,12 @@ function Header({ userData, socket }) {
       });
     }
   }, [socket]);
+
   const handleReadAll = () => {
     setNotifications([]);
     setIsNotificationsOpen(false);
   };
+
   const handleLogOut = async () => {
     try {
       const logOutConfirmation = window.confirm(
@@ -51,12 +52,12 @@ function Header({ userData, socket }) {
       <nav className="navigation">
         <ul className="navigationList">
           <li>
-            <NavLink to="/MainPage">
+            <NavLink to="/MainPage" activeClassName="activeLink">
               <p>Home</p>
             </NavLink>
           </li>
           <li>
-            <NavLink to="/AppointmentPage">
+            <NavLink to="/AppointmentPage" activeClassName="activeLink">
               <p>Appointments</p>
             </NavLink>
           </li>

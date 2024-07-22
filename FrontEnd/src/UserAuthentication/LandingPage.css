@@ -141,7 +141,7 @@ header .container {
   display: inline-block;
   border: none;
   background: var(--primaryText);
-  color: var(--backgroundColor);
+  color: var(--toggleIcon);
   outline: none;
   cursor: pointer;
   height: 39px;

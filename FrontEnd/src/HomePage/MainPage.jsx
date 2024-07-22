@@ -91,6 +91,7 @@ function MainPage({ userUID, userData, socket }) {
       <div className="bodyArea">
           <SearchBar filterPosts={filterPosts} />
         <div className="feedSection">
+
           {isLoading ? (
             <p>Loading...</p>
           ) : filteredPosts.length === 0 ? (
@@ -118,6 +119,7 @@ function MainPage({ userUID, userData, socket }) {
               />
             </div>
           )}
+        
         </div>
       </div>
     </div>

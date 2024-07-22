@@ -45,14 +45,20 @@ function BookingForm({ userData, socket }) {
   };
 
   useEffect(() => {
-    const isFormValid = Object.values(appointmentData).every(
-      (value) => value !== ""
-    );
+    const isFormValid = Object.keys(appointmentData).every(key => {
+      if (key === 'appointmentAdditionalNote') {
+        return true; // Skip validation for optional input
+      }
+      return appointmentData[key] !== '';
+    });
+
     setIsFormValid(isFormValid);
+
     if (userUID === post.userId) {
       setIsFormValid(false);
     }
-  }, [appointmentData]);
+  }, [appointmentData, userUID, post.userId]);
+
 
   const handleSubmit = async (event, type) => {
     try {
@@ -67,10 +73,10 @@ function BookingForm({ userData, socket }) {
           post.vendorUsername,
           appointmentData,
           userData,
-          post.VendorEmail,
+          post.VendorEmail
         );
         await feedCategory(userUID, post.serviceCategories);
-        await recommendedVendors(userUID, post.vendorUID)
+        await recommendedVendors(userUID, post.vendorUID);
         await socket.emit("sendNotification", {
           userID: userUID,
           senderID: userUID,
