@@ -89,9 +89,7 @@ function MainPage({ userUID, userData, socket }) {
         <CategoryList filterPosts={filterPosts} />
       </div>
       <div className="bodyArea">
-        <div className="searchArea">
           <SearchBar filterPosts={filterPosts} />
-        </div>
         <div className="feedSection">
           {isLoading ? (
             <p>Loading...</p>

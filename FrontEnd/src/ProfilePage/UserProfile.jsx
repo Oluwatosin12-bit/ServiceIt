@@ -350,8 +350,7 @@ function UserProfilePage({ userUID, userData }) {
                 onChange={(event) => handleChange(event)}
               />
             </div>
-
-            <button type="submit" disabled={!isFormValid}>
+            <button type="submit" disabled={!isFormValid} className="createButton">
               Create Post
             </button>
           </form>

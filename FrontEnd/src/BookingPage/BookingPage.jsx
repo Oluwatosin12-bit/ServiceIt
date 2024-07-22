@@ -2,12 +2,14 @@ import "./BookingPage.css";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { requestAppointment } from "./BookingDB";
+import { useTheme } from "../UseContext";
 import { feedCategory, recommendedVendors } from "../HomePage/RecommendationDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
 function BookingForm({ userData, socket }) {
   const location = useLocation();
+  const { theme } = useTheme();
   const { post, userUID } = location.state || {};
   const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
   const [isRequestPending, setIsRequestPending] = useState(false);
@@ -113,14 +115,14 @@ function BookingForm({ userData, socket }) {
     );
   }
   return (
-    <div className="bookingPage">
+    <div className={`bookingPage ${theme}`}>
       <form className="bookingForm" onSubmit={() => handleSubmit(event, 2)}>
         <h2 className="vendorUsername">
           Book an appointment with {post.vendorUsername}
         </h2>
         <div>
           <label htmlFor="appointmentTitle">Appointment Title</label>
-          <textarea
+          <input
             name="appointmentTitle"
             id="appointmentTitle"
             value={appointmentData.appointmentTitle}
@@ -157,7 +159,7 @@ function BookingForm({ userData, socket }) {
           value={appointmentData.appointmentAdditionalNote}
           onChange={(event) => handleChange(event)}
         />
-        <button type="submit" disabled={!isFormValid}>
+        <button type="submit" disabled={!isFormValid} className="sendButton">
           Send Request
         </button>
       </form>

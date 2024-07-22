@@ -22,7 +22,7 @@ function AppointmentDetails({ isShown, onClose, appointment }) {
             </div>
             <div className="fullDisplayDetails">
               <h3>{appointment.appointmentTitle}</h3>
-              <p>Appointment made by {appointment.appointmentTitle}</p>
+              <p>Appointment made by {appointment.customerUsername}</p>
               <div>
                 <p><strong>Customer Details:</strong></p>
                 <p>Customer Name: {appointment.customerUsername}</p>

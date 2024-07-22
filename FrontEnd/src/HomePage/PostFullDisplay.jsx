@@ -77,12 +77,12 @@ function PostFullDisplay({
             <div className="fullDisplayDetails">
               <h3 className="fullDisplayTitle">{post.serviceTitle}</h3>
               <p className="fullDisplayPrice">
-                Price Range: {post.servicePrice}
+                <strong>Price Range:</strong> {post.servicePrice}
               </p>
               <p className="fullDisplayDescription">
-                Description: {post.serviceDescription}
+                <strong>Description:</strong> {post.serviceDescription}
               </p>
-              <button onClick={handleBookingFormOpen}>Book Now</button>
+              <button onClick={handleBookingFormOpen} className="bookButton">Book Now</button>
               <span>
                 {favorited ? (
                   <i

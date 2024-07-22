@@ -34,6 +34,7 @@
 
 .formHeading{
   text-align: center;
+  color: var(--modalTextColor);
 }
 
 .postForm {
@@ -72,7 +73,7 @@ textarea {
   height: 150px;
 }
 
-button {
+.createButton {
   background: var(--buttonColor);
   color: var(--color6);
   padding: 10px 10px;
@@ -82,8 +83,8 @@ button {
   margin-right: 5px;
 }
 
-button:disabled {
-  background-color: #aaa;
+.createButton:disabled {
+  background: var(--secondaryText);
   cursor: not-allowed;
 }
 

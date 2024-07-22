@@ -16,6 +16,7 @@ import BookingForm from "./BookingPage/BookingPage";
 import NotificationsPage from "./Notifications/NotificationsPage";
 import AppointmentPage from "./Appointment/AppointmentPage";
 import FavoritesPage from "./Favorites/FavoritesPage";
+import HistoryPage from "./Appointment/HistoryPage";
 import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
@@ -130,6 +131,10 @@ function App() {
             <Route
               path="/FavoritesPage"
               element={<FavoritesPage userData={userData} socket={socket}/>}
+            />
+            <Route
+              path="/HistoryPage"
+              element={<HistoryPage userData={userData} socket={socket}/>}
             />
           </Route>
         </Routes>

@@ -22,24 +22,26 @@ p {
   margin-top: 100px;
   overflow-y: auto;
 }
-.searchArea{
+.searchArea {
+  position: relative;
   display: flex;
   align-items: center;
-  display: block;
-  margin-left: 290px;
-  margin-top: 50px;
-  text-align: center;
   width: 200px;
 }
+
 .searchInput {
-  border: none;
-  outline: none;
   flex: 1;
-}
-.searchIcon {
-  margin-right: 5px;
+  padding-left: 25px;
   color: var(--primaryText);
 }
+
+.searchIcon {
+  position: absolute;
+  left: 8px; 
+  color: var(--primaryText);
+}
+
+
 .feedSection {
   flex-grow: 1;
   display: flex;

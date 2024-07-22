@@ -66,7 +66,7 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <NavLink to="">
+            <NavLink to="/HistoryPage">
               <p>History</p>
             </NavLink>
           </li>
@@ -79,7 +79,7 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <button className="toggleBtn" onClick={handleThemeChange}>
+            <button className="toggleBtns" onClick={handleThemeChange}>
               <i
                 className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
               ></i>
@@ -91,7 +91,7 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <p onClick={handleLogOut}>Sign Out</p>
+            <p onClick={handleLogOut} className="signOut">Sign Out</p>
           </li>
         </ul>
       </nav>

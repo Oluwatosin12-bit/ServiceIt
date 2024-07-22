@@ -47,6 +47,10 @@ function AppointmentPage({ userData, socket }) {
     appointmentID,
     type
   ) => {
+    const logOutConfirmation = window.confirm(
+      "Are you sure you want to decline appointment?"
+    );
+    if (logOutConfirmation === true) {
     await declineAppointment(customerID, vendorID, appointmentID);
     await socket.emit("sendNotification", {
       userID: userData?.userID,
@@ -58,6 +62,7 @@ function AppointmentPage({ userData, socket }) {
       appointmentTitle: appointment.appointmentTitle,
       type,
     });
+  }
   };
 
   useEffect(() => {
@@ -127,7 +132,7 @@ function AppointmentPage({ userData, socket }) {
             {appointment.vendorUID === userID && (
               <div className="appointmentActions">
                 <button
-                  className="appointmentButtons"
+                  className="appointmentButtons acceptAppointment"
                   onClick={() =>
                     handleAcceptedAppointment(
                       appointment,
@@ -141,7 +146,7 @@ function AppointmentPage({ userData, socket }) {
                   Accept
                 </button>
                 <button
-                  className="appointmentButtons"
+                  className="appointmentButtons cancelAppointment"
                   onClick={() =>
                     handleDeclinedAppointment(
                       appointment,
@@ -175,11 +180,11 @@ function AppointmentPage({ userData, socket }) {
               </div>
             </div>
             <div className="appointmentActions">
-              <button className="appointmentButtons">
+              <button className="appointmentButtons acceptAppointment">
                 Add to Google Calendar
               </button>
               <button
-                className="appointmentButtons"
+                className="appointmentButtons cancelAppointment"
                 onClick={() =>
                   handleDeclinedAppointment(
                     appointment,

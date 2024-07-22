@@ -1,5 +1,5 @@
 import {useState} from "react";
-
+import "./SearchBar.css"
 function SearchBar({filterPosts}) {
   const [ searchWord, setSearchWord ] = useState("");
   const handleSearchChange = (e) => {
@@ -8,7 +8,8 @@ function SearchBar({filterPosts}) {
     filterPosts([], value);
   };
   return (
-    <div className="searchArea">
+    <div className="searchContainer">
+      <div className="searchArea">
       <i className="fa-solid fa-magnifying-glass searchIcon"></i>
       <input
         value={searchWord}
@@ -16,6 +17,7 @@ function SearchBar({filterPosts}) {
         className="searchInput"
         placeholder="Search..."
       />
+    </div>
     </div>
   );
 }
