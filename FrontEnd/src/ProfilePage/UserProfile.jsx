@@ -8,6 +8,7 @@ import {
 } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
 import { CATEGORIES } from "../Categories";
+import PostFullDisplay from "../HomePage/PostFullDisplay";
 import { useTheme } from "../UseContext";
 import "./UserProfile.css";
 
@@ -24,6 +25,8 @@ function UserProfilePage({ userUID, userData }) {
   const [searchLocationTerm, setSearchLocationTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
   const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
   const [isDeletePostDropdownVisible, setIsDeletePostDropdownVisible] =
@@ -38,6 +41,13 @@ function UserProfilePage({ userUID, userData }) {
     setIsDeletePostDropdownVisible(
       isDeletePostDropdownVisible === index ? null : index
     );
+  };
+  const toggleCreatePostModal = () => {
+    setIsCreatePostModalShown(!isCreatePostModalShown);
+  };
+  const toggleOpenPostModal = (post) => {
+    setSelectedPost(post);
+    setIsPostDetailModalShown(!isPostDetailModalShown);
   };
 
   useEffect(() => {
@@ -141,10 +151,6 @@ function UserProfilePage({ userUID, userData }) {
     return () => unsubscribe && unsubscribe();
   }, [userUID]);
 
-  const toggleModal = () => {
-    setIsCreatePostModalShown(!isCreatePostModalShown);
-  };
-
   const handleLogOut = async () => {
     try {
       const logOutConfirmation = window.confirm(
@@ -176,7 +182,7 @@ function UserProfilePage({ userUID, userData }) {
     event.preventDefault();
     try {
       await createPost(formData, imageUpload, userUID, userData);
-      toggleModal();
+      toggleCreatePostModal();
     } catch (error) {
       throw new Error(`Error submitting form: ${error.message}`);
     }
@@ -213,13 +219,13 @@ function UserProfilePage({ userUID, userData }) {
             <p>I am an amazing service provider</p>
           </div>
           <div>
-            <button className="createButton" onClick={toggleModal}>
+            <button className="createButton" onClick={toggleCreatePostModal}>
               Create a Post
             </button>
           </div>
         </div>
 
-        <Modal isShown={isCreatePostModalShown} onClose={toggleModal}>
+        <Modal isShown={isCreatePostModalShown} onClose={toggleCreatePostModal}>
           <form onSubmit={handleFormSubmit} className="postForm">
             <div className="formGroup">
               <h2 className="formHeading">Create Post</h2>
@@ -354,7 +360,7 @@ function UserProfilePage({ userUID, userData }) {
       <div className="userPosts">
         <div className="userPostsPreview">
           {userPosts.map((post, index) => (
-            <div key={index} className="eachPost">
+            <div key={index} className="eachPost" onClick={()=>toggleOpenPostModal(post)}>
               <div className="postHeading">
                 <p>{post.serviceTitle}</p>
                 <span
@@ -381,6 +387,17 @@ function UserProfilePage({ userUID, userData }) {
               <img src={post.imageURL} alt="post photo" />
             </div>
           ))}
+          {isPostDetailModalShown && selectedPost !== null && (
+            <div>
+              <PostFullDisplay
+                userUID={userUID}
+                post={selectedPost}
+                isShown={isPostDetailModalShown}
+                onClose={toggleOpenPostModal}
+                userData={userData}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

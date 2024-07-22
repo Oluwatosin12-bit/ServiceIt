@@ -19,8 +19,11 @@
 .feedTitle,
 .feedDescription,
 .feedTimestamp {
-  color: var(--darkOne);
+  color: var(--secondaryText);
   text-align: left;
+}
+.postHeader h3{
+  color: var(--primaryText);
 }
 
 .feedTimestamp {
@@ -34,4 +37,11 @@
 }
 .vendorUsername{
   cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+  .feedPreview {
+    width: 205px;
+    height: 350px;
+  }
 }

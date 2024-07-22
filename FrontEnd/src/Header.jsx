@@ -1,9 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useNavigate} from "react-router-dom";
 import { useTheme } from "./UseContext";
+import { logOutUser } from "./UserAuthentication/Auth";
 import "./Header.css";
 import NotificationsPage from "./Notifications/NotificationsPage";
 function Header({ userData, socket }) {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(true);
   const [invisibleComponent, setInvisibleComponent] = useState(false);
@@ -23,13 +26,26 @@ function Header({ userData, socket }) {
     setNotifications([]);
     setIsNotificationsOpen(false);
   };
+  const handleLogOut = async () => {
+    try {
+      const logOutConfirmation = window.confirm(
+        "Are you sure you want to sign out?"
+      );
+      if (logOutConfirmation === true) {
+        await logOutUser();
+        navigate("/");
+      }
+    } catch (error) {
+      throw new Error(`Error logging out: ${error.message}`);
+    }
+  };
 
   return (
     <div className={`headerSection ${theme}`}>
       <div>
         <h2>ServiceIt</h2>
       </div>
-      <div>
+      <div className="userName">
         <p>Hello, {userData?.Name}!</p>
       </div>
       <nav className="navigation">
@@ -63,16 +79,19 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/UserProfile">
-              <i className="fa-solid fa-user profileIcon"></i>
-            </NavLink>
-          </li>
-          <li>
             <button className="toggleBtn" onClick={handleThemeChange}>
               <i
                 className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
               ></i>
             </button>
+          </li>
+          <li>
+            <NavLink to="/UserProfile">
+              <i className="fa-solid fa-user profileIcon"></i>
+            </NavLink>
+          </li>
+          <li>
+            <p onClick={handleLogOut}>Sign Out</p>
           </li>
         </ul>
       </nav>

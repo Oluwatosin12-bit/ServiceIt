@@ -7,7 +7,7 @@
     --color6: rgb(255, 255, 255); /* White */
     --color7: black; /* Black */
     --mainColor: #64bcf4; /* Sky Blue*/
-    --backgroundColor: #f1f8fc;
+    --backgroundColor: #404040;
     --hoverColor: #5bacdf; /*Slightly darker blue*/
     --darkOne: #312f3a;
     --darkTwo: #45424b;
@@ -31,11 +31,15 @@
   --color5: rgb(79, 91, 213); /* Blue */
   --color6: rgb(255, 255, 255); /* White */
   --color7: black; /* Black */
-  --mainColor: #64bcf4;
-  --hoverColor: #5bacdf;
-  --backgroundColor: #192e3a;
-  --darkOne: #f3f3f3;
-  --darkTwo: #fff;
+  --mainColor: #00FFFF;
+  --hoverColor: #00CCCC;
+  --buttonText: #002E4D;
+  --backgroundColor: #121212;
+  --menuColor: #181818;
+  --darkOne: #282828;
+  --darkTwo: #404040;
+  --primaryText: #FFFFFF;
+  --secondaryText: #B3B3B3;
   --lightOne: #ccc;
   --lightTwo: #e7e3e3;
   --alert: red;

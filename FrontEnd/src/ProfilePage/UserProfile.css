@@ -14,7 +14,7 @@
 }
 
 .welcomePlace {
-  color: var(--darkOne);
+  color: var(--primaryText);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,7 +27,7 @@
 }
 
 .userInfo {
-  border-bottom: 1px solid var(--darkOne);
+  border-bottom: 1px solid var(--secondaryText);
   min-height: 250px;
   margin: 0 5px;
 }
@@ -114,6 +114,12 @@ button:disabled {
   align-items: center;
   position: relative;
 }
+.bioContainer p{
+  color: var(--secondaryText);
+}
+.welcomePlace p{
+  color: var(--secondaryText);
+}
 
 .ellipsisIcon,
 .editIcon {
@@ -150,7 +156,7 @@ button:disabled {
   float: right;
 }
 p {
-  color: var(--darkOne);
+  color:var(--secondaryText);
 }
 .createButton {
   width: 200px;
@@ -159,6 +165,9 @@ p {
 .postHeading {
   display: flex;
   justify-content: space-between;
+}
+.postHeading p{
+  color: var(--secondaryText);
 }
 
 .deleteDropDown{

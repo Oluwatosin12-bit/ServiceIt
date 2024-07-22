@@ -9,6 +9,7 @@ function SearchBar({filterPosts}) {
   };
   return (
     <div className="searchArea">
+      <i className="fa-solid fa-magnifying-glass searchIcon"></i>
       <input
         value={searchWord}
         onChange={handleSearchChange}

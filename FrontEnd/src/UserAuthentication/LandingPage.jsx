@@ -30,23 +30,18 @@ function LandingPage() {
               <h3>ServiceIt</h3>
             </div>
 
+            <div className="toggleThemeArea">
+              <button className="toggleBtn" onClick={handleThemeChange}>
+                <i
+                  className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
+                ></i>
+              </button>
+            </div>
+
             <div className="links">
               <ul className={isMenuOpen ? "active" : ""}>
                 <li>
                   <a href="#">About Us</a>
-                </li>
-                <li>
-                  <a href="#">Testimonials</a>
-                </li>
-                <li>
-                  <a href="/EntryPage" className="btn">
-                    Sign Up
-                  </a>
-                </li>
-                <li>
-                  <a href="/EntryPage" className="btn">
-                    Login
-                  </a>
                 </li>
               </ul>
             </div>
@@ -80,23 +75,13 @@ function LandingPage() {
               </div>
             </div>
             <div className="right">
-              <img
-                src="/person.png"
-                alt="Person Image"
-                className="person"
-              />
+              <img src="/person.png" alt="Person Image" className="person" />
             </div>
           </div>
         </div>
 
         <div className="bottomArea">
-          <div className="container">
-            <button className="toggleBtn" onClick={handleThemeChange}>
-              <i
-                className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
-              ></i>
-            </button>
-          </div>
+          <div className="container"></div>
         </div>
       </div>
     </main>
