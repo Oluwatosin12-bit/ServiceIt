@@ -18,6 +18,7 @@ import { v4 } from "uuid";
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
 const POST_CATEGORIES_FOLDER_NAME = "postCategories"
+const LOCATION_FOLDER_NAME = "serviceLocations"
 async function addUser(
   userID,
   name,
@@ -99,6 +100,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       imageURL,
       createdAt,
       vendorUsername,
+      vendorEmail: userData.Email,
       vendorUID: userID,
       postID: generatedID
     };
@@ -120,7 +122,21 @@ const createPost = async (formData, imageUpload, userID, userData) => {
         await setDoc(categoryDocRef, { categoryName: category, Posts: [] });
       }
 
-      const categoryPostsCollectionRef = collection(categoryDocRef, "Posts");
+      const categoryPostsCollectionRef = collection(categoryDocRef, POSTS_COLLECTION);
+      const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
+      await setDoc(categoryPostDocRef, formDataWithImage);
+    }
+
+    //add to Location collection
+    for (const location of formData.serviceLocations) {
+      const locationDocRef = doc(database,  LOCATION_FOLDER_NAME, location);
+      const categoryDocSnap = await getDoc(locationDocRef);
+
+      if (categoryDocSnap.exists() === false) {
+        await setDoc(locationDocRef, { locationName: location, Posts: [] });
+      }
+
+      const categoryPostsCollectionRef = collection(locationDocRef, POSTS_COLLECTION);
       const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
       await setDoc(categoryPostDocRef, formDataWithImage);
     }
@@ -151,7 +167,7 @@ const fetchUserPosts = (userID, callback) => {
       postsData.push(doc.data());
     });
 
-    callback(postsData);
+    callback(postsData.sort((a, b) => b.createdAt - a.createdAt));
   });
   return unsubscribe;
 };

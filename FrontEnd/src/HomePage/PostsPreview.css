@@ -20,6 +20,7 @@
 .feedDescription,
 .feedTimestamp {
   color: var(--darkOne);
+  text-align: left;
 }
 
 .feedTimestamp {
@@ -30,4 +31,7 @@
 .feedImage {
   width: 250px;
   height: 200px;
+}
+.vendorUsername{
+  cursor: pointer;
 }

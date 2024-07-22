@@ -23,9 +23,8 @@ function NotificationsPage({ userData }) {
     return (
       <div className={`appointmentPage ${theme}`}>
         <div className="appointments">
-          <i className="fa-solid fa-bell"></i>
           <h2>No Notifications yet.</h2>
-          <p>When you get notifications, they will show up here</p>
+          <p className="emptyPageMessage">When you get notifications, they will show up here</p>
         </div>
       </div>
     );
@@ -37,7 +36,13 @@ function NotificationsPage({ userData }) {
       <div className="stackedNotifications">
         {userNotificationData.map((notification) => (
           <div key={notification.id} className="notificationTab">
-            <p>{notification.message}</p>
+            <div className="notificationContent">
+              <p className="notificationMessage">{notification.message}</p>
+              <p className="notificationTime">{notification.timeStamp}</p>
+            </div>
+            {notification.image && (
+            <img src={notification.image} alt="Notification Image" className="notificationImage"/>
+          )}
           </div>
         ))}
       </div>

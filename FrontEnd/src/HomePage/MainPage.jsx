@@ -15,16 +15,35 @@ function MainPage({ userUID, userData, socket }) {
   const [selectedPost, setSelectedPost] = useState(null);
   const { theme } = useTheme();
 
-  const fetchFeed = async () => {
-    if (userUID !== null) {
-      const feedData = await fetchUserFeed(userUID);
-      setUserFeed(feedData);
-      setFilteredPosts(feedData);
-      setIsLoading(false);
-    }
-  };
   useEffect(() => {
-    fetchFeed();
+    const fetchDataAndUpdateLocalStorage = async () => {
+      try {
+        const storedUserFeed = localStorage.getItem("userFeed");
+        if (storedUserFeed !== null) {
+          const parsedUserFeed = JSON.parse(storedUserFeed);
+          setUserFeed(parsedUserFeed);
+          setFilteredPosts(parsedUserFeed);
+          setIsLoading(false);
+        } else {
+          if (userUID !== null) {
+            const feedData = await fetchUserFeed(userUID);
+            const feedDataWithDates = feedData.map(item => ({
+              ...item,
+              createdAt: item.createdAt.toDate()
+            }));
+            setUserFeed(feedDataWithDates);
+            setFilteredPosts(feedDataWithDates);
+            setIsLoading(false);
+            localStorage.setItem("userFeed", JSON.stringify(feedDataWithDates));
+          }
+        }
+      } catch (error) {
+        throw new Error("Error fetching or updating data:", error.message);
+      }
+    };
+    fetchDataAndUpdateLocalStorage();
+    const intervalId = setInterval(fetchDataAndUpdateLocalStorage, 3600000);
+    return () => clearInterval(intervalId);
   }, [userUID]);
 
   const filterPosts = (selectedCategories = [], searchWord = "") => {

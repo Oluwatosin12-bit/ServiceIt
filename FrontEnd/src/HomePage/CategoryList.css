@@ -15,6 +15,11 @@
   list-style: none;
   margin: 20px auto;
   color: var(--darkOne);
+  cursor: pointer;
+}
+
+.categories ul li:hover, .selectedFilter {
+  background-color: red;
 }
 .categories nav{
   display: flex;

@@ -30,7 +30,7 @@ function CategoryList({ filterPosts }) {
           {CATEGORIES.map((category) => (
             <li
               key={category}
-              className={selectedCategories.includes(category) ? "selected" : ""}
+              className={selectedCategories.includes(category) ? "selectedFilter" : ""}
               onClick={() => handleCategoryClick(category)}
             >
               {category}

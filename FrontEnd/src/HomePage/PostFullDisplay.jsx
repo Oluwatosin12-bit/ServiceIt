@@ -34,7 +34,6 @@ function PostFullDisplay({
   if (isShown === false) {
     return null;
   }
-  const createdAt = post.createdAt.toDate();
 
   //add to favorites document, extract post category for recommendation
   const handleNotification = async (type) => {
@@ -97,9 +96,6 @@ function PostFullDisplay({
                   />
                 )}
               </span>
-              <p className="fullDisplayTimestamp">
-                Created at: {createdAt.toLocaleString()}
-              </p>
             </div>
           </div>
         </div>

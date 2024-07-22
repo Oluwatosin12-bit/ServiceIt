@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import {
   fetchUserPosts,
@@ -7,11 +7,20 @@ import Modal from "../Modal";
 import { useTheme } from "../UseContext";
 import "./UserProfile.css";
 
-function VendorProfilePage({ post }) {
+function VendorProfilePage() {
   const { theme } = useTheme();
-  const navigate = useNavigate();
+  const location = useLocation();
+  const { post } = location.state || {};
+  const vendorID = post.vendorUID
   const [userPosts, setUserPosts] = useState([]);
 
+  useEffect(() => {
+    if (vendorID === null) return;
+    const unsubscribe = fetchUserPosts(vendorID, (postsData) => {
+      setUserPosts(postsData);
+    });
+    return () => unsubscribe && unsubscribe();
+  }, [vendorID]);
 
   return (
     <div className={`userProfileSection ${theme}`}>
@@ -19,6 +28,7 @@ function VendorProfilePage({ post }) {
         <div className="welcomePlace">
           <div>
             <img src="/Profile.jpeg" alt="profile avatar" />
+            <h1>{post?.VendorUsername} </h1>
             <div className="bioContainer">
               <p>Bio:</p>
             </div>

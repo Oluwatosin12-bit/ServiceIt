@@ -8,13 +8,13 @@ import {
 import "./AppointmentPage.css";
 import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
-import Modal from "../Modal";
 
 function AppointmentPage({ userData, socket }) {
   const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] =
     useState(false);
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(null)
   const userID = userData?.userID;
   const ACCEPTED_ACTION_TYPE = 3
   const DECLINED_ACTION_TYPE = 4
@@ -82,7 +82,8 @@ function AppointmentPage({ userData, socket }) {
     };
   }, [userID]);
 
-  const toggleModal = () => {
+  const toggleAppointmentDetailsModal = (appointment) => {
+    setSelectedAppointment(appointment)
     setIsAppointmentDetailsModalShown(!isAppointmentDetailsModalShown);
   };
 
@@ -103,7 +104,7 @@ function AppointmentPage({ userData, socket }) {
       <div className="appointments">
         <h2>Pending Appointments</h2>
         {pendingAppointmentData.map((appointment) => (
-          <div key={appointment.docID} className="appointmentTab">
+          <div key={appointment.docID} className="appointmentTab" onClick={()=>toggleAppointmentDetailsModal(appointment)}>
             <div className="appointmentInfo">
               {appointment.vendorUID === userID && (
                 <p className="appointmentUser">
@@ -160,7 +161,7 @@ function AppointmentPage({ userData, socket }) {
 
         <h2>Upcoming Appointments</h2>
         {upcomingAppointmentData.map((appointment) => (
-          <div key={appointment.docID} className="appointmentTab">
+          <div key={appointment.docID} className="appointmentTab" onClick={()=>toggleAppointmentDetailsModal(appointment)}>
             <div className="appointmentInfo">
               <p className="appointmentUser">{appointment.vendorUsername}</p>
               <p className="appointmentTitle">{appointment.appointmentTitle}</p>
@@ -194,6 +195,14 @@ function AppointmentPage({ userData, socket }) {
             </div>
           </div>
         ))}
+        {isAppointmentDetailsModalShown && selectedAppointment !== null &&(
+          <div>
+            <AppointmentDetails
+            isShown={isAppointmentDetailsModalShown}
+            onClose={toggleAppointmentDetailsModal}
+            appointment={selectedAppointment}/>
+          </div>
+        )}
       </div>
     </div>
   );

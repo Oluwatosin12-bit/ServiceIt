@@ -26,7 +26,8 @@ const requestAppointment = async (
   vendorUID,
   vendorUsername,
   appointmentData,
-  userData
+  userData,
+  vendorEmail
 ) => {
   try {
     const Status = PENDING_STATUS;
@@ -39,6 +40,8 @@ const requestAppointment = async (
       vendorUsername,
       customerUsername,
       Status,
+      customerEmail: userData.Email,
+      vendorEmail,
       docID: appointmentID,
     };
     const userDocRef = doc(

@@ -19,6 +19,7 @@ const POST_CATEGORIES_FOLDER = "postCategories";
 const POSTS_COLLECTION = "Posts";
 const FAVORITES_COLLECTION = "Favorites";
 const APPOINTMENT_COLLECTION = "Appointments";
+const LOCATION_FOLDER_NAME = "serviceLocations";
 
 const feedCategory = async (userID, categories) => {
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
@@ -71,7 +72,7 @@ const addToFavoriteDocs = async (userUID, favorited, post) => {
     userUID,
     FAVORITES_COLLECTION
   );
-  const postDocRef = doc(favoritesRef, post.postId);
+  const postDocRef = doc(favoritesRef, post.postID);
 
   if (favorited === true) {
     await deleteDoc(postDocRef);
@@ -98,58 +99,6 @@ const isLiked = (userUID, postID, callback) => {
   return unsubscribe;
 };
 
-const postsFromFavorites = async (userUID) => {
-  try {
-    const favoritesRef = collection(
-      database,
-      DATABASE_FOLDER_NAME,
-      userUID,
-      FAVORITES_COLLECTION
-    );
-    const favoritePosts = await getDocs(favoritesRef);
-    const favoriteVendorsID = [];
-
-    for (const favoriteDoc of favoritePosts.docs) {
-      const vendorID = favoriteDoc.data().post.vendorUID;
-      if (vendorID !== null) {
-        favoriteVendorsID.push(vendorID);
-      }
-    }
-
-    return favoriteVendorsID;
-  } catch (error) {
-    throw new Error(
-      `Error fetching posts from favorite vendors ${error.message}`
-    );
-  }
-};
-
-const postsFromAppointments = async (userUID) => {
-  try {
-    const appointmentRef = collection(
-      database,
-      DATABASE_FOLDER_NAME,
-      userUID,
-      APPOINTMENT_COLLECTION
-    );
-    const appointmentPosts = await getDocs(appointmentRef);
-    const scheduledAppointmentVendorsID = [];
-
-    for (const appointmentDoc of appointmentPosts.docs) {
-      const vendorID = appointmentDoc.data().vendorUID;
-      if (vendorID !== null) {
-        scheduledAppointmentVendorsID.push(vendorID);
-      }
-    }
-
-    return scheduledAppointmentVendorsID;
-  } catch (error) {
-    throw new Error(
-      `Error fetching posts from scheduled appoinment vendors ${error.message}`
-    );
-  }
-};
-
 const fetchUserFeed = async (userID) => {
   if (userID === null) {
     return;
@@ -169,9 +118,9 @@ const fetchUserFeed = async (userID) => {
       const postsQuery = query(collection(categoryRef, POSTS_COLLECTION));
       const postsSnapshot = await getDocs(postsQuery);
       postsSnapshot.forEach((postDoc) => {
-        const postID = postDoc.id
-        if(uniquePosts.has(postID) === false){
-          uniquePosts.add(postID)
+        const postID = postDoc.id;
+        if (uniquePosts.has(postID) === false) {
+          uniquePosts.add(postID);
           allPosts.push(postDoc.data());
         }
       });
@@ -188,13 +137,28 @@ const fetchUserFeed = async (userID) => {
     );
     const vendorPosts = await getDocs(vendorCollectionRef);
     vendorPosts.forEach((vendorPost) => {
-      const vendorPostID = vendorPost.id
-      if(uniquePosts.has(vendorPostID) === false){
-        uniquePosts.add(vendorPostID)
+      const vendorPostID = vendorPost.id;
+      if (uniquePosts.has(vendorPostID) === false) {
+        uniquePosts.add(vendorPostID);
         allPosts.push(vendorPost.data());
       }
     });
   }
+
+  //post by location
+  const LocationCollectionRef = collection(
+    database,
+    LOCATION_FOLDER_NAME,
+    userData.UserLocation
+  );
+  const postsByLocation = await getDocs(LocationCollectionRef);
+  postsByLocation.forEach((post) => {
+    const postID = post.id;
+    if (uniquePosts.has(vendorPostID) === false) {
+      uniquePosts.add(postID);
+      allPosts.push(post.data());
+    }
+  });
 
   allPosts.sort((a, b) => b.createdAt - a.createdAt);
   return allPosts;
@@ -204,7 +168,6 @@ export {
   fetchUserFeed,
   feedCategory,
   addToFavoriteDocs,
-  postsFromFavorites,
   isLiked,
   recommendedVendors,
 };

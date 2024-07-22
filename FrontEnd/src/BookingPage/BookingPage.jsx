@@ -64,7 +64,8 @@ function BookingForm({ userData, socket }) {
           post.userId,
           post.vendorUsername,
           appointmentData,
-          userData
+          userData,
+          post.VendorEmail,
         );
         await feedCategory(userUID, post.serviceCategories);
         await recommendedVendors(userUID, post.vendorUID)
