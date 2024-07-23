@@ -20,6 +20,7 @@ const POSTS_COLLECTION = "Posts";
 const FAVORITES_COLLECTION = "Favorites";
 const APPOINTMENT_COLLECTION = "Appointments";
 const LOCATION_FOLDER_NAME = "serviceLocations";
+const COUNT_CHANGE = 1;
 
 const feedCategory = async (userID, categories) => {
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
@@ -84,27 +85,41 @@ const addToFavoriteDocs = async (userUID, favorited, post) => {
   }
 };
 
-const updateVendorPostLikes = async(post, favorited) =>{
-  const postDocRef = doc(database, DATABASE_FOLDER_NAME, post.vendorUID, POSTS_COLLECTION, post.postID)
+const updateVendorPostLikes = async (post, favorited) => {
+  const postDocRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    post.vendorUID,
+    POSTS_COLLECTION,
+    post.postID
+  );
 
   if (favorited === true) {
     await updateDoc(postDocRef, {
-      FavoriteCount: post.FavoriteCount - 1
+      FavoriteCount: post.FavoriteCount - COUNT_CHANGE,
     });
   } else {
-      await updateDoc(postDocRef, {
-        FavoriteCount: post.FavoriteCount + 1
-      });
+    await updateDoc(postDocRef, {
+      FavoriteCount: post.FavoriteCount + COUNT_CHANGE,
+    });
   }
-}
+};
 
-const updateVendorPostAppointment = async(post) =>{
-  const postDocRef = doc(database, DATABASE_FOLDER_NAME, post.vendorUID, POSTS_COLLECTION, post.postID)
+const updateVendorPostAppointment = async (post) => {
+  const postDocRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    post.vendorUID,
+    POSTS_COLLECTION,
+    post.postID
+  );
   await updateDoc(postDocRef, {
-    AppointmentCount: post.AppointmentCount + 1
+    AppointmentCount: post.AppointmentCount + COUNT_CHANGE,
   });
-  await updateDoc(postDocRef.AppointmentCount+=1);
-}
+  await updateDoc(postDocRef, {
+    AppointmentCount: post.AppointmentCount + COUNT_CHANGE,
+  });
+};
 
 const isLiked = (userUID, postID, callback) => {
   const favoritesRef = collection(
@@ -126,7 +141,7 @@ const fetchUserFeed = async (userID) => {
     return;
   }
   const allPosts = [];
-  const postScore = 0
+  const postScore = 0;
   const uniquePosts = new Set();
   const userData = await getUserData(userID);
   const userFeedCategories = userData.feedCategories ?? [];
@@ -194,5 +209,5 @@ export {
   isLiked,
   getRecommendedVendors,
   updateVendorPostLikes,
-  updateVendorPostAppointment
+  updateVendorPostAppointment,
 };
