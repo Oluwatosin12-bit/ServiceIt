@@ -79,7 +79,7 @@ function SignUpPage() {
         <input
           name="name"
           id="name"
-          placeholder="First Name, Last Name"
+          placeholder="Jane Doe"
           onChange={(event) => setName(event.target.value)}
           required="required"
         />

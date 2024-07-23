@@ -29,7 +29,7 @@ const registerUser = async (
       name,
       username,
       email,
-      selectedCategories || [],
+      selectedCategories ?? [],
       userLocation,
     );
     if (newUser !== null && userAddedToDB !== false) {

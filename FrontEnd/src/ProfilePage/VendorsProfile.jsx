@@ -10,7 +10,7 @@ import "./UserProfile.css";
 function VendorProfilePage() {
   const { theme } = useTheme();
   const location = useLocation();
-  const { post } = location.state || {};
+  const { post } = location.state ?? {};
   const vendorID = post.vendorUID
   const [userPosts, setUserPosts] = useState([]);
 

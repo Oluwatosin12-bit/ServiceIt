@@ -19,6 +19,7 @@ const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
 const POST_CATEGORIES_FOLDER_NAME = "postCategories"
 const LOCATION_FOLDER_NAME = "serviceLocations"
+const ACTION_COUNTS = 0
 async function addUser(
   userID,
   name,
@@ -33,9 +34,11 @@ async function addUser(
     Name: name,
     UserName: userName,
     Email: signUpEmail,
-    selectedCategories: selectedCategories || [],
-    feedCategories: selectedCategories || [],
+    selectedCategories: selectedCategories ?? [],
+    feedCategories: selectedCategories ?? [],
     UserLocation: userLocation,
+    FavoriteCount: ACTION_COUNTS,
+    AppointmentCount: ACTION_COUNTS,
   });
 }
 
@@ -102,7 +105,9 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       vendorUsername,
       vendorEmail: userData.Email,
       vendorUID: userID,
-      postID: generatedID
+      postID: generatedID,
+      FavoriteCount: 0,
+      AppointmentCount: 0,
     };
 
     if (userID === null) {

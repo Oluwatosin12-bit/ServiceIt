@@ -5,6 +5,7 @@ import {
   acceptAppointment,
   declineAppointment,
 } from "../BookingPage/BookingDB";
+import {  updateVendorPostAppointment} from "../HomePage/RecommendationDB"
 import "./AppointmentPage.css";
 import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
@@ -28,6 +29,7 @@ function AppointmentPage({ userData, socket }) {
     type
   ) => {
     await acceptAppointment(customerID, vendorID, appointmentID);
+    await acceptAppointment(post)
     await socket.emit("sendNotification", {
       userID: userData?.userID,
       senderID: userData?.userID,

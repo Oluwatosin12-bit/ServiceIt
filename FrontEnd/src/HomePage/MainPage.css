@@ -18,7 +18,7 @@ p {
   overflow-y: auto;
 }
 
-.bodyArea{
+.bodyArea {
   margin-top: 100px;
 }
 .searchArea {
@@ -40,7 +40,6 @@ p {
   color: var(--primaryText);
 }
 
-
 .feedSection {
   flex-grow: 1;
   display: flex;
@@ -51,6 +50,7 @@ p {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  max-height: calc(100vh - 130px);
 }
 
 .postFeed {
@@ -69,7 +69,7 @@ p {
   .categorySection {
     width: 100px;
   }
-  .searchArea{
+  .searchArea {
     margin-left: 125px;
   }
   .feedSection {
@@ -79,7 +79,7 @@ p {
     width: 200px;
     height: 150px;
   }
-  .postFeed:hover{
+  .postFeed:hover {
     width: 205px;
   }
   p {

@@ -52,12 +52,12 @@ function Header({ userData, socket }) {
       <nav className="navigation">
         <ul className="navigationList">
           <li>
-            <NavLink to="/MainPage" activeClassName="activeLink">
+            <NavLink to="/MainPage">
               <p>Home</p>
             </NavLink>
           </li>
           <li>
-            <NavLink to="/AppointmentPage" activeClassName="activeLink">
+            <NavLink to="/AppointmentPage">
               <p>Appointments</p>
             </NavLink>
           </li>

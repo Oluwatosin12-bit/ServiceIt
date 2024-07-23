@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
+import axios from "axios";
 import { logOutUser } from "../UserAuthentication/Auth";
 import {
   createPost,
@@ -27,6 +28,7 @@ function UserProfilePage({ userUID, userData }) {
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
+  const MINIMUM_SEARCH_WORD = 2
   const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
   const [isDeletePostDropdownVisible, setIsDeletePostDropdownVisible] =
@@ -51,19 +53,24 @@ function UserProfilePage({ userUID, userData }) {
   };
 
   useEffect(() => {
-    if (searchLocationTerm.length >= 2) {
+    if (searchLocationTerm.length >= MINIMUM_SEARCH_WORD) {
       fetchLocations(searchLocationTerm);
     } else {
       setSuggestions([]);
     }
   }, [searchLocationTerm]);
   const fetchLocations = (query) => {
-    fetch(`https://your-api-url?q=${query}`)
+    fetch(`https://serviceitbackend.onrender.com/places-autocomplete?input=${query}`)
       .then((response) => response.json())
       .then((data) => {
-        setSuggestions(data);
+        setSuggestions(data.predictions);
       })
+      .catch((error) => {
+        setSuggestions([]);
+        throw new Error('Error fetching locations:', error);
+      });
   };
+
   const addLocation = (location) => {
     setSelectedLocations([...selectedLocations, location]);
     setSearchLocationTerm("");
@@ -288,9 +295,9 @@ function UserProfilePage({ userUID, userData }) {
                   <div
                     key={index}
                     className="suggestion"
-                    onClick={() => addLocation(location)}
+                    onClick={() => addLocation(location.description)}
                   >
-                    {`${location.city}, ${location.state}`}
+                    {location.description}
                   </div>
                 ))}
               </div>
@@ -310,7 +317,7 @@ function UserProfilePage({ userUID, userData }) {
             </div>
             <div>
               <label htmlFor="serviceAvailability">Availability:</label>{" "}
-              <span>when you are available to offer this service</span>
+              <span>When you are available to offer this service</span>
               <input
                 type="text"
                 placeholder="Example: Every Thursday, through July 2024"

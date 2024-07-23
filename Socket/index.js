@@ -1,9 +1,11 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
+import {GOOGLE_PLACES_KEY} from "./env.js"
 import cors from "cors";
 import express from "express";
-import { collection, addDoc, Timestamp, updateDoc, query, where, orderBy, getDocs } from "firebase/firestore";
-const PORT = process.env.PORT || 3000;
+import { collection, addDoc, Timestamp} from "firebase/firestore";
+import axios from "axios";
+const PORT = process.env.PORT ?? 3000;
 const app = express();
 
 app.use(cors({
@@ -27,7 +29,6 @@ app.use(cors({
 }));
 
 const server = app.listen(PORT, () => {
-
 });
 
 const io = new Server(server, {
@@ -36,6 +37,30 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     pingInterval: 25000,
     pingTimeout: 60000,
+  }
+});
+
+const fetchPlacesAutocomplete = async (query) => {
+  const apiKey = GOOGLE_PLACES_KEY;
+  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=(cities)&key=${apiKey}`;
+
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    throw new Error('Error fetching locations:', error.message);
+  }
+};
+
+// Express route to handle autocomplete requests
+app.get('/places-autocomplete', async (req, res) => {
+  const { input } = req.query;
+
+  try {
+    const data = await fetchPlacesAutocomplete(input);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch locations' });
   }
 });
 

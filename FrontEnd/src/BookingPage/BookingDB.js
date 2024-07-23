@@ -17,6 +17,7 @@ import {
 const DATABASE_FOLDER_NAME = "users";
 const APPOINTMENT_COLLECTION = "Appointments";
 const NOTIFICATION_COLLECTION = "Notifications";
+const FAVORITES_COLLECTION = "Favorites";
 const PENDING_STATUS = "pending";
 const ACCEPTED_STATUS = "accepted";
 const DECLINED_STATUS = "declined";
@@ -113,7 +114,7 @@ const fetchUserFavorites = (userID, callback) => {
         database,
         DATABASE_FOLDER_NAME,
         userID,
-        "Favorites"
+        FAVORITES_COLLECTION
       )
     );
     const unsubscribe = onSnapshot(userFavoritesRef, (snapshot) => {

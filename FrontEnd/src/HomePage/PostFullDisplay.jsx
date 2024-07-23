@@ -4,7 +4,8 @@ import {
   feedCategory,
   addToFavoriteDocs,
   isLiked,
-  recommendedVendors
+  getRecommendedVendors,
+  updateVendorPostLikes,
 } from "./RecommendationDB";
 import "./PostFullDisplay.css";
 
@@ -40,8 +41,9 @@ function PostFullDisplay({
     try {
       setFavorited(!favorited);
       feedCategory(userUID, post.serviceCategories);
-      await recommendedVendors(userUID, post.vendorUID)
+      await getRecommendedVendors,(userUID, post.vendorUID)
       await addToFavoriteDocs(userUID, favorited, post);
+      await updateVendorPostLikes(post, favorited)
       if (notificationSent === false) {
         socket.emit("sendNotification", {
           userID: userUID,
