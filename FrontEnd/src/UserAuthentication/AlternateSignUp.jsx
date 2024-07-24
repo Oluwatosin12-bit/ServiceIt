@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { registerUser } from "./Auth";
 import { CATEGORIES } from "../Categories";
 import { useTheme } from "../UseContext";
+import { fetchLocations } from "../UseableFunctions";
 import "./EntryPage.css";
 
 function SignUpPage() {
@@ -18,7 +19,9 @@ function SignUpPage() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [availableCategories] = useState(CATEGORIES);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
   const MIN_PASSWORD_LENGTH = 6;
+  const MIN_SEARCH_WORD = 2;
 
   const removeCategory = (category) => {
     setSelectedCategories(selectedCategories.filter((selectedCategory) => selectedCategory !== category));
@@ -43,6 +46,20 @@ function SignUpPage() {
   useEffect(() => {
     setIsFormValid(validateForm());
   }, [email, password, userName]);
+
+  const handleLocationInputChange = (event) => {
+    const query = event.target.value;
+    setUserLocation(query);
+    if (query.length >= MIN_SEARCH_WORD) {
+      fetchLocations(query, setSearchSuggestions);
+    } else {
+      setSearchSuggestions([]);
+    }
+  };
+  const addLocation = (location) => {
+    setUserLocation(location);
+    setSearchSuggestions([]);
+  };
 
   const handleSignUp = async (event) => {
     event.preventDefault();
@@ -145,15 +162,29 @@ function SignUpPage() {
             ))}
           </select>
         </div>
+        <div>
         <label>
-        <span>Location</span>
-        <input
-          name="location"
-          onChange={(event) => setUserLocation(event.target.value)}
-          required="required"
-          placeholder="County, State"
-        />
-      </label>
+          <span>Location</span>
+          <input
+            name="location"
+            value={userLocation}
+            onChange={handleLocationInputChange}
+            required="required"
+            placeholder="City, State"
+          />
+        </label>
+        <div className="suggestions">
+          {searchSuggestions.map((location, index) => (
+            <div
+              key={index}
+              className="suggestion"
+              onClick={() => addLocation(location.description)}
+            >
+              {location.description}
+            </div>
+          ))}
+        </div>
+      </div>
         <div className="link-out">
           <a href="/EntryPage" className="redirect3">
             Already have an account? Login here

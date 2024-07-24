@@ -15,9 +15,12 @@ function Header({ userData, socket }) {
   };
 
   useEffect(() => {
-    if (socket) {
+    if (socket !== null && socket !== undefined) {
       socket.on("getNotification", (data) => {
-        setNotifications((prev) => [...prev, data]);
+        const isDuplicate = notifications.some((notification)=> notification.message === data.message);
+        if (isDuplicate === false){
+          setNotifications((prev) => [...prev, data]);
+        }
       });
     }
   }, [socket]);

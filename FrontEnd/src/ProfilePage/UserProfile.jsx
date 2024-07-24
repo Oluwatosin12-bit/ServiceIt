@@ -1,14 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { logOutUser } from "../UserAuthentication/Auth";
-import {
-  createPost,
-  fetchUserPosts,
-} from "../UserAuthentication/FirestoreDB";
+import { createPost, fetchUserPosts } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
 import { CATEGORIES } from "../Categories";
 import PostFullDisplay from "../HomePage/PostFullDisplay";
 import { fetchLocations, handleDeletePost } from "../UseableFunctions";
+import { EditProfile } from "./EditingProfile";
 import { useTheme } from "../UseContext";
 import "./UserProfile.css";
 
@@ -34,6 +32,12 @@ function UserProfilePage({ userUID, userData }) {
     useState(false);
   const signOutDropdownRef = useRef(null);
   const deletePostDropdownRef = useRef({});
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isEditProfileModalShown, setIsEditProfileModalShown] = useState(false);
+  const handleClickEditProfile = () => {
+    setIsEditingProfile(true);
+    setIsEditProfileModalShown(true);
+  };
 
   const toggleSignOutDropdown = () => {
     setIsSignOutDropdownVisible(!isSignOutDropdownVisible);
@@ -203,11 +207,17 @@ function UserProfilePage({ userUID, userData }) {
             <div className="bioContainer">
               <p>Bio:</p>
               <span className="icon editIcon">
-                <i className="fa-solid fa-pen-to-square" />
+                <i
+                  className="fa-solid fa-pen-to-square"
+                  onClick={handleClickEditProfile}
+                />
               </span>
             </div>
             <p>{userData?.Bio}</p>
           </div>
+          {isEditingProfile && (
+            <EditProfile userUID={userUID} userData={userData} isEditProfileModalShown ={isEditProfileModalShown} setIsEditProfileModalShown={setIsEditProfileModalShown}/>
+          )}
           <div>
             <button className="createButton" onClick={toggleCreatePostModal}>
               Create a Post
@@ -300,7 +310,7 @@ function UserProfilePage({ userUID, userData }) {
             </div>
             <div>
               <label htmlFor="serviceAvailability">Availability:</label>{" "}
-              <span>When you are available to offer this service</span>
+              <span className="availabilityInfo">When you are available to offer this service</span>
               <input
                 type="text"
                 placeholder="Example: Every Thursday, through July 2024"

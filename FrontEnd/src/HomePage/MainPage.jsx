@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { fetchUserFeed } from "./RecommendationDB";
+import { fetchUserFeed, filterByCategory } from "./RecommendationDB";
 import CategoryList from "./CategoryList";
 import PostsPreview from "./PostsPreview";
 import PostFullDisplay from "./PostFullDisplay";
 import SearchBar from "../Search/SearchBar";
 import { useTheme } from "../UseContext";
+import { fetchAndUpdateUserLocation } from "../LocationUtil";
 import "./MainPage.css";
 
 function MainPage({ userUID, userData, socket }) {
@@ -37,6 +38,10 @@ function MainPage({ userUID, userData, socket }) {
           setIsLoading(false);
           localStorage.setItem("userFeed", JSON.stringify(feedDataWithDates));
         }
+
+        if (userUID !== null && userUID !== undefined) {
+          await fetchAndUpdateUserLocation(userUID);
+        }
       } catch (error) {
         throw new Error(`Error fetching or updating data: ${error.message}`);
       }
@@ -46,7 +51,7 @@ function MainPage({ userUID, userData, socket }) {
     return () => clearInterval(intervalId);
   }, [userUID]);
 
-  const filterPosts = (selectedCategories = [], searchWord = "") => {
+  const filterPosts = async(selectedCategories = [], searchWord = "") => {
     let filtered = [...userFeed];
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((post) =>

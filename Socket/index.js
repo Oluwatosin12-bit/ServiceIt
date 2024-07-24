@@ -117,13 +117,22 @@ const constructMessage = (userID, receivee, senderName, receiverName, appointmen
   }
 };
 
+let sentNotifications = {}
+const resetSentNotifications = (userID) => {
+  sentNotifications[userID] = false;
+};
+
 io.on("connection", (socket) => {
   socket.on("newUser", async(userID) => {
     addNewUser(userID, socket.id)
   });
 
   socket.on("disconnect", () => {
-    removeUser(socket.id);
+    const user = onlineUsers.find((user) => user.socketID === socket.id);
+    if (user !== undefined && user !== null) {
+      resetSentNotifications(user.userID);
+      removeUser(socket.id);
+    }
   });
 
   socket.on("error", (err) => {

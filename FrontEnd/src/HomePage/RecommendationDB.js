@@ -15,7 +15,10 @@ import {
   FieldValue,
 } from "firebase/firestore";
 import { getUserData } from "../UserAuthentication/FirestoreDB";
-import { updateFavoriteCount, updateAppointmentCount } from "../UseableFunctions";
+import {
+  updateFavoriteCount,
+  updateAppointmentCount,
+} from "../UseableFunctions";
 
 const DATABASE_FOLDER_NAME = "users";
 const POST_CATEGORIES_FOLDER = "postCategories";
@@ -191,16 +194,45 @@ const updateVendorPostAppointment = async (post) => {
   }
 };
 
+const filterByCategory = async (userID, category) => {
+  const posts = [];
+  const uniquePosts = new Set();
+  const categoryCollectionRef = collection(
+    database,
+    POST_CATEGORIES_FOLDER,
+    category,
+    POSTS_COLLECTION
+  );
+  const categoryQuery = query(categoryCollectionRef);
+  const categoryDocs = await getDocs(categoryQuery);
+  categoryDocs.forEach((post) => {
+    const postID = post.id;
+    if (uniquePosts.has(postID) === false && post.vendorUID !== userID) {
+      uniquePosts.add(postID);
+      posts.push(post.data());
+    }
+  });
+  return posts
+};
+
 const fetchUserFeed = async (userID) => {
   if (userID === null) {
     return;
   }
   const allPosts = [];
-  const postScore = 0;
-  const CUTOFF_SCORE = 7;
   const uniquePosts = new Set();
+
+  //score cutoffs
+  const CATEG0RY_CUTOFF_SCORE = 40;
+  const REC_VENDOR_CUTOFF_SCORE = 30;
+  const SIMILAR_LOCATION_SCORE = 40;
+  const FAVORITE_OVERALL_SCORE = 13;
+  const APPOINTMENT_OVERALL_SCORE = 30;
+  const POSTCOUNT_OVERALL_SCORE = 17;
+  const MULTIPLICAND = 0.99;
+
   const userData = await getUserData(userID);
-  const userLocation =  userData?.UserLocation
+  const userLocation = userData?.UserLocation;
   const userFeedCategories = userData.feedCategories ?? [];
   const approvedVendorsID = userData.recommendedVendors ?? [];
 
@@ -212,9 +244,13 @@ const fetchUserFeed = async (userID) => {
     if (categoryDoc.exists()) {
       const postsQuery = query(collection(categoryRef, POSTS_COLLECTION));
       const postsSnapshot = await getDocs(postsQuery);
+
       postsSnapshot.forEach((postDoc) => {
         const postID = postDoc.id;
-        if (uniquePosts.has(postID) === false && postDoc.vendorUID !== userID) {
+        if (
+          uniquePosts.has(postID) === false &&
+          postDoc.data().vendorUID !== userID
+        ) {
           uniquePosts.add(postID);
           allPosts.push(postDoc.data());
         }
@@ -224,37 +260,54 @@ const fetchUserFeed = async (userID) => {
 
   //posts by recommended vendors (if they meet weightScore)
   for (const vendorID of approvedVendorsID) {
-    const vendorCollectionRef = collection(
-      database,
-      DATABASE_FOLDER_NAME,
-      vendorID,
-      POSTS_COLLECTION
-    );
-    const vendorPosts = await getDocs(vendorCollectionRef);
-    vendorPosts.forEach((vendorPost) => {
-      const vendorPostID = vendorPost.id;
-      if (uniquePosts.has(vendorPostID) === false && vendorPost.vendorUID !== userID) {
-        uniquePosts.add(vendorPostID);
-        allPosts.push(vendorPost.data());
-      }
-    });
+    const vendorCollectionRef = doc(database, DATABASE_FOLDER_NAME, vendorID);
+    const vendorCollectionSnap = await getDoc(vendorCollectionRef);
+
+    if (vendorCollectionSnap.exists()) {
+      const vendorData = vendorCollectionSnap.data();
+      const favoriteScore = vendorData.FavoriteCount * MULTIPLICAND;
+      const appointmentScore = vendorData.AppointmentCount * MULTIPLICAND;
+      const postCountScore = vendorData.PostCount * MULTIPLICAND;
+
+      let accountScore = 0;
+      accountScore += Math.min(favoriteScore, FAVORITE_OVERALL_SCORE);
+      accountScore += Math.min(appointmentScore, APPOINTMENT_OVERALL_SCORE);
+      accountScore += Math.min(postCountScore, POSTCOUNT_OVERALL_SCORE);
+
+      const vendorPostRef = collection(vendorCollectionRef, POSTS_COLLECTION);
+      const vendorPosts = await getDocs(vendorPostRef);
+      vendorPosts.forEach((vendorPost) => {
+        const vendorPostID = vendorPost.id;
+        const vendorServiceLocations = vendorPost.data().serviceLocations
+        if (vendorServiceLocations.includes(userLocation)) {
+          accountScore += SIMILAR_LOCATION_SCORE;
+        }
+        if (
+          uniquePosts.has(vendorPostID) === false &&
+          vendorPost.data().vendorUID !== userID &&
+          accountScore > REC_VENDOR_CUTOFF_SCORE
+        ) {
+          uniquePosts.add(vendorPostID);
+          allPosts.push(vendorPost.data());
+        }
+      });
+    }
   }
 
   //post by nearest location
-  const locationPostRef = doc(database, LOCATION_FOLDER_NAME, userLocation)
-  const locationDocRef = await getDoc(locationPostRef)
-  if(locationDocRef.exists()){
+  const locationPostRef = doc(database, LOCATION_FOLDER_NAME, userLocation);
+  const locationDocRef = await getDoc(locationPostRef);
+  if (locationDocRef.exists()) {
     const postQuery = query(collection(locationDocRef, POSTS_COLLECTION));
     const postsSnapshot = await getDocs(postQuery);
-    postsSnapshot.forEach((postDoc)=>{
+    postsSnapshot.forEach((postDoc) => {
       const postID = postDoc.id;
-        if (uniquePosts.has(postID) === false && postDoc.vendorUID !== userID) {
-          uniquePosts.add(postID);
-          allPosts.push(postDoc.data());
-        }
-    })
+      if (uniquePosts.has(postID) === false && postDoc.data().vendorUID !== userID) {
+        uniquePosts.add(postID);
+        allPosts.push(postDoc.data());
+      }
+    });
   }
-
 
   allPosts.sort((a, b) => b.createdAt - a.createdAt);
   return allPosts;
@@ -268,4 +321,5 @@ export {
   getRecommendedVendors,
   updateVendorPostLikes,
   updateVendorPostAppointment,
+  filterByCategory,
 };
