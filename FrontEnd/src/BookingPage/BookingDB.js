@@ -28,11 +28,14 @@ const requestAppointment = async (
   vendorUsername,
   appointmentData,
   userData,
-  vendorEmail
+  vendorEmail,
+  vendorName,
+  postID
 ) => {
   try {
     const Status = PENDING_STATUS;
     const customerUsername = userData.UserName;
+    const customerName = userData?.Name
     const appointmentID = generateRandomID();
     const appointmentDataWithStatus = {
       ...appointmentData,
@@ -44,6 +47,9 @@ const requestAppointment = async (
       customerEmail: userData.Email,
       vendorEmail,
       docID: appointmentID,
+      customerName,
+      vendorName,
+      postID
     };
     const userDocRef = doc(
       database,

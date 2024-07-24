@@ -7,6 +7,7 @@ import {
   getRecommendedVendors,
   updateVendorPostLikes,
 } from "./RecommendationDB";
+import { handleDeletePost } from "../UseableFunctions";
 import "./PostFullDisplay.css";
 
 function PostFullDisplay({
@@ -41,9 +42,9 @@ function PostFullDisplay({
     try {
       setFavorited(!favorited);
       feedCategory(userUID, post.serviceCategories);
-      await getRecommendedVendors,(userUID, post.vendorUID)
+      await getRecommendedVendors(userUID, post.vendorUID);
       await addToFavoriteDocs(userUID, favorited, post);
-      await updateVendorPostLikes(post, favorited)
+      await updateVendorPostLikes(post, favorited);
       if (notificationSent === false) {
         socket.emit("sendNotification", {
           userID: userUID,
@@ -84,20 +85,41 @@ function PostFullDisplay({
               <p className="fullDisplayDescription">
                 <strong>Description:</strong> {post.serviceDescription}
               </p>
-              <button onClick={handleBookingFormOpen} className="bookButton">Book Now</button>
-              <span>
-                {favorited ? (
-                  <i
-                    className="fa-solid fa-heart hearted"
-                    onClick={() => handleNotification(1)}
-                  />
-                ) : (
-                  <i
-                    className="fa-regular fa-heart"
-                    onClick={() => handleNotification(1)}
-                  />
-                )}
-              </span>
+              {post.vendorUID !== userUID && (
+                <div>
+                  <button
+                    onClick={handleBookingFormOpen}
+                    className="bookButton"
+                  >
+                    Book Now
+                  </button>
+                  <span>
+                    {favorited ? (
+                      <i
+                        className="fa-solid fa-heart hearted"
+                        onClick={() => handleNotification(1)}
+                      />
+                    ) : (
+                      <i
+                        className="fa-regular fa-heart"
+                        onClick={() => handleNotification(1)}
+                      />
+                    )}
+                  </span>
+                </div>
+              )}
+              {post.vendorUID === userUID && (
+                <div>
+                  <button
+                    onClick={(event) =>
+                      handleDeletePost(event, userUID, post.postID)
+                    }
+                    className="bookButton"
+                  >
+                    Delete Post
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

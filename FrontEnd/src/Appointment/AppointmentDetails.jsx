@@ -25,13 +25,13 @@ function AppointmentDetails({ isShown, onClose, appointment }) {
               <p>Appointment made by {appointment.customerUsername}</p>
               <div>
                 <p><strong>Customer Details:</strong></p>
-                <p>Customer Name: {appointment.customerUsername}</p>
+                <p>Customer Name: {appointment.customerName}</p>
                 <p>Customer Email: {appointment.customerEmail}</p>
               </div>
               <div>
                 <p>
                   <strong>Vendor Details:</strong>
-                  <p>Vendor Name: {appointment.vendorUsername}</p>
+                  <p>Vendor Name: {appointment.vendorName}</p>
                   <p>Vendor Email: {appointment.vendorEmail}</p>
                 </p>
               </div>

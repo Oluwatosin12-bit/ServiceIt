@@ -1,15 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import axios from "axios";
 import { logOutUser } from "../UserAuthentication/Auth";
 import {
   createPost,
   fetchUserPosts,
-  deletePost,
 } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
 import { CATEGORIES } from "../Categories";
 import PostFullDisplay from "../HomePage/PostFullDisplay";
+import { fetchLocations, handleDeletePost } from "../UseableFunctions";
 import { useTheme } from "../UseContext";
 import "./UserProfile.css";
 
@@ -24,11 +23,11 @@ function UserProfilePage({ userUID, userData }) {
   const [availableCategories] = useState(CATEGORIES);
   const [newCategory, setNewCategory] = useState("");
   const [searchLocationTerm, setSearchLocationTerm] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
-  const MINIMUM_SEARCH_WORD = 2
+  const MINIMUM_SEARCH_WORD = 2;
   const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
   const [isDeletePostDropdownVisible, setIsDeletePostDropdownVisible] =
@@ -54,27 +53,16 @@ function UserProfilePage({ userUID, userData }) {
 
   useEffect(() => {
     if (searchLocationTerm.length >= MINIMUM_SEARCH_WORD) {
-      fetchLocations(searchLocationTerm);
+      fetchLocations(searchLocationTerm, setSearchSuggestions);
     } else {
-      setSuggestions([]);
+      setSearchSuggestions([]);
     }
   }, [searchLocationTerm]);
-  const fetchLocations = (query) => {
-    fetch(`https://serviceitbackend.onrender.com/places-autocomplete?input=${query}`)
-      .then((response) => response.json())
-      .then((data) => {
-        setSuggestions(data.predictions);
-      })
-      .catch((error) => {
-        setSuggestions([]);
-        throw new Error('Error fetching locations:', error);
-      });
-  };
 
   const addLocation = (location) => {
     setSelectedLocations([...selectedLocations, location]);
     setSearchLocationTerm("");
-    setSuggestions([]);
+    setSearchSuggestions([]);
   };
 
   const removeLocation = (index) => {
@@ -82,30 +70,6 @@ function UserProfilePage({ userUID, userData }) {
     updatedLocations.splice(index, 1);
     setSelectedLocations(updatedLocations);
   };
-
-  const handleClickOutside = (event) => {
-    if (
-      signOutDropdownRef.current !== null &&
-      !signOutDropdownRef.current.contains(event.target)
-    ) {
-      setIsSignOutDropdownVisible(false);
-    }
-
-    for (let postId in deletePostDropdownRef.current) {
-      if (
-        deletePostDropdownRef.current[postId] !== null &&
-        !deletePostDropdownRef.current[postId].contains(event.target)
-      ) {
-        setIsDeletePostDropdownVisible(null);
-      }
-    }
-  };
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   const removeCategory = (category) => {
     setServiceCategories(
@@ -135,16 +99,16 @@ function UserProfilePage({ userUID, userData }) {
     serviceTitle: "",
     serviceDescription: "",
     servicePrice: "",
-    serviceLocations: "",
+    serviceLocations: [],
     serviceAvailability: "",
   });
   formData.serviceCategories = serviceCategories;
+  formData.serviceLocations = selectedLocations;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({ ...formData, [name]: value });
   };
-
   useEffect(() => {
     const isFormValid = Object.values(formData).every((val) => val !== "");
     setIsFormValid(isFormValid);
@@ -157,6 +121,30 @@ function UserProfilePage({ userUID, userData }) {
     });
     return () => unsubscribe && unsubscribe();
   }, [userUID]);
+
+  const handleClickOutside = (event) => {
+    if (
+      signOutDropdownRef.current !== null &&
+      !signOutDropdownRef.current.contains(event.target)
+    ) {
+      setIsSignOutDropdownVisible(false);
+    }
+
+    for (let postId in deletePostDropdownRef.current) {
+      if (
+        deletePostDropdownRef.current[postId] !== null &&
+        !deletePostDropdownRef.current[postId].contains(event.target)
+      ) {
+        setIsDeletePostDropdownVisible(null);
+      }
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleLogOut = async () => {
     try {
@@ -172,23 +160,18 @@ function UserProfilePage({ userUID, userData }) {
     }
   };
 
-  const handleDeletePost = async (userUID, postID) => {
-    try {
-      const deletePostConfirmation = window.confirm(
-        "Are you sure you want to delete this post?"
-      );
-      if (deletePostConfirmation === true) {
-        deletePost(userUID, postID);
-      }
-    } catch (error) {
-      throw new Error(`Error deleting Post ${error.message}`);
-    }
-  };
-
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     try {
       await createPost(formData, imageUpload, userUID, userData);
+      setServiceCategories([]);
+      setSelectedLocations([]);
+      setFormData({
+        serviceTitle: "",
+        serviceDescription: "",
+        servicePrice: "",
+        serviceAvailability: "",
+      });
       toggleCreatePostModal();
     } catch (error) {
       throw new Error(`Error submitting form: ${error.message}`);
@@ -223,7 +206,7 @@ function UserProfilePage({ userUID, userData }) {
                 <i className="fa-solid fa-pen-to-square" />
               </span>
             </div>
-            <p>I am an amazing service provider</p>
+            <p>{userData?.Bio}</p>
           </div>
           <div>
             <button className="createButton" onClick={toggleCreatePostModal}>
@@ -291,7 +274,7 @@ function UserProfilePage({ userUID, userData }) {
                 }
               />
               <div className="suggestions">
-                {suggestions.map((location, index) => (
+                {searchSuggestions.map((location, index) => (
                   <div
                     key={index}
                     className="suggestion"
@@ -304,7 +287,7 @@ function UserProfilePage({ userUID, userData }) {
               <div className="selected-locations">
                 {selectedLocations.map((location, index) => (
                   <div key={index} className="selected-location">
-                    {`${location.city}, ${location.state}`}
+                    {location}
                     <span
                       className="remove-location"
                       onClick={() => removeLocation(index)}
@@ -357,7 +340,11 @@ function UserProfilePage({ userUID, userData }) {
                 onChange={(event) => handleChange(event)}
               />
             </div>
-            <button type="submit" disabled={!isFormValid} className="createButton">
+            <button
+              type="submit"
+              disabled={!isFormValid}
+              className="createButton"
+            >
               Create Post
             </button>
           </form>
@@ -366,12 +353,19 @@ function UserProfilePage({ userUID, userData }) {
       <div className="userPosts">
         <div className="userPostsPreview">
           {userPosts.map((post, index) => (
-            <div key={index} className="eachPost" onClick={()=>toggleOpenPostModal(post)}>
+            <div
+              key={index}
+              className="eachPost"
+              onClick={() => toggleOpenPostModal(post)}
+            >
               <div className="postHeading">
                 <p>{post.serviceTitle}</p>
                 <span
                   className="icon ellipsisIcon"
-                  onClick={() => toggleDeletePostDropdown(index)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    toggleDeletePostDropdown(index);
+                  }}
                 >
                   <i className="fa-solid fa-ellipsis-vertical" />
                 </span>
@@ -382,7 +376,9 @@ function UserProfilePage({ userUID, userData }) {
                   >
                     <ul>
                       <li
-                        onClick={() => handleDeletePost(userUID, post.postID)}
+                        onClick={(event) =>
+                          handleDeletePost(event, userUID, post.postID)
+                        }
                       >
                         Delete Post
                       </li>

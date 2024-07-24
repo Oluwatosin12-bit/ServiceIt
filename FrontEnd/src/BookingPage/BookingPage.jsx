@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { requestAppointment } from "./BookingDB";
 import { useTheme } from "../UseContext";
-import { feedCategory, getRecommendedVendors, } from "../HomePage/RecommendationDB";
+import { feedCategory, getRecommendedVendors} from "../HomePage/RecommendationDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
@@ -33,14 +33,20 @@ function BookingForm({ userData, socket }) {
     vendorUID,
     vendorUsername,
     appointmentData,
-    userData
+    userData,
+    vendorEmail,
+    vendorName,
+    postID
   ) => {
     await requestAppointment(
       userUID,
       vendorUID,
       vendorUsername,
       appointmentData,
-      userData
+      userData,
+      vendorEmail,
+      vendorName,
+      postID
     );
   };
 
@@ -54,33 +60,35 @@ function BookingForm({ userData, socket }) {
 
     setIsFormValid(isFormValid);
 
-    if (userUID === post.userId) {
+    if (userUID === post.vendorUID) {
       setIsFormValid(false);
     }
-  }, [appointmentData, userUID, post.userId]);
+  }, [appointmentData, userUID, post.vendorUID]);
 
 
   const handleSubmit = async (event, type) => {
     try {
       event.preventDefault();
-      if (userUID === post.userId) {
+      if (userUID === post.vendorUID) {
         setModalPopUpMessage("You cannot book an appointment with yourself");
       } else {
         setIsRequestPending(true);
         await sendAppointmentRequest(
           userUID,
-          post.userId,
+          post.vendorUID,
           post.vendorUsername,
           appointmentData,
           userData,
-          post.VendorEmail
+          post.vendorEmail,
+          post.vendorName,
+          post.postID
         );
         await feedCategory(userUID, post.serviceCategories);
         await getRecommendedVendors(userUID, post.vendorUID);
         await socket.emit("sendNotification", {
           userID: userUID,
           senderID: userUID,
-          receiverID: post.userId,
+          receiverID: post.vendorUID,
           senderName: userData?.UserName,
           receiverName: post?.vendorUsername,
           appointmentDate: appointmentData.appointmentDate,
@@ -124,7 +132,7 @@ function BookingForm({ userData, socket }) {
     <div className={`bookingPage ${theme}`}>
       <form className="bookingForm" onSubmit={() => handleSubmit(event, 2)}>
         <h2 className="vendorUsername">
-          Book an appointment with {post.vendorUsername}
+          Book an appointment with {post.vendorUsername} for {post.serviceTitle}
         </h2>
         <div>
           <label htmlFor="appointmentTitle">Appointment Title</label>

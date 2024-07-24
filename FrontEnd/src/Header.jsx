@@ -47,7 +47,7 @@ function Header({ userData, socket }) {
         <h2>ServiceIt</h2>
       </div>
       <div className="userName">
-        <p>Hello, {userData?.Name}!</p>
+        <p>Hello, {userData?.UserName}!</p>
       </div>
       <nav className="navigation">
         <ul className="navigationList">

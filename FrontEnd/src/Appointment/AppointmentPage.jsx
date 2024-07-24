@@ -5,7 +5,7 @@ import {
   acceptAppointment,
   declineAppointment,
 } from "../BookingPage/BookingDB";
-import {  updateVendorPostAppointment} from "../HomePage/RecommendationDB"
+import {updateVendorPostAppointment} from "../HomePage/RecommendationDB"
 import "./AppointmentPage.css";
 import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
@@ -29,7 +29,7 @@ function AppointmentPage({ userData, socket }) {
     type
   ) => {
     await acceptAppointment(customerID, vendorID, appointmentID);
-    await acceptAppointment(post)
+    await updateVendorPostAppointment(appointment);
     await socket.emit("sendNotification", {
       userID: userData?.userID,
       senderID: userData?.userID,
@@ -43,12 +43,14 @@ function AppointmentPage({ userData, socket }) {
   };
 
   const handleDeclinedAppointment = async (
+    event,
     appointment,
     vendorID,
     customerID,
     appointmentID,
     type
   ) => {
+    event.stopPropagation()
     const logOutConfirmation = window.confirm(
       "Are you sure you want to decline appointment?"
     );
@@ -149,8 +151,9 @@ function AppointmentPage({ userData, socket }) {
                 </button>
                 <button
                   className="appointmentButtons cancelAppointment"
-                  onClick={() =>
+                  onClick={(event) =>
                     handleDeclinedAppointment(
+                      event,
                       appointment,
                       appointment.customerUID,
                       appointment.vendorUID,
@@ -187,8 +190,9 @@ function AppointmentPage({ userData, socket }) {
               </button>
               <button
                 className="appointmentButtons cancelAppointment"
-                onClick={() =>
+                onClick={(event) =>
                   handleDeclinedAppointment(
+                    event,
                     appointment,
                     appointment.customerUID,
                     appointment.vendorUID,

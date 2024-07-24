@@ -24,21 +24,21 @@ function MainPage({ userUID, userData, socket }) {
           setUserFeed(parsedUserFeed);
           setFilteredPosts(parsedUserFeed);
           setIsLoading(false);
-        } else {
-          if (userUID !== null) {
-            const feedData = await fetchUserFeed(userUID);
-            const feedDataWithDates = feedData.map(item => ({
-              ...item,
-              createdAt: item.createdAt.toDate()
-            }));
-            setUserFeed(feedDataWithDates);
-            setFilteredPosts(feedDataWithDates);
-            setIsLoading(false);
-            localStorage.setItem("userFeed", JSON.stringify(feedDataWithDates));
-          }
+        }
+
+        if (userUID !== null || storedUserFeed === null) {
+          const feedData = await fetchUserFeed(userUID);
+          const feedDataWithDates = feedData.map((item) => ({
+            ...item,
+            createdAt: item.createdAt.toDate(),
+          }));
+          setUserFeed(feedDataWithDates);
+          setFilteredPosts(feedDataWithDates);
+          setIsLoading(false);
+          localStorage.setItem("userFeed", JSON.stringify(feedDataWithDates));
         }
       } catch (error) {
-        throw new Error("Error fetching or updating data:", error.message);
+        throw new Error(`Error fetching or updating data: ${error.message}`);
       }
     };
     fetchDataAndUpdateLocalStorage();
@@ -47,13 +47,13 @@ function MainPage({ userUID, userData, socket }) {
   }, [userUID]);
 
   const filterPosts = (selectedCategories = [], searchWord = "") => {
-    let filtered = [...userFeed]
-    if (selectedCategories.length > 0){
+    let filtered = [...userFeed];
+    if (selectedCategories.length > 0) {
       filtered = filtered.filter((post) =>
-      selectedCategories.some((category) =>
-        post.serviceCategories.includes(category)
-      )
-    );
+        selectedCategories.some((category) =>
+          post.serviceCategories.includes(category)
+        )
+      );
     }
 
     if (searchWord === "") {
@@ -89,10 +89,9 @@ function MainPage({ userUID, userData, socket }) {
         <CategoryList filterPosts={filterPosts} />
       </div>
       <div className="bodyArea">
-          <SearchBar filterPosts={filterPosts} />
+        <SearchBar filterPosts={filterPosts} />
         <div className="feedSection">
-
-          {isLoading ? (
+          {userUID && isLoading ? (
             <p>Loading...</p>
           ) : filteredPosts.length === 0 ? (
             <p>No posts found.</p>
@@ -119,7 +118,6 @@ function MainPage({ userUID, userData, socket }) {
               />
             </div>
           )}
-        
         </div>
       </div>
     </div>

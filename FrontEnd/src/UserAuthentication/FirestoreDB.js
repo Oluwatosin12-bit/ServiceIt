@@ -9,7 +9,10 @@ import {
   getDoc,
   onSnapshot,
   Timestamp,
-  deleteDoc
+  deleteDoc,
+  updateDoc,
+  writeBatch,
+  FieldValue
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import {generateRandomID} from "../BookingPage/BookingDB"
@@ -20,6 +23,7 @@ const POSTS_COLLECTION = "Posts";
 const POST_CATEGORIES_FOLDER_NAME = "postCategories"
 const LOCATION_FOLDER_NAME = "serviceLocations"
 const ACTION_COUNTS = 0
+const COUNT_CHANGE = 1;
 async function addUser(
   userID,
   name,
@@ -39,6 +43,8 @@ async function addUser(
     UserLocation: userLocation,
     FavoriteCount: ACTION_COUNTS,
     AppointmentCount: ACTION_COUNTS,
+    Bio: "I am an amazing service provider",
+    PostCount: ACTION_COUNTS
   });
 }
 
@@ -105,18 +111,26 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       vendorUsername,
       vendorEmail: userData.Email,
       vendorUID: userID,
+      vendorName: userData.Name,
       postID: generatedID,
-      FavoriteCount: 0,
-      AppointmentCount: 0,
+      FavoriteCount: ACTION_COUNTS,
+      AppointmentCount: ACTION_COUNTS,
     };
 
     if (userID === null) {
       throw new Error(`Invalid user ID: ${error.message}`);
     }
+    const batchWrite = writeBatch(database);
+
+    //add to user collection
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
-    const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
-    const postDocRef = doc(postsCollectionRef, generatedID);
-    await setDoc(postDocRef, formDataWithImage);
+    const postDocRef = doc(collection(userDocRef, POSTS_COLLECTION), generatedID);
+    batchWrite.set(postDocRef, formDataWithImage);
+
+    //increase postCount
+    const userDocSnap = await getDoc(userDocRef)
+    const postCount = userDocSnap.data().PostCount
+    batchWrite.update(userDocRef, { PostCount: postCount+COUNT_CHANGE });
 
     //add to postCategories collection
     for (const category of formData.serviceCategories) {
@@ -124,12 +138,12 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       const categoryDocSnap = await getDoc(categoryDocRef);
 
       if (categoryDocSnap.exists() === false) {
-        await setDoc(categoryDocRef, { categoryName: category, Posts: [] });
+        batchWrite.set(categoryDocRef, { categoryName: category, Posts: [] });
       }
 
       const categoryPostsCollectionRef = collection(categoryDocRef, POSTS_COLLECTION);
       const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
-      await setDoc(categoryPostDocRef, formDataWithImage);
+      batchWrite.set(categoryPostDocRef, formDataWithImage);
     }
 
     //add to Location collection
@@ -138,13 +152,14 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       const categoryDocSnap = await getDoc(locationDocRef);
 
       if (categoryDocSnap.exists() === false) {
-        await setDoc(locationDocRef, { locationName: location, Posts: [] });
+        batchWrite.set(locationDocRef, { locationName: location, Posts: [] });
       }
 
       const categoryPostsCollectionRef = collection(locationDocRef, POSTS_COLLECTION);
       const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
-      await setDoc(categoryPostDocRef, formDataWithImage);
+      batchWrite.set(categoryPostDocRef, formDataWithImage);
     }
+    await batchWrite.commit();
   } catch (error) {
     throw new Error(`Error creating post: ${error.message}`);
   }
