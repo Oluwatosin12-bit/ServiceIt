@@ -1,8 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import {
-  fetchUserPosts,
-} from "../UserAuthentication/FirestoreDB";
+import { fetchUserPosts } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
 import { useTheme } from "../UseContext";
 import "./UserProfile.css";
@@ -11,7 +9,7 @@ function VendorProfilePage() {
   const { theme } = useTheme();
   const location = useLocation();
   const { post } = location.state ?? {};
-  const vendorID = post.vendorUID
+  const vendorID = post.vendorUID;
   const [userPosts, setUserPosts] = useState([]);
 
   useEffect(() => {
@@ -35,7 +33,6 @@ function VendorProfilePage() {
             <p>I am an amazing service provider</p>
           </div>
         </div>
-
       </div>
       <div className="userPosts">
         <div className="userPostsPreview">

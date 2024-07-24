@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { registerUser } from "./Auth";
-import { CATEGORIES } from "../Categories";
+import fetchCategoryNames from "../Categories";
 import { useTheme } from "../UseContext";
 import { fetchLocations } from "../UseableFunctions";
 import "./EntryPage.css";
@@ -18,11 +18,19 @@ function SignUpPage() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [availableCategories] = useState(CATEGORIES);
+  const [availableCategories, setAvailableCategories] = useState([]);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const MIN_PASSWORD_LENGTH = 6;
   const MIN_SEARCH_WORD = 2;
 
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await fetchCategoryNames();
+      setAvailableCategories(fetchedCategories);
+    };
+
+    loadCategories();
+  }, []);
   const removeCategory = (category) => {
     setSelectedCategories(
       selectedCategories.filter(

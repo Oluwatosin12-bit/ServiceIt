@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../UserAuthentication/FirebaseConfig";
-import { CATEGORIES } from "../Categories";
+import  fetchCategoryNames  from "../Categories";
 import Modal from "../Modal";
 
 const EditProfile = ({ userUID, userData,isEditProfileModalShown, setIsEditProfileModalShown }) =>{
@@ -11,8 +11,16 @@ const EditProfile = ({ userUID, userData,isEditProfileModalShown, setIsEditProfi
   const [userSelectedCategories, setUserSelectedCategories] = useState(
     userData?.selectedCategories ?? []
   );
-  const [availableCategories] = useState(CATEGORIES);
+  const [availableCategories, setAvailableCategories] = useState([]);
 
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await fetchCategoryNames();
+      setAvailableCategories(fetchedCategories);
+    };
+
+    loadCategories();
+  }, []);
   const toggleEditProfileModal = () => {
     setIsEditProfileModalShown(!isEditProfileModalShown);
   };

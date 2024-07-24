@@ -1,11 +1,22 @@
 import "./CategoryList.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTheme } from "../UseContext";
-import fetchCategoryNames, { CATEGORIES } from "../Categories";
+import  fetchCategoryNames  from "../Categories";
 
 function CategoryList({ filterPosts }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const { theme } = useTheme();
+
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await fetchCategoryNames();
+      setCategories(fetchedCategories);
+    };
+
+    loadCategories();
+  }, []);
 
   const handleCategoryClick = (category) => {
     let newSelectedCategories = [...selectedCategories];
@@ -27,7 +38,7 @@ function CategoryList({ filterPosts }) {
       <h2 className="categoriesList">Categories</h2>
       <nav>
         <ul>
-          {CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <li
               key={category}
               className={selectedCategories.includes(category) ? "selectedFilter" : ""}

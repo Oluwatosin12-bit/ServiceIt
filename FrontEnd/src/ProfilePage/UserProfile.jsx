@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { logOutUser } from "../UserAuthentication/Auth";
 import { createPost, fetchUserPosts } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
-import { CATEGORIES } from "../Categories";
+import  fetchCategoryNames  from "../Categories";
 import PostFullDisplay from "../HomePage/PostFullDisplay";
 import { fetchLocations, handleDeletePost } from "../UseableFunctions";
 import { EditProfile } from "./EditingProfile";
@@ -18,7 +18,7 @@ function UserProfilePage({ userUID, userData }) {
   const [isCreatePostModalShown, setIsCreatePostModalShown] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [serviceCategories, setServiceCategories] = useState([]);
-  const [availableCategories] = useState(CATEGORIES);
+  const [availableCategories, setAvailableCategories] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [searchLocationTerm, setSearchLocationTerm] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState([]);
@@ -38,6 +38,15 @@ function UserProfilePage({ userUID, userData }) {
     setIsEditingProfile(true);
     setIsEditProfileModalShown(true);
   };
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      const fetchedCategories = await fetchCategoryNames();
+      setAvailableCategories(fetchedCategories);
+    };
+
+    loadCategories();
+  }, []);
 
   const toggleSignOutDropdown = () => {
     setIsSignOutDropdownVisible(!isSignOutDropdownVisible);
