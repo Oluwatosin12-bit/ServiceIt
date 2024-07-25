@@ -20,11 +20,11 @@ p {
   border-right: 1px solid #cccccc;
 }
 
-.bodyArea{
+.bodyArea {
   margin-top: 100px;
   overflow-y: auto;
 }
-.searchArea{
+.searchArea {
   display: block;
   margin-left: 290px;
   margin-top: 20px;
@@ -59,7 +59,7 @@ p {
   .categorySection {
     width: 100px;
   }
-  .searchArea{
+  .searchArea {
     margin-left: 125px;
   }
   .feedSection {

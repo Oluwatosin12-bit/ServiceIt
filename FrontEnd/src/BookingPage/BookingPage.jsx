@@ -8,7 +8,7 @@ import NotificationsPage from "../Notifications/NotificationsPage";
 
 function BookingForm({ userData, socket }) {
   const location = useLocation();
-  const { post, userUID } = location.state || {};
+  const { post, userUID } = location.state ?? {};
   const [isBookingFormModalShown, setIsBookingFormModalShown] = useState(false);
   const [isRequestPending, setIsRequestPending] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);

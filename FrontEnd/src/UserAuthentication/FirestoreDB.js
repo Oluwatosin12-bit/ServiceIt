@@ -9,15 +9,15 @@ import {
   getDoc,
   onSnapshot,
   Timestamp,
-  deleteDoc
+  deleteDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import {generateRandomID} from "../BookingPage/BookingDB"
+import { generateRandomID } from "../BookingPage/BookingDB";
 import { v4 } from "uuid";
 
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
-const POST_CATEGORIES_FOLDER_NAME = "postCategories"
+const POST_CATEGORIES_FOLDER_NAME = "postCategories";
 async function addUser(
   userID,
   name,
@@ -32,8 +32,8 @@ async function addUser(
     Name: name,
     UserName: userName,
     Email: signUpEmail,
-    selectedCategories: selectedCategories || [],
-    feedCategories: selectedCategories || [],
+    selectedCategories: selectedCategories ?? [],
+    feedCategories: selectedCategories ?? [],
     UserLocation: userLocation,
   });
 }
@@ -100,7 +100,7 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       createdAt,
       vendorUsername,
       vendorUID: userID,
-      postID: generatedID
+      postID: generatedID,
     };
 
     if (userID === null) {
@@ -113,7 +113,11 @@ const createPost = async (formData, imageUpload, userID, userData) => {
 
     //add to postCategories collection
     for (const category of formData.serviceCategories) {
-      const categoryDocRef = doc(database, POST_CATEGORIES_FOLDER_NAME, category);
+      const categoryDocRef = doc(
+        database,
+        POST_CATEGORIES_FOLDER_NAME,
+        category
+      );
       const categoryDocSnap = await getDoc(categoryDocRef);
 
       if (categoryDocSnap.exists() === false) {
@@ -129,11 +133,16 @@ const createPost = async (formData, imageUpload, userID, userData) => {
   }
 };
 
-const deletePost = (userUID, postID) =>{
-  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, POSTS_COLLECTION);
+const deletePost = (userUID, postID) => {
+  const favoritesRef = collection(
+    database,
+    DATABASE_FOLDER_NAME,
+    userUID,
+    POSTS_COLLECTION
+  );
   const postDocRef = doc(favoritesRef, postID);
   deleteDoc(postDocRef);
-}
+};
 
 const fetchUserPosts = (userID, callback) => {
   if (userID === null) {
@@ -162,5 +171,5 @@ export {
   getUserData,
   createPost,
   fetchUserPosts,
-  deletePost
+  deletePost,
 };

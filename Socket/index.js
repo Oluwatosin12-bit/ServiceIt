@@ -2,33 +2,42 @@ import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
 import cors from "cors";
 import express from "express";
-import { collection, addDoc, Timestamp, updateDoc, query, where, orderBy, getDocs } from "firebase/firestore";
-const PORT = process.env.PORT || 3000;
+import {
+  collection,
+  addDoc,
+  Timestamp,
+  updateDoc,
+  query,
+  where,
+  orderBy,
+  getDocs,
+} from "firebase/firestore";
+const PORT = process.env.PORT ?? 3000;
 const app = express();
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:5173/BookingPage",
-    "http://localhost:5173/MainPage",
-    "http://localhost:5173/Header",
-    "http://localhost:5173/UserProfile",
-    "http://localhost:5173/NotificationsPage",
-    "https://serviceitt.netlify.app",
-    "https://serviceitt.netlify.app/BookingPage",
-    "https://serviceitt.netlify.app/MainPage",
-    "https://serviceitt.netlify.app/Header",
-    "https://serviceitt.netlify.app/UserProfile",
-    "https://serviceitt.netlify.app/NotificationsPage",
-    "https://serviceitbackend.onrender.com"
-  ],
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"]
-}));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5173/BookingPage",
+      "http://localhost:5173/MainPage",
+      "http://localhost:5173/Header",
+      "http://localhost:5173/UserProfile",
+      "http://localhost:5173/NotificationsPage",
+      "https://serviceitt.netlify.app",
+      "https://serviceitt.netlify.app/BookingPage",
+      "https://serviceitt.netlify.app/MainPage",
+      "https://serviceitt.netlify.app/Header",
+      "https://serviceitt.netlify.app/UserProfile",
+      "https://serviceitt.netlify.app/NotificationsPage",
+      "https://serviceitbackend.onrender.com",
+    ],
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 
-const server = app.listen(PORT, () => {
-
-});
+const server = app.listen(PORT, () => {});
 
 const io = new Server(server, {
   cors: {
@@ -36,7 +45,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     pingInterval: 25000,
     pingTimeout: 60000,
-  }
+  },
 });
 
 let onlineUsers = [];
@@ -59,42 +68,51 @@ const getUser = (userID) => {
   return onlineUsers.find((user) => user.userID === userID);
 };
 
-const constructMessage = (userID, receivee, senderName, receiverName, appointmentDate, appointmentTitle, postTitle, type) => {
+const constructMessage = (
+  userID,
+  receivee,
+  senderName,
+  receiverName,
+  appointmentDate,
+  appointmentTitle,
+  postTitle,
+  type
+) => {
   let action;
   if (type === 1) {
     action = "favorited";
-    if (userID === receivee){
-      return `You ${action} ${receiverName}'s post on ${postTitle}`
-    } else{
-      return `${senderName} ${action} your post on ${postTitle}`
+    if (userID === receivee) {
+      return `You ${action} ${receiverName}'s post on ${postTitle}`;
+    } else {
+      return `${senderName} ${action} your post on ${postTitle}`;
     }
   } else if (type === 2) {
     action = "requested";
-    if (userID === receivee){
-      return `You ${action} an appointment with ${receiverName} for ${appointmentTitle}`
-    } else{
-      return `${senderName} ${action} an appointment for ${appointmentTitle}`
+    if (userID === receivee) {
+      return `You ${action} an appointment with ${receiverName} for ${appointmentTitle}`;
+    } else {
+      return `${senderName} ${action} an appointment for ${appointmentTitle}`;
     }
   } else if (type === 3) {
     action = "accepted";
-    if (userID === receivee){
-      return `Your appointment with ${receiverName} for ${appointmentTitle} has been ${action}`
-    } else{
-      return `You ${action} an appointment with ${senderName} for ${appointmentTitle}`
+    if (userID === receivee) {
+      return `Your appointment with ${receiverName} for ${appointmentTitle} has been ${action}`;
+    } else {
+      return `You ${action} an appointment with ${senderName} for ${appointmentTitle}`;
     }
   } else if (type === 4) {
     action = "declined";
-    if (userID === receivee){
-      return `Your appointment with ${receiverName} for ${appointmentTitle} has been ${action}`
-    } else{
-      return `You ${action} an appointment with ${senderName} for ${appointmentTitle}`
+    if (userID === receivee) {
+      return `Your appointment with ${receiverName} for ${appointmentTitle} has been ${action}`;
+    } else {
+      return `You ${action} an appointment with ${senderName} for ${appointmentTitle}`;
     }
   }
 };
 
 io.on("connection", (socket) => {
-  socket.on("newUser", async(userID) => {
-    addNewUser(userID, socket.id)
+  socket.on("newUser", async (userID) => {
+    addNewUser(userID, socket.id);
   });
 
   socket.on("disconnect", () => {
@@ -119,9 +137,27 @@ io.on("connection", (socket) => {
       type,
     }) => {
       const receiver = getUser(receiverID);
-      const sender = getUser(senderID)
-      const senderMessage = constructMessage(userID, senderID, senderName, receiverName, appointmentDate, appointmentTitle, postTitle, type);
-      const receiverMessage = constructMessage(userID, receiverID, senderName, receiverName, appointmentDate, appointmentTitle, postTitle, type);
+      const sender = getUser(senderID);
+      const senderMessage = constructMessage(
+        userID,
+        senderID,
+        senderName,
+        receiverName,
+        appointmentDate,
+        appointmentTitle,
+        postTitle,
+        type
+      );
+      const receiverMessage = constructMessage(
+        userID,
+        receiverID,
+        senderName,
+        receiverName,
+        appointmentDate,
+        appointmentTitle,
+        postTitle,
+        type
+      );
 
       const status = "unread";
       const senderNotification = {
@@ -154,7 +190,7 @@ io.on("connection", (socket) => {
           senderNotification
         );
       } catch (error) {
-        throw new Error (`Error storing notification:" ${error}`);
+        throw new Error(`Error storing notification:" ${error}`);
       }
     }
   );

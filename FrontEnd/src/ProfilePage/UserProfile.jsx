@@ -26,8 +26,8 @@ function UserProfilePage({ userUID, userData }) {
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
-  const [isDeletePostDropdownVisible, setIsDeletePostDropdownVisible] =
-    useState(false);
+  const [deletePostIndex, setDeletePostIndex] =
+    useState(null);
   const signOutDropdownRef = useRef(null);
   const deletePostDropdownRef = useRef({});
 
@@ -35,8 +35,8 @@ function UserProfilePage({ userUID, userData }) {
     setIsSignOutDropdownVisible(!isSignOutDropdownVisible);
   };
   const toggleDeletePostDropdown = (index) => {
-    setIsDeletePostDropdownVisible(
-      isDeletePostDropdownVisible === index ? null : index
+    setDeletePostIndex(
+      deletePostIndex === index ? null : index
     );
   };
 
@@ -80,7 +80,7 @@ function UserProfilePage({ userUID, userData }) {
         deletePostDropdownRef.current[postId] !== null &&
         !deletePostDropdownRef.current[postId].contains(event.target)
       ) {
-        setIsDeletePostDropdownVisible(null);
+        setDeletePostIndex(null);
       }
     }
   };
@@ -364,7 +364,7 @@ function UserProfilePage({ userUID, userData }) {
                 >
                   <i className="fa-solid fa-ellipsis-vertical" />
                 </span>
-                {isDeletePostDropdownVisible === index && (
+                {deletePostIndex === index && (
                   <div
                     ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
                     className="deleteDropDown"

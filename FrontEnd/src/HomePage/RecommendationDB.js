@@ -27,7 +27,7 @@ const feedCategory = async (userID, categories) => {
   let currentCategories = [];
   if (docSnap.exists()) {
     const userData = docSnap.data();
-    currentCategories = userData.feedCategories || [];
+    currentCategories = userData.feedCategories ?? [];
   }
 
   categories.forEach((category) => {
@@ -51,7 +51,7 @@ const recommendedVendors = async (userID, vendorID) => {
   let currentRecommendedVendors = [];
   if (docSnap.exists()) {
     const userData = docSnap.data();
-    currentRecommendedVendors = userData.recommendedVendors || [];
+    currentRecommendedVendors = userData.recommendedVendors ?? [];
 
     if (currentRecommendedVendors.includes(vendorID) === false) {
       currentRecommendedVendors.push(vendorID);
@@ -98,58 +98,6 @@ const isLiked = (userUID, postID, callback) => {
   return unsubscribe;
 };
 
-const postsFromFavorites = async (userUID) => {
-  try {
-    const favoritesRef = collection(
-      database,
-      DATABASE_FOLDER_NAME,
-      userUID,
-      FAVORITES_COLLECTION
-    );
-    const favoritePosts = await getDocs(favoritesRef);
-    const favoriteVendorsID = [];
-
-    for (const favoriteDoc of favoritePosts.docs) {
-      const vendorID = favoriteDoc.data().post.vendorUID;
-      if (vendorID !== null) {
-        favoriteVendorsID.push(vendorID);
-      }
-    }
-
-    return favoriteVendorsID;
-  } catch (error) {
-    throw new Error(
-      `Error fetching posts from favorite vendors ${error.message}`
-    );
-  }
-};
-
-const postsFromAppointments = async (userUID) => {
-  try {
-    const appointmentRef = collection(
-      database,
-      DATABASE_FOLDER_NAME,
-      userUID,
-      APPOINTMENT_COLLECTION
-    );
-    const appointmentPosts = await getDocs(appointmentRef);
-    const scheduledAppointmentVendorsID = [];
-
-    for (const appointmentDoc of appointmentPosts.docs) {
-      const vendorID = appointmentDoc.data().vendorUID;
-      if (vendorID !== null) {
-        scheduledAppointmentVendorsID.push(vendorID);
-      }
-    }
-
-    return scheduledAppointmentVendorsID;
-  } catch (error) {
-    throw new Error(
-      `Error fetching posts from scheduled appoinment vendors ${error.message}`
-    );
-  }
-};
-
 const fetchUserFeed = async (userID) => {
   if (userID === null) {
     return;
@@ -157,8 +105,8 @@ const fetchUserFeed = async (userID) => {
   const allPosts = [];
   const uniquePosts = new Set();
   const userData = await getUserData(userID);
-  const userFeedCategories = userData.feedCategories || [];
-  const approvedVendorsID = userData.recommendedVendors || [];
+  const userFeedCategories = userData.feedCategories ?? [];
+  const approvedVendorsID = userData.recommendedVendors ?? [];
 
   //posts by recommended Category
   for (const categoryID of userFeedCategories) {
@@ -169,9 +117,9 @@ const fetchUserFeed = async (userID) => {
       const postsQuery = query(collection(categoryRef, POSTS_COLLECTION));
       const postsSnapshot = await getDocs(postsQuery);
       postsSnapshot.forEach((postDoc) => {
-        const postID = postDoc.id
-        if(uniquePosts.has(postID) === false){
-          uniquePosts.add(postID)
+        const postID = postDoc.id;
+        if (uniquePosts.has(postID) === false) {
+          uniquePosts.add(postID);
           allPosts.push(postDoc.data());
         }
       });
@@ -188,9 +136,9 @@ const fetchUserFeed = async (userID) => {
     );
     const vendorPosts = await getDocs(vendorCollectionRef);
     vendorPosts.forEach((vendorPost) => {
-      const vendorPostID = vendorPost.id
-      if(uniquePosts.has(vendorPostID) === false){
-        uniquePosts.add(vendorPostID)
+      const vendorPostID = vendorPost.id;
+      if (uniquePosts.has(vendorPostID) === false) {
+        uniquePosts.add(vendorPostID);
         allPosts.push(vendorPost.data());
       }
     });
@@ -204,7 +152,6 @@ export {
   fetchUserFeed,
   feedCategory,
   addToFavoriteDocs,
-  postsFromFavorites,
   isLiked,
   recommendedVendors,
 };

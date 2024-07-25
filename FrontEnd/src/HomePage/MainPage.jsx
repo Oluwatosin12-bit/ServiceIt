@@ -28,13 +28,13 @@ function MainPage({ userUID, userData, socket }) {
   }, [userUID]);
 
   const filterPosts = (selectedCategories = [], searchWord = "") => {
-    let filtered = [...userFeed]
-    if (selectedCategories.length > 0){
+    let filtered = [...userFeed];
+    if (selectedCategories.length > 0) {
       filtered = filtered.filter((post) =>
-      selectedCategories.some((category) =>
-        post.serviceCategories.includes(category)
-      )
-    );
+        selectedCategories.some((category) =>
+          post.serviceCategories.includes(category)
+        )
+      );
     }
 
     if (searchWord === "") {
