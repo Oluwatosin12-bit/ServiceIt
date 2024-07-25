@@ -17,8 +17,10 @@ function Header({ userData, socket }) {
   useEffect(() => {
     if (socket !== null && socket !== undefined) {
       socket.on("getNotification", (data) => {
-        const isDuplicate = notifications.some((notification)=> notification.message === data.message);
-        if (isDuplicate === false){
+        const isDuplicate = notifications.some(
+          (notification) => notification.message === data.message
+        );
+        if (!isDuplicate) {
           setNotifications((prev) => [...prev, data]);
         }
       });
@@ -41,7 +43,7 @@ function Header({ userData, socket }) {
       const logOutConfirmation = window.confirm(
         "Are you sure you want to sign out?"
       );
-      if (logOutConfirmation === true) {
+      if (logOutConfirmation) {
         await logOutUser();
         navigate("/");
       }
@@ -101,7 +103,9 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <p onClick={handleLogOut} className="signOut">Sign Out</p>
+            <p onClick={handleLogOut} className="signOut">
+              Sign Out
+            </p>
           </li>
         </ul>
       </nav>

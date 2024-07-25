@@ -1,7 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { registerUser } from "./Auth";
-import  fetchCategoryNames  from "../Categories";
+import fetchCategoryNames from "../Categories";
 import { useTheme } from "../UseContext";
 import { fetchLocations } from "../UseableFunctions";
 import "./EntryPage.css";
@@ -33,7 +33,11 @@ function SignUpPage() {
   }, []);
 
   const removeCategory = (category) => {
-    setSelectedCategories(selectedCategories.filter((selectedCategory) => selectedCategory !== category));
+    setSelectedCategories(
+      selectedCategories.filter(
+        (selectedCategory) => selectedCategory !== category
+      )
+    );
   };
   const handleCategoryChange = (event) => {
     const selectedOptions = Array.from(
@@ -93,7 +97,9 @@ function SignUpPage() {
         setErrorMessage("Username taken. Please choose a different one");
       }
     } catch (error) {
-      setErrorMessage("Invalid Input: one of the fields has an incorrect input");
+      setErrorMessage(
+        "Invalid Input: one of the fields has an incorrect input"
+      );
     }
   };
 
@@ -172,28 +178,28 @@ function SignUpPage() {
           </select>
         </div>
         <div>
-        <label>
-          <span>Location</span>
-          <input
-            name="location"
-            value={userLocation}
-            onChange={handleLocationInputChange}
-            required="required"
-            placeholder="City, State"
-          />
-        </label>
-        <div className="suggestions">
-          {searchSuggestions.map((location, index) => (
-            <div
-              key={index}
-              className="suggestion"
-              onClick={() => addLocation(location.description)}
-            >
-              {location.description}
-            </div>
-          ))}
+          <label>
+            <span>Location</span>
+            <input
+              name="location"
+              value={userLocation}
+              onChange={handleLocationInputChange}
+              required="required"
+              placeholder="City, State"
+            />
+          </label>
+          <div className="suggestions">
+            {searchSuggestions.map((location, index) => (
+              <div
+                key={index}
+                className="suggestion"
+                onClick={() => addLocation(location.description)}
+              >
+                {location.description}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
         <div className="link-out">
           <a href="/EntryPage" className="redirect3">
             Already have an account? Login here

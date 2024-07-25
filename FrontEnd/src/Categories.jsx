@@ -1,15 +1,9 @@
-import {
-  query,
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-} from "firebase/firestore";
+import { query, collection, doc, getDocs, getDoc } from "firebase/firestore";
 import { database } from "./UserAuthentication/FirebaseConfig";
 
-const POST_CATEGORIES_FOLDER_NAME = "postCategories"
+const POST_CATEGORIES_FOLDER_NAME = "postCategories";
 
-const fetchCategoryNames = async() =>{
+const fetchCategoryNames = async () => {
   const categoryDocRef = collection(database, POST_CATEGORIES_FOLDER_NAME);
   const CATEGORIES = [
     "Hair Styling",
@@ -22,16 +16,16 @@ const fetchCategoryNames = async() =>{
     "Pet Sitting",
     "Chef",
   ];
-  try{
+  try {
     const querySnapshot = await getDocs(categoryDocRef);
-    const newCategories = [...CATEGORIES]
+    const newCategories = [...CATEGORIES];
     if (querySnapshot.empty) {
       return CATEGORIES;
     }
 
     querySnapshot.forEach((doc) => {
       const categoryName = doc.id;
-      if (newCategories.includes(categoryName) === false) {
+      if (!newCategories.includes(categoryName)) {
         newCategories.push(categoryName);
       }
     });
@@ -39,6 +33,6 @@ const fetchCategoryNames = async() =>{
   } catch (error) {
     return CATEGORIES;
   }
-}
+};
 
 export default fetchCategoryNames;

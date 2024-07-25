@@ -15,6 +15,7 @@ function MainPage({ userUID, userData, socket }) {
   const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const REFRESH_TIME = 3600000;
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -40,7 +41,7 @@ function MainPage({ userUID, userData, socket }) {
           localStorage.setItem("userFeed", JSON.stringify(feedDataWithDates));
         }
 
-        if (userUID !== null && userUID !== undefined) {
+        if (userUID !== null) {
           await fetchAndUpdateUserLocation(userUID);
         }
       } catch (error) {
@@ -48,11 +49,14 @@ function MainPage({ userUID, userData, socket }) {
       }
     };
     fetchDataAndUpdateLocalStorage();
-    const intervalId = setInterval(fetchDataAndUpdateLocalStorage, 3600000);
+    const intervalId = setInterval(
+      fetchDataAndUpdateLocalStorage,
+      REFRESH_TIME
+    );
     return () => clearInterval(intervalId);
   }, [userUID]);
 
-  const filterPosts = async(selectedCategories = [], searchWord = "") => {
+  const filterPosts = async (selectedCategories = [], searchWord = "") => {
     let filtered = [...userFeed];
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((post) =>
@@ -97,7 +101,7 @@ function MainPage({ userUID, userData, socket }) {
       <div className="bodyArea">
         <SearchBar filterPosts={filterPosts} />
         <div className="feedSection">
-          {userUID && isLoading ? (
+          {userUID !== null && isLoading ? (
             <LoadingPage />
           ) : filteredPosts.length === 0 ? (
             <p>No posts found.</p>

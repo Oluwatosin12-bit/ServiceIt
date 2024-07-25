@@ -17,10 +17,10 @@
   padding: 0 1rem;
 }
 
-h2{
+h2 {
   color: var(--primaryText);
 }
-p{
+p {
   color: var(--secondaryColor);
 }
 
@@ -83,15 +83,15 @@ p{
   width: 200px;
 }
 
-.acceptAppointment{
+.acceptAppointment {
   background-color: var(--mainColor) !important;
 }
 
-.cancelAppointment{
-  background-color: var(--cancelButton) ;
+.cancelAppointment {
+  background-color: var(--cancelButton);
 }
 
-.cancelAppointment:hover{
+.cancelAppointment:hover {
   background-color: var(--hoverCancelButton) !important;
 }
 

@@ -24,10 +24,10 @@
   overflow-y: auto;
 }
 
-.hearted{
+.hearted {
   color: red;
 }
-.bookButton{
+.bookButton {
   background: var(--buttonColor);
   margin-top: 5px;
 }

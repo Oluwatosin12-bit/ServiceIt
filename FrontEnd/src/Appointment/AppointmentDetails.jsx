@@ -1,7 +1,7 @@
 import "../HomePage/PostFullDisplay.css";
 
 function AppointmentDetails({ isShown, onClose, appointment }) {
-  if (isShown === false) {
+  if (!isShown) {
     return null;
   }
 
@@ -24,7 +24,9 @@ function AppointmentDetails({ isShown, onClose, appointment }) {
               <h3>{appointment.appointmentTitle}</h3>
               <p>Appointment made by {appointment.customerUsername}</p>
               <div>
-                <p><strong>Customer Details:</strong></p>
+                <p>
+                  <strong>Customer Details:</strong>
+                </p>
                 <p>Customer Name: {appointment.customerName}</p>
                 <p>Customer Email: {appointment.customerEmail}</p>
               </div>

@@ -33,7 +33,7 @@ function PostFullDisplay({
   const handleBookingFormOpen = () => {
     navigate("/BookingPage", { state: { post, userUID } });
   };
-  if (isShown === false) {
+  if (!isShown) {
     return null;
   }
 
@@ -45,7 +45,7 @@ function PostFullDisplay({
       await getRecommendedVendors(userUID, post.vendorUID);
       await addToFavoriteDocs(userUID, favorited, post);
       await updateVendorPostLikes(post, favorited);
-      if (notificationSent === false) {
+      if (!notificationSent) {
         socket.emit("sendNotification", {
           userID: userUID,
           senderID: userUID,

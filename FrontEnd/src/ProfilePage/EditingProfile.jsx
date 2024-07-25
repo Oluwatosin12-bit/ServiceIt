@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
 import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../UserAuthentication/FirebaseConfig";
-import  fetchCategoryNames  from "../Categories";
+import fetchCategoryNames from "../Categories";
 import Modal from "../Modal";
 
-const EditProfile = ({ userUID, userData,isEditProfileModalShown, setIsEditProfileModalShown }) =>{
+const EditProfile = ({
+  userUID,
+  userData,
+  isEditProfileModalShown,
+  setIsEditProfileModalShown,
+}) => {
   const DATABASE_FOLDER_NAME = "users";
   const userCollectionRef = doc(database, DATABASE_FOLDER_NAME, userUID);
   const [userBio, setUserBio] = useState(userData?.Bio);
+  const [isLoading, setIsLoading] = useState(true);
   const [userSelectedCategories, setUserSelectedCategories] = useState(
     userData?.selectedCategories ?? []
   );
@@ -20,6 +26,7 @@ const EditProfile = ({ userUID, userData,isEditProfileModalShown, setIsEditProfi
     };
 
     loadCategories();
+    setIsLoading(false);
   }, []);
   const toggleEditProfileModal = () => {
     setIsEditProfileModalShown(!isEditProfileModalShown);
@@ -30,7 +37,7 @@ const EditProfile = ({ userUID, userData,isEditProfileModalShown, setIsEditProfi
   };
   const handleCategoryChange = (e) => {
     const selectedCategory = e.target.value;
-    if (userSelectedCategories.includes(selectedCategory) === false) {
+    if (!userSelectedCategories.includes(selectedCategory)) {
       setUserSelectedCategories([...userSelectedCategories, selectedCategory]);
     }
   };
@@ -86,16 +93,22 @@ const EditProfile = ({ userUID, userData,isEditProfileModalShown, setIsEditProfi
         <label htmlFor="categoryDropdown">Select Categories:</label>
         <select id="categoryDropdown" onChange={handleCategoryChange}>
           <option value="">Select category</option>
-          {availableCategories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            availableCategories.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))
+          )}
         </select>
       </div>
-      <button onClick={handleSave} className="saveButton">Save</button>
+      <button onClick={handleSave} className="saveButton">
+        Save
+      </button>
     </Modal>
   );
-}
+};
 
-export {EditProfile};
+export { EditProfile };

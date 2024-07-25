@@ -23,7 +23,7 @@ function EntryPage() {
             </div>
             <div className="img-text m-in">
               <h1>One of us?</h1>
-              <p>just sign in</p>
+              <p>Just sign in</p>
             </div>
             <div>
               <img

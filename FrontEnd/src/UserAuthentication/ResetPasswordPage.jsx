@@ -23,23 +23,23 @@ function ResetPasswordPage() {
     <div className="alternate-signup">
       <div>
         <form>
-        <h3 className="resetTitle">Reset Password</h3>
-        <label>
-          <span>Email Address</span>
-          <input
-            type="email"
-            name="email"
-            required="required"
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </label>
-        <button
-          className="submit reset-submit"
-          type="submit"
-          onClick={handleResetPassword}
-        >
-          Reset Password
-        </button>
+          <h3 className="resetTitle">Reset Password</h3>
+          <label>
+            <span>Email Address</span>
+            <input
+              type="email"
+              name="email"
+              required="required"
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </label>
+          <button
+            className="submit reset-submit"
+            type="submit"
+            onClick={handleResetPassword}
+          >
+            Reset Password
+          </button>
         </form>
       </div>
     </div>

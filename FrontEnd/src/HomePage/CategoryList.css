@@ -1,9 +1,9 @@
 @import "../Colors.css";
-.categorySection{
+.categorySection {
   display: flex;
   box-shadow: 0px 5px 8px var(--backgroundColor);
 }
-.categories{
+.categories {
   background-color: var(--menuColor);
   flex: 1;
 }
@@ -19,17 +19,19 @@
   cursor: pointer;
 }
 
-.categories ul li, .selectedFilter {
+.categories ul li,
+.selectedFilter {
   box-sizing: border-box;
 }
-.categories ul li:hover, .selectedFilter {
+.categories ul li:hover,
+.selectedFilter {
   background-color: var(--darkTwo);
   padding: 15px;
   width: 200px;
   border-radius: 5px;
   box-sizing: border-box;
 }
-.categories nav{
+.categories nav {
   display: flex;
   justify-content: center;
   height: 100vh;
@@ -45,11 +47,12 @@
   .categories ul li {
     font-size: 10px;
   }
-  .categories ul li:hover, .selectedFilter {
+  .categories ul li:hover,
+  .selectedFilter {
     width: 100px;
   }
 
-  .categoriesList{
+  .categoriesList {
     font-size: 1rem;
   }
 }

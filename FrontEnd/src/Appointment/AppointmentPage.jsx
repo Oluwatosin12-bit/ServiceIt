@@ -5,7 +5,7 @@ import {
   acceptAppointment,
   declineAppointment,
 } from "../BookingPage/BookingDB";
-import {updateVendorPostAppointment} from "../HomePage/RecommendationDB"
+import { updateVendorPostAppointment } from "../HomePage/RecommendationDB";
 import "./AppointmentPage.css";
 import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
@@ -17,10 +17,10 @@ function AppointmentPage({ userData, socket }) {
     useState(false);
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
-  const [selectedAppointment, setSelectedAppointment] = useState(null)
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
   const userID = userData?.userID;
-  const ACCEPTED_ACTION_TYPE = 3
-  const DECLINED_ACTION_TYPE = 4
+  const ACCEPTED_ACTION_TYPE = 3;
+  const DECLINED_ACTION_TYPE = 4;
   const { theme } = useTheme();
 
   const handleAcceptedAppointment = async (
@@ -52,23 +52,23 @@ function AppointmentPage({ userData, socket }) {
     appointmentID,
     type
   ) => {
-    event.stopPropagation()
-    const logOutConfirmation = window.confirm(
+    event.stopPropagation();
+    const declineAppointmentConfirmation = window.confirm(
       "Are you sure you want to decline appointment?"
     );
-    if (logOutConfirmation === true) {
-    await declineAppointment(customerID, vendorID, appointmentID);
-    await socket.emit("sendNotification", {
-      userID: userData?.userID,
-      senderID: userData?.userID,
-      receiverID: appointment.customerUID,
-      senderName: userData?.UserName,
-      receiverName: appointment.customerUsername,
-      appointmentDate: appointment.appointmentDate,
-      appointmentTitle: appointment.appointmentTitle,
-      type,
-    });
-  }
+    if (declineAppointmentConfirmation === true) {
+      await declineAppointment(customerID, vendorID, appointmentID);
+      await socket.emit("sendNotification", {
+        userID: userData?.userID,
+        senderID: userData?.userID,
+        receiverID: appointment.customerUID,
+        senderName: userData?.UserName,
+        receiverName: appointment.customerUsername,
+        appointmentDate: appointment.appointmentDate,
+        appointmentTitle: appointment.appointmentTitle,
+        type,
+      });
+    }
   };
 
   useEffect(() => {
@@ -95,7 +95,7 @@ function AppointmentPage({ userData, socket }) {
   }, [userID]);
 
   const toggleAppointmentDetailsModal = (appointment) => {
-    setSelectedAppointment(appointment)
+    setSelectedAppointment(appointment);
     setIsAppointmentDetailsModalShown(!isAppointmentDetailsModalShown);
   };
 
@@ -174,7 +174,11 @@ function AppointmentPage({ userData, socket }) {
 
         <h2>Upcoming Appointments</h2>
         {upcomingAppointmentData.map((appointment) => (
-          <div key={appointment.docID} className="appointmentTab" onClick={()=>toggleAppointmentDetailsModal(appointment)}>
+          <div
+            key={appointment.docID}
+            className="appointmentTab"
+            onClick={() => toggleAppointmentDetailsModal(appointment)}
+          >
             <div className="appointmentInfo">
               <p className="appointmentUser">{appointment.vendorUsername}</p>
               <p className="appointmentTitle">{appointment.appointmentTitle}</p>
@@ -209,12 +213,13 @@ function AppointmentPage({ userData, socket }) {
             </div>
           </div>
         ))}
-        {isAppointmentDetailsModalShown && selectedAppointment !== null &&(
+        {isAppointmentDetailsModalShown && selectedAppointment !== null && (
           <div>
             <AppointmentDetails
-            isShown={isAppointmentDetailsModalShown}
-            onClose={toggleAppointmentDetailsModal}
-            appointment={selectedAppointment}/>
+              isShown={isAppointmentDetailsModalShown}
+              onClose={toggleAppointmentDetailsModal}
+              appointment={selectedAppointment}
+            />
           </div>
         )}
       </div>

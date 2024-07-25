@@ -3,7 +3,10 @@ import { useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { requestAppointment } from "./BookingDB";
 import { useTheme } from "../UseContext";
-import { feedCategory, getRecommendedVendors} from "../HomePage/RecommendationDB";
+import {
+  feedCategory,
+  getRecommendedVendors,
+} from "../HomePage/RecommendationDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
 
@@ -15,6 +18,7 @@ function BookingForm({ userData, socket }) {
   const [isRequestPending, setIsRequestPending] = useState(false);
   const [isFormValid, setIsFormValid] = useState(true);
   const [modalPopUpMessage, setModalPopUpMessage] = useState("");
+  const ADDITIONAL_NOTE = "appointmentAdditionalNote";
   const [appointmentData, setAppointmentData] = useState({
     appointmentTitle: "",
     appointmentDescription: "",
@@ -51,11 +55,11 @@ function BookingForm({ userData, socket }) {
   };
 
   useEffect(() => {
-    const isFormValid = Object.keys(appointmentData).every(key => {
-      if (key === 'appointmentAdditionalNote') {
+    const isFormValid = Object.keys(appointmentData).every((key) => {
+      if (key === ADDITIONAL_NOTE) {
         return true; // Skip validation for optional input
       }
-      return appointmentData[key] !== '';
+      return appointmentData[key] !== "";
     });
 
     setIsFormValid(isFormValid);
@@ -65,47 +69,42 @@ function BookingForm({ userData, socket }) {
     }
   }, [appointmentData, userUID, post.vendorUID]);
 
-
   const handleSubmit = async (event, type) => {
     try {
       event.preventDefault();
-      if (userUID === post.vendorUID) {
-        setModalPopUpMessage("You cannot book an appointment with yourself");
-      } else {
-        setIsRequestPending(true);
-        await sendAppointmentRequest(
-          userUID,
-          post.vendorUID,
-          post.vendorUsername,
-          appointmentData,
-          userData,
-          post.vendorEmail,
-          post.vendorName,
-          post.postID
-        );
-        await feedCategory(userUID, post.serviceCategories);
-        await getRecommendedVendors(userUID, post.vendorUID);
-        await socket.emit("sendNotification", {
-          userID: userUID,
-          senderID: userUID,
-          receiverID: post.vendorUID,
-          senderName: userData?.UserName,
-          receiverName: post?.vendorUsername,
-          appointmentDate: appointmentData.appointmentDate,
-          appointmentTitle: appointmentData.appointmentTitle,
-          type,
-        });
-        setAppointmentData({
-          appointmentTitle: "",
-          appointmentDescription: "",
-          appointmentDate: "",
-          appointmentTime: "",
-          appointmentAdditionalNote: "",
-        });
-        setModalPopUpMessage(
-          `Your appointment request has been sent to ${post.vendorUsername}`
-        );
-      }
+      setIsRequestPending(true);
+      await sendAppointmentRequest(
+        userUID,
+        post.vendorUID,
+        post.vendorUsername,
+        appointmentData,
+        userData,
+        post.vendorEmail,
+        post.vendorName,
+        post.postID
+      );
+      await feedCategory(userUID, post.serviceCategories);
+      await getRecommendedVendors(userUID, post.vendorUID);
+      await socket.emit("sendNotification", {
+        userID: userUID,
+        senderID: userUID,
+        receiverID: post.vendorUID,
+        senderName: userData?.UserName,
+        receiverName: post?.vendorUsername,
+        appointmentDate: appointmentData.appointmentDate,
+        appointmentTitle: appointmentData.appointmentTitle,
+        type,
+      });
+      setAppointmentData({
+        appointmentTitle: "",
+        appointmentDescription: "",
+        appointmentDate: "",
+        appointmentTime: "",
+        appointmentAdditionalNote: "",
+      });
+      setModalPopUpMessage(
+        `Your appointment request has been sent to ${post.vendorUsername}`
+      );
       toggleModal();
     } catch (error) {
       throw new Error(`Error sending appointment request ${error.message}`);

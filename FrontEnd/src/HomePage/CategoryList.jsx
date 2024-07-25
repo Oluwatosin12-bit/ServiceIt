@@ -1,7 +1,7 @@
 import "./CategoryList.css";
 import { useState, useEffect } from "react";
 import { useTheme } from "../UseContext";
-import  fetchCategoryNames  from "../Categories";
+import fetchCategoryNames from "../Categories";
 
 function CategoryList({ filterPosts }) {
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -30,7 +30,7 @@ function CategoryList({ filterPosts }) {
     }
 
     setSelectedCategories(newSelectedCategories);
-    filterPosts(newSelectedCategories, '');
+    filterPosts(newSelectedCategories, "");
   };
 
   return (
@@ -41,7 +41,9 @@ function CategoryList({ filterPosts }) {
           {categories.map((category) => (
             <li
               key={category}
-              className={selectedCategories.includes(category) ? "selectedFilter" : ""}
+              className={
+                selectedCategories.includes(category) ? "selectedFilter" : ""
+              }
               onClick={() => handleCategoryClick(category)}
             >
               {category}

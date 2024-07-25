@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { logOutUser } from "../UserAuthentication/Auth";
 import { createPost, fetchUserPosts } from "../UserAuthentication/FirestoreDB";
 import Modal from "../Modal";
-import  fetchCategoryNames  from "../Categories";
+import fetchCategoryNames from "../Categories";
 import PostFullDisplay from "../HomePage/PostFullDisplay";
 import { fetchLocations, handleDeletePost } from "../UseableFunctions";
 import { EditProfile } from "./EditingProfile";
@@ -146,14 +146,14 @@ function UserProfilePage({ userUID, userData }) {
       setIsSignOutDropdownVisible(false);
     }
 
-    for (let postId in deletePostDropdownRef.current) {
+    Object.keys(deletePostDropdownRef.current).forEach((postId) => {
       if (
         deletePostDropdownRef.current[postId] !== null &&
         !deletePostDropdownRef.current[postId].contains(event.target)
       ) {
         setIsDeletePostDropdownVisible(null);
       }
-    }
+    });
   };
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -228,7 +228,12 @@ function UserProfilePage({ userUID, userData }) {
             <p>{userData?.Bio}</p>
           </div>
           {isEditingProfile && (
-            <EditProfile userUID={userUID} userData={userData} isEditProfileModalShown ={isEditProfileModalShown} setIsEditProfileModalShown={setIsEditProfileModalShown}/>
+            <EditProfile
+              userUID={userUID}
+              userData={userData}
+              isEditProfileModalShown={isEditProfileModalShown}
+              setIsEditProfileModalShown={setIsEditProfileModalShown}
+            />
           )}
           <div>
             <button className="createButton" onClick={toggleCreatePostModal}>
@@ -322,7 +327,9 @@ function UserProfilePage({ userUID, userData }) {
             </div>
             <div>
               <label htmlFor="serviceAvailability">Availability:</label>{" "}
-              <span className="availabilityInfo">When you are available to offer this service</span>
+              <span className="availabilityInfo">
+                When you are available to offer this service
+              </span>
               <input
                 type="text"
                 placeholder="Example: Every Thursday, through July 2024"

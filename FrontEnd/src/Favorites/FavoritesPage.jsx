@@ -30,7 +30,9 @@ function FavoritesPage({ userData }) {
       <div className={`appointmentPage ${theme}`}>
         <div className="appointments">
           <h2>No Favorited Posts yet.</h2>
-          <p className="emptyPageMessage">When you favorite posts, they will show up here</p>
+          <p className="emptyPageMessage">
+            When you favorite posts, they will show up here
+          </p>
         </div>
       </div>
     );
@@ -43,10 +45,21 @@ function FavoritesPage({ userData }) {
         {userFavoritesData.map((favorite, index) => (
           <div key={index} className="notificationTab">
             <div className="notificationContent">
-              <p  className="notificationMessage" onClick={() => handleOpenUserProfile(favorite.post)}>{favorite.post.vendorUsername}</p>
-              <p  className="notificationTime">Post heading: {favorite.post.serviceTitle}</p>
+              <p
+                className="notificationMessage"
+                onClick={() => handleOpenUserProfile(favorite.post)}
+              >
+                {favorite.post.vendorUsername}
+              </p>
+              <p className="notificationTime">
+                Post heading: {favorite.post.serviceTitle}
+              </p>
             </div>
-            <img src={favorite.post.imageURL} alt="Favorites Post Image" className="notificationImage"/>
+            <img
+              src={favorite.post.imageURL}
+              alt="Favorites Post Image"
+              className="notificationImage"
+            />
           </div>
         ))}
       </div>

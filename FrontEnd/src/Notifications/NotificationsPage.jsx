@@ -27,7 +27,9 @@ function NotificationsPage({ userData }) {
       <div className={`appointmentPage ${theme}`}>
         <div className="appointments">
           <h2>No Notifications yet.</h2>
-          <p className="emptyPageMessage">When you get notifications, they will show up here</p>
+          <p className="emptyPageMessage">
+            When you get notifications, they will show up here
+          </p>
         </div>
       </div>
     );
@@ -44,8 +46,12 @@ function NotificationsPage({ userData }) {
               <p className="notificationTime">{notification.timeStamp}</p>
             </div>
             {notification.image && (
-            <img src={notification.image} alt="Notification Image" className="notificationImage"/>
-          )}
+              <img
+                src={notification.image}
+                alt="Notification Image"
+                className="notificationImage"
+              />
+            )}
           </div>
         ))}
       </div>

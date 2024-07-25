@@ -1,7 +1,7 @@
-import {useState} from "react";
-import "./SearchBar.css"
-function SearchBar({filterPosts}) {
-  const [ searchWord, setSearchWord ] = useState("");
+import { useState } from "react";
+import "./SearchBar.css";
+function SearchBar({ filterPosts }) {
+  const [searchWord, setSearchWord] = useState("");
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchWord(value);
@@ -10,14 +10,14 @@ function SearchBar({filterPosts}) {
   return (
     <div className="searchContainer">
       <div className="searchArea">
-      <i className="fa-solid fa-magnifying-glass searchIcon"></i>
-      <input
-        value={searchWord}
-        onChange={handleSearchChange}
-        className="searchInput"
-        placeholder="Search..."
-      />
-    </div>
+        <i className="fa-solid fa-magnifying-glass searchIcon"></i>
+        <input
+          value={searchWord}
+          onChange={handleSearchChange}
+          className="searchInput"
+          placeholder="Search..."
+        />
+      </div>
     </div>
   );
 }

@@ -23,13 +23,13 @@
 .popUpMessage {
   padding-top: 10px;
   padding-right: 5px;
-  z-index: 1000px;
+  z-index: 1000;
 }
 
-.sendButton{
+.sendButton {
   background: var(--buttonColor);
 }
 
-.sendButton:disabled{
+.sendButton:disabled {
   background: var(--secondaryText);
 }
