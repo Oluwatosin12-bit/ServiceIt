@@ -35,7 +35,7 @@ const requestAppointment = async (
   try {
     const Status = PENDING_STATUS;
     const customerUsername = userData.UserName;
-    const customerName = userData?.Name
+    const customerName = userData?.Name;
     const appointmentID = generateRandomID();
     const appointmentDataWithStatus = {
       ...appointmentData,
@@ -49,7 +49,7 @@ const requestAppointment = async (
       docID: appointmentID,
       customerName,
       vendorName,
-      postID
+      postID,
     };
     const userDocRef = doc(
       database,
@@ -116,12 +116,7 @@ const fetchUserFavorites = (userID, callback) => {
       throw new Error(`Invalid userID: ${error.message}`);
     }
     const userFavoritesRef = query(
-      collection(
-        database,
-        DATABASE_FOLDER_NAME,
-        userID,
-        FAVORITES_COLLECTION
-      )
+      collection(database, DATABASE_FOLDER_NAME, userID, FAVORITES_COLLECTION)
     );
     const unsubscribe = onSnapshot(userFavoritesRef, (snapshot) => {
       const favorites = [];
@@ -168,7 +163,7 @@ const fetchPendingAppointments = (userID, callback) => {
   }
 };
 
-const fetchUpcomingAppointments = (userID, callback) => {
+const fetchUpcomingAppointments = (userID, socket, callback) => {
   try {
     if (userID === null) {
       return;
@@ -182,16 +177,34 @@ const fetchUpcomingAppointments = (userID, callback) => {
       ),
       where("Status", "==", ACCEPTED_STATUS)
     );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
       const upcomingAppointmentsData = [];
-      querySnapshot.forEach((doc) => {
-        upcomingAppointmentsData.push({ docID: doc.id, ...doc.data() });
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      const tomorrowDateStr = tomorrow.toISOString().split("T")[0];
+
+      const promises = querySnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        const appointmentDateStr = data.appointmentDate;
+
+        upcomingAppointmentsData.push({ docID: doc.id, ...data });
+
+        if (appointmentDateStr === tomorrowDateStr) {
+          await socket.emit("sendReminder", {
+            userID: userID,
+            vendorID: data.vendorUID,
+            customerUsername: data.customerUsername,
+            vendorUsername: data.vendorUsername,
+            appointmentTime: appointmentDateStr,
+          });
+        }
       });
 
+      await Promise.all(promises);
+
       upcomingAppointmentsData.sort((a, b) => {
-        const dateA = new Date(a.appointmentDate);
-        const dateB = new Date(b.appointmentDate);
-        return dateA - dateB;
+        return new Date(a.appointmentDate) - new Date(b.appointmentDate);
       });
 
       callback(upcomingAppointmentsData);

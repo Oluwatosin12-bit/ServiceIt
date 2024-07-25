@@ -139,6 +139,42 @@ io.on("connection", (socket) => {
     socket.close();
   });
 
+  const DATABASE_FOLDER_NAME = "users";
+  const NOTIFICATIONS_FOLDER_NAME = "Notifications"
+
+  socket.on("sendReminder", async({userID, vendorID, customerUsername, vendorUsername, appointmentTime})=>{
+    const receiver1 = getUser(userID);
+    const receiver2 = getUser(vendorID)
+
+    const customerReminder = {
+      message: `You have an appointment tomorrow with ${vendorUsername} at ${appointmentTime}`
+    }
+    const vendorReminder = {
+      message: `You have a service to render to ${customerUsername} at ${appointmentTime}`
+    }
+
+    if (receiver1 !== undefined) {
+      io.to(receiver1.socketID).emit("getReminder", customerReminder);
+    }
+
+    if (receiver2 !== undefined) {
+      io.to(receiver2.socketID).emit("getReminder", vendorReminder);
+    }
+
+    try {
+      await addDoc(
+        collection(database, DATABASE_FOLDER_NAME, userID, NOTIFICATIONS_FOLDER_NAME),
+        customerReminder
+      );
+      await addDoc(
+        collection(database, DATABASE_FOLDER_NAME, vendorID, NOTIFICATIONS_FOLDER_NAME),
+        customerReminder
+      );
+    } catch (error) {
+      throw new Error (`Error storing notification:" ${error}`);
+    }
+  })
+
   socket.on(
     "sendNotification",
     async ({
@@ -180,11 +216,11 @@ io.on("connection", (socket) => {
 
       try {
         await addDoc(
-          collection(database, "users", receiverID, "Notifications"),
+          collection(database, DATABASE_FOLDER_NAME, receiverID, NOTIFICATIONS_FOLDER_NAME),
           receiverNotification
         );
         await addDoc(
-          collection(database, "users", senderID, "Notifications"),
+          collection(database, DATABASE_FOLDER_NAME, senderID, NOTIFICATIONS_FOLDER_NAME),
           senderNotification
         );
       } catch (error) {

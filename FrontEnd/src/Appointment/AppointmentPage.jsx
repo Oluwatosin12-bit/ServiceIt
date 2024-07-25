@@ -9,8 +9,10 @@ import {updateVendorPostAppointment} from "../HomePage/RecommendationDB"
 import "./AppointmentPage.css";
 import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
+import LoadingPage from "../LoadingComponent/LoadingPage"
 
 function AppointmentPage({ userData, socket }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] =
     useState(false);
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
@@ -80,11 +82,12 @@ function AppointmentPage({ userData, socket }) {
       }
     );
     const unsubscribeUpcomingAppointment = fetchUpcomingAppointments(
-      userID,
+      userID, socket,
       (appointmentData) => {
         setUpcomingAppointmentData(appointmentData);
       }
     );
+    setIsLoading(false);
     return () => {
       unsubscribePendingAppointment();
       unsubscribeUpcomingAppointment();
@@ -112,7 +115,7 @@ function AppointmentPage({ userData, socket }) {
     <div className={`appointmentPage ${theme}`}>
       <div className="appointments">
         <h2>Pending Appointments</h2>
-        {pendingAppointmentData.map((appointment) => (
+        {isLoading ? (<LoadingPage />) : pendingAppointmentData.map((appointment) => (
           <div key={appointment.docID} className="appointmentTab" onClick={()=>toggleAppointmentDetailsModal(appointment)}>
             <div className="appointmentInfo">
               {appointment.vendorUID === userID && (

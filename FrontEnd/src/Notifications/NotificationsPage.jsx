@@ -2,8 +2,10 @@ import { fetchNotifications } from "../BookingPage/BookingDB";
 import { useState, useEffect } from "react";
 import "./NotificationPage.css";
 import { useTheme } from "../UseContext";
+import LoadingPage from "../LoadingComponent/LoadingPage"
 
 function NotificationsPage({ userData }) {
+  const [isLoading, setIsLoading] = useState(true);
   const userID = userData?.userID;
   const [userNotificationData, setUserNotificationData] = useState([]);
   const { theme } = useTheme();
@@ -15,6 +17,7 @@ function NotificationsPage({ userData }) {
     const unsubscribe = fetchNotifications(userID, (notificationData) => {
       const userNotifications = notificationData;
       setUserNotificationData(userNotifications);
+      setIsLoading(false);
     });
 
     return () => unsubscribe();
@@ -34,8 +37,8 @@ function NotificationsPage({ userData }) {
     <div className={`notificationsSection ${theme}`}>
       <h2 className="notificationTitle">User Notifications:</h2>
       <div className="stackedNotifications">
-        {userNotificationData.map((notification) => (
-          <div key={notification.id} className="notificationTab">
+        {isLoading ? (<LoadingPage />) : userNotificationData.map((notification, index) => (
+          <div key={index} className="notificationTab">
             <div className="notificationContent">
               <p className="notificationMessage">{notification.message}</p>
               <p className="notificationTime">{notification.timeStamp}</p>

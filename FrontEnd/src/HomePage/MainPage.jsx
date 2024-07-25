@@ -6,6 +6,7 @@ import PostFullDisplay from "./PostFullDisplay";
 import SearchBar from "../Search/SearchBar";
 import { useTheme } from "../UseContext";
 import { fetchAndUpdateUserLocation } from "../LocationUtil";
+import LoadingPage from "../LoadingComponent/LoadingPage"
 import "./MainPage.css";
 
 function MainPage({ userUID, userData, socket }) {
@@ -97,7 +98,7 @@ function MainPage({ userUID, userData, socket }) {
         <SearchBar filterPosts={filterPosts} />
         <div className="feedSection">
           {userUID && isLoading ? (
-            <p>Loading...</p>
+            <LoadingPage />
           ) : filteredPosts.length === 0 ? (
             <p>No posts found.</p>
           ) : (

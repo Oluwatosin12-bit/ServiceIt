@@ -22,6 +22,12 @@ function Header({ userData, socket }) {
           setNotifications((prev) => [...prev, data]);
         }
       });
+      socket.on("getReminders",(data)=>{
+        const isDuplicate = notifications.some((notification)=> notification.message === data.message);
+        if (isDuplicate === false){
+          setNotifications((prev) => [...prev, data]);
+        }
+      })
     }
   }, [socket]);
 

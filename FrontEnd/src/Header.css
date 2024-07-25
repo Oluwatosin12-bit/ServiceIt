@@ -132,3 +132,10 @@
     height: 115px;
   }
 }
+
+@media (max-width: 850px) {
+  .navigation ul li{
+    margin-top: 0;
+    margin-bottom: 7px;
+  }
+}

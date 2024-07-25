@@ -23,8 +23,7 @@ import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { ThemeProvider, SearchWordProvider } from "./UseContext";
 import EntryPage from "./UserAuthentication/EntryPage"
-import populateDatabase from "./PopulateDatabase/AddToDatabase";
-import populatePosts from "./PopulateDatabase/PopulatePostsDB"
+
 function App() {
   const userUID = useUID();
   const [userData, setUserData] = useState(null);

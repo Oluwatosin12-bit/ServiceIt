@@ -8,11 +8,13 @@ import PostFullDisplay from "../HomePage/PostFullDisplay";
 import { fetchLocations, handleDeletePost } from "../UseableFunctions";
 import { EditProfile } from "./EditingProfile";
 import { useTheme } from "../UseContext";
+import LoadingPage from "../LoadingComponent/LoadingPage"
 import "./UserProfile.css";
 
 function UserProfilePage({ userUID, userData }) {
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
   const [imageUpload, setImageUpload] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
   const [isCreatePostModalShown, setIsCreatePostModalShown] = useState(false);
@@ -131,6 +133,7 @@ function UserProfilePage({ userUID, userData }) {
     if (userUID === null) return;
     const unsubscribe = fetchUserPosts(userUID, (postsData) => {
       setUserPosts(postsData);
+      setIsLoading(false);
     });
     return () => unsubscribe && unsubscribe();
   }, [userUID]);
@@ -371,7 +374,7 @@ function UserProfilePage({ userUID, userData }) {
       </div>
       <div className="userPosts">
         <div className="userPostsPreview">
-          {userPosts.map((post, index) => (
+          {isLoading ? (<LoadingPage />) :userPosts.map((post, index) => (
             <div
               key={index}
               className="eachPost"
