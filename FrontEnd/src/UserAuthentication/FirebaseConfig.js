@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
+
 import {VITE_API_KEY, VITE_AUTH_DOMAIN,
   VITE_PROJECT_ID,
   VITE_STORAGE_BUCKET,

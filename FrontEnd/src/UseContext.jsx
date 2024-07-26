@@ -12,3 +12,16 @@ export const ThemeProvider = ({ children }) => {
 };
 
 export const useTheme = () => useContext(ThemeContext);
+
+const SearchWordContext = createContext();
+export const SearchWordProvider = ({ children }) => {
+  const [searchWord, setSearchWord] = useState("");
+
+  return (
+    <SearchWordContext.Provider value={{searchWord, setSearchWord}}>
+      {children}
+    </SearchWordContext.Provider>
+  );
+};
+
+export const useSearchWord = () => useContext(SearchWordContext);

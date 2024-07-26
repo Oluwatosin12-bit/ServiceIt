@@ -9,30 +9,32 @@ import {
   getDoc,
   onSnapshot,
   Timestamp,
-  deleteDoc
+  deleteDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import {generateRandomID} from "../BookingPage/BookingDB"
+import { generateRandomID } from "../BookingPage/BookingDB";
 import { v4 } from "uuid";
 
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
+const POST_CATEGORIES_FOLDER_NAME = "postCategories";
 async function addUser(
   userID,
-  firstName,
-  lastName,
+  name,
   userName,
   signUpEmail,
-  selectedCategories
+  selectedCategories,
+  userLocation
 ) {
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
   return await setDoc(userDocRef, {
     userID: userID,
-    FirstName: firstName,
-    LastName: lastName,
+    Name: name,
     UserName: userName,
     Email: signUpEmail,
-    feedCategories: selectedCategories || [],
+    selectedCategories: selectedCategories ?? [],
+    feedCategories: selectedCategories ?? [],
+    UserLocation: userLocation,
   });
 }
 
@@ -98,27 +100,49 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       createdAt,
       vendorUsername,
       vendorUID: userID,
-      postID: generatedID
+      postID: generatedID,
     };
 
     if (userID === null) {
       throw new Error(`Invalid user ID: ${error.message}`);
     }
-
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
     const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
     const postDocRef = doc(postsCollectionRef, generatedID);
     await setDoc(postDocRef, formDataWithImage);
+
+    //add to postCategories collection
+    for (const category of formData.serviceCategories) {
+      const categoryDocRef = doc(
+        database,
+        POST_CATEGORIES_FOLDER_NAME,
+        category
+      );
+      const categoryDocSnap = await getDoc(categoryDocRef);
+
+      if (categoryDocSnap.exists() === false) {
+        await setDoc(categoryDocRef, { categoryName: category, Posts: [] });
+      }
+
+      const categoryPostsCollectionRef = collection(categoryDocRef, "Posts");
+      const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
+      await setDoc(categoryPostDocRef, formDataWithImage);
+    }
   } catch (error) {
     throw new Error(`Error creating post: ${error.message}`);
   }
 };
 
-const deletePost = (userUID, postID) =>{
-  const favoritesRef = collection(database, DATABASE_FOLDER_NAME, userUID, POSTS_COLLECTION);
+const deletePost = (userUID, postID) => {
+  const favoritesRef = collection(
+    database,
+    DATABASE_FOLDER_NAME,
+    userUID,
+    POSTS_COLLECTION
+  );
   const postDocRef = doc(favoritesRef, postID);
   deleteDoc(postDocRef);
-}
+};
 
 const fetchUserPosts = (userID, callback) => {
   if (userID === null) {
@@ -138,7 +162,6 @@ const fetchUserPosts = (userID, callback) => {
 
     callback(postsData);
   });
-
   return unsubscribe;
 };
 
@@ -148,5 +171,5 @@ export {
   getUserData,
   createPost,
   fetchUserPosts,
-  deletePost
+  deletePost,
 };

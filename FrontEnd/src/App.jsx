@@ -11,6 +11,7 @@ import AlternateSignUp from "./UserAuthentication/AlternateSignUp"
 import ResetPasswordPage from "./UserAuthentication/ResetPasswordPage";
 import MainPage from "./HomePage/MainPage";
 import UserProfile from "./ProfilePage/UserProfile";
+import VendorProfile from "./ProfilePage/VendorsProfile";
 import BookingForm from "./BookingPage/BookingPage";
 import NotificationsPage from "./Notifications/NotificationsPage";
 import AppointmentPage from "./Appointment/AppointmentPage";
@@ -19,14 +20,13 @@ import { getUserData } from "./UserAuthentication/FirestoreDB";
 import { useUID } from "./UserAuthentication/Auth";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { ThemeProvider } from "./UseContext";
+import { ThemeProvider, SearchWordProvider } from "./UseContext";
 import EntryPage from "./UserAuthentication/EntryPage"
 
 function App() {
   const userUID = useUID();
   const [userData, setUserData] = useState(null);
   const [socket, setSocket] = useState(null);
-  const [theme, setTheme] = useState("dark");
 
   const fetchData = async () => {
     if (userUID !== null) {
@@ -49,9 +49,6 @@ function App() {
     });
 
     newSocket.on("reconnect", (attemptNumber) => {
-    });
-
-    newSocket.on("firstEvent", (msg) => {
     });
 
     return () => {
@@ -77,6 +74,7 @@ function App() {
   return (
       <Router>
       <ThemeProvider>
+      <SearchWordProvider>
         <Routes>
           <Route path="/" element={<LandingPage socket={socket} />} />
           <Route path="/EntryPage" element={<EntryPage socket={socket} />} />
@@ -106,6 +104,16 @@ function App() {
               }
             />
             <Route
+              path="/VendorProfile"
+              element={
+                <VendorProfile
+                  userUID={userUID}
+                  userData={userData}
+                  socket={socket}
+                />
+              }
+            />
+            <Route
               path="/BookingPage"
               element={<BookingForm userData={userData} socket={socket} />}
             />
@@ -125,6 +133,7 @@ function App() {
             />
           </Route>
         </Routes>
+        </SearchWordProvider>
       </ThemeProvider>
     </Router>
   );

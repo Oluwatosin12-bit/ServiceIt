@@ -31,7 +31,7 @@ button {
   overflow: hidden;
   position: relative;
   width: 900px;
-  height: 700px;
+  height: 900px;
   background: var(--lightOne);
   box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
   border-radius: 15px;
@@ -437,6 +437,12 @@ button {
 }
 .reset-submit {
   background-color: #312f3a;
+}
+
+@media screen and (max-height: 849px) {
+  .cont{
+    margin: 75px;
+  }
 }
 
 @media screen and (max-width: 950px) {

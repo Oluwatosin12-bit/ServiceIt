@@ -28,7 +28,7 @@ function EntryPage() {
           <div>
             <img
               className="signUpImage"
-              src="src/Images/coworking-woman-doing-online-shopping-at-home.gif"
+              src="/coworking-woman-doing-online-shopping-at-home.gif"
             />
           </div>
           <div className="img-btn" ref={imgBtnRef} onClick={handleClick}>

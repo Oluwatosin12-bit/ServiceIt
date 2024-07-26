@@ -106,8 +106,12 @@ const fetchUserFavorites = (userID, callback) => {
       throw new Error(`Invalid userID: ${error.message}`);
     }
     const userFavoritesRef = query(
-      collection(database, DATABASE_FOLDER_NAME, userID, "Favorites"),
-      
+      collection(
+        database,
+        DATABASE_FOLDER_NAME,
+        userID,
+        "Favorites"
+      )
     );
     const unsubscribe = onSnapshot(userFavoritesRef, (snapshot) => {
       const favorites = [];

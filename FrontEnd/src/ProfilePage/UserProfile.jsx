@@ -10,7 +10,6 @@ import Modal from "../Modal";
 import { CATEGORIES } from "../Categories";
 import { useTheme } from "../UseContext";
 import "./UserProfile.css";
-import "https://kit.fontawesome.com/61795c539b.js";
 
 function UserProfilePage({ userUID, userData }) {
   const { theme } = useTheme();
@@ -19,38 +18,69 @@ function UserProfilePage({ userUID, userData }) {
   const [userPosts, setUserPosts] = useState([]);
   const [isCreatePostModalShown, setIsCreatePostModalShown] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [serviceCategories, setSelectedCategories] = useState([]);
+  const [serviceCategories, setServiceCategories] = useState([]);
   const [availableCategories] = useState(CATEGORIES);
-  const [isSignOutDropdownVisible, setisSignOutDropdownVisible] =
+  const [newCategory, setNewCategory] = useState("");
+  const [searchLocationTerm, setSearchLocationTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
-  const [isDeletePostDropdownVisible, setisDeletePostDropdownVisible] =
-    useState(false);
+  const [deletePostIndex, setDeletePostIndex] =
+    useState(null);
   const signOutDropdownRef = useRef(null);
   const deletePostDropdownRef = useRef({});
 
   const toggleSignOutDropdown = () => {
-    setisSignOutDropdownVisible(!isSignOutDropdownVisible);
+    setIsSignOutDropdownVisible(!isSignOutDropdownVisible);
   };
   const toggleDeletePostDropdown = (index) => {
-    setisDeletePostDropdownVisible(
-      isDeletePostDropdownVisible === index ? null : index
+    setDeletePostIndex(
+      deletePostIndex === index ? null : index
     );
+  };
+
+  useEffect(() => {
+    if (searchLocationTerm.length >= 2) {
+      fetchLocations(searchLocationTerm);
+    } else {
+      setSuggestions([]);
+    }
+  }, [searchLocationTerm]);
+  const fetchLocations = (query) => {
+    fetch(`https://your-api-url?q=${query}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setSuggestions(data);
+      })
+      .catch((error) => console.error("Error fetching data:", error));
+  };
+  const addLocation = (location) => {
+    setSelectedLocations([...selectedLocations, location]);
+    setSearchLocationTerm("");
+    setSuggestions([]);
+  };
+
+  const removeLocation = (index) => {
+    const updatedLocations = [...selectedLocations];
+    updatedLocations.splice(index, 1);
+    setSelectedLocations(updatedLocations);
   };
 
   const handleClickOutside = (event) => {
     if (
-      signOutDropdownRef.current !==null &&
+      signOutDropdownRef.current !== null &&
       !signOutDropdownRef.current.contains(event.target)
     ) {
-      setisSignOutDropdownVisible(false);
+      setIsSignOutDropdownVisible(false);
     }
 
     for (let postId in deletePostDropdownRef.current) {
       if (
-        deletePostDropdownRef.current[postId] !==null &&
+        deletePostDropdownRef.current[postId] !== null &&
         !deletePostDropdownRef.current[postId].contains(event.target)
       ) {
-        setisDeletePostDropdownVisible(null);
+        setDeletePostIndex(null);
       }
     }
   };
@@ -62,7 +92,7 @@ function UserProfilePage({ userUID, userData }) {
   }, []);
 
   const removeCategory = (category) => {
-    setSelectedCategories(
+    setServiceCategories(
       serviceCategories.filter(
         (serviceCategory) => serviceCategory !== category
       )
@@ -76,7 +106,13 @@ function UserProfilePage({ userUID, userData }) {
     const newCategories = selectedOptions.filter(
       (category) => !serviceCategories.includes(category)
     );
-    setSelectedCategories([...serviceCategories, ...newCategories]);
+    setServiceCategories([...serviceCategories, ...newCategories]);
+  };
+  const addCategory = () => {
+    if (newCategory.trim() !== "" && !serviceCategories.includes(newCategory)) {
+      setServiceCategories([...serviceCategories, newCategory]);
+      setNewCategory("");
+    }
   };
   const [formData, setFormData] = useState({
     serviceCategories: [],
@@ -152,7 +188,7 @@ function UserProfilePage({ userUID, userData }) {
       <div className="userInfo">
         <div className="welcomePlace">
           <div>
-            <img src="src/Images/Profile.jpeg" alt="profile avatar" />
+            <img src="/Profile.jpeg" alt="profile avatar" />
             <div className="nameContainer" ref={signOutDropdownRef}>
               <h1>{userData?.UserName} </h1>
               <span
@@ -187,6 +223,7 @@ function UserProfilePage({ userUID, userData }) {
         <Modal isShown={isCreatePostModalShown} onClose={toggleModal}>
           <form onSubmit={handleFormSubmit} className="postForm">
             <div className="formGroup">
+              <h2 className="formHeading">Create Post</h2>
               <label htmlFor="serviceTitle">Title:</label>
               <input
                 type="text"
@@ -222,6 +259,13 @@ function UserProfilePage({ userUID, userData }) {
                 ))}
               </select>
             </div>
+            <input
+              type="text"
+              placeholder="Add category not listed"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+            />
+            <button onClick={addCategory}>Add Category</button>
             <div>
               <label htmlFor="serviceLocations">Serviceable Location(s):</label>
               <input
@@ -229,15 +273,42 @@ function UserProfilePage({ userUID, userData }) {
                 placeholder="Example: Los Angeles, Birmingham"
                 name="serviceLocations"
                 id="serviceLocations"
-                value={formData.serviceLocations}
-                onChange={(event) => handleChange(event)}
+                value={searchLocationTerm}
+                onChange={(event) =>
+                  setSearchLocationTerm(event.target.value.trim())
+                }
               />
+              <div className="suggestions">
+                {suggestions.map((location, index) => (
+                  <div
+                    key={index}
+                    className="suggestion"
+                    onClick={() => addLocation(location)}
+                  >
+                    {`${location.city}, ${location.state}`}
+                  </div>
+                ))}
+              </div>
+              <div className="selected-locations">
+                {selectedLocations.map((location, index) => (
+                  <div key={index} className="selected-location">
+                    {`${location.city}, ${location.state}`}
+                    <span
+                      className="remove-location"
+                      onClick={() => removeLocation(index)}
+                    >
+                      x
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
             <div>
-              <label htmlFor="serviceAvailability">Availability:</label>
+              <label htmlFor="serviceAvailability">Availability:</label>{" "}
+              <span>when you are available to offer this service</span>
               <input
                 type="text"
-                placeholder=""
+                placeholder="Example: Every Thursday, through July 2024"
                 name="serviceAvailability"
                 id="serviceAvailability"
                 value={formData.serviceAvailability}
@@ -282,33 +353,37 @@ function UserProfilePage({ userUID, userData }) {
         </Modal>
       </div>
       <div className="userPosts">
-      <div className="userPostsPreview">
-        {userPosts.map((post, index) => (
-          <div key={index} className="eachPost">
-            <div className="postHeading">
-              <p>{post.serviceTitle}</p>
-              <span
-                className="icon ellipsisIcon"
-                onClick={() => toggleDeletePostDropdown(index)}
-              >
-                <i className="fa-solid fa-ellipsis-vertical" />
-              </span>
-              {isDeletePostDropdownVisible === index && (
-                <div
-                  ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
-                  className="deleteDropDown"
+        <div className="userPostsPreview">
+          {userPosts.map((post, index) => (
+            <div key={index} className="eachPost">
+              <div className="postHeading">
+                <p>{post.serviceTitle}</p>
+                <span
+                  className="icon ellipsisIcon"
+                  onClick={() => toggleDeletePostDropdown(index)}
                 >
-                  <ul>
-                    <li onClick={() => handleDeletePost(userUID, post.postID)}>Delete Post</li>
-                  </ul>
-                </div>
-              )}
+                  <i className="fa-solid fa-ellipsis-vertical" />
+                </span>
+                {deletePostIndex === index && (
+                  <div
+                    ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
+                    className="deleteDropDown"
+                  >
+                    <ul>
+                      <li
+                        onClick={() => handleDeletePost(userUID, post.postID)}
+                      >
+                        Delete Post
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <img src={post.imageURL} alt="post photo" />
             </div>
-            <img src={post.imageURL} alt="post photo" />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   );
 }

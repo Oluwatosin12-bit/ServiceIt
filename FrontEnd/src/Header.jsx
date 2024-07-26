@@ -5,7 +5,7 @@ import "./Header.css";
 import NotificationsPage from "./Notifications/NotificationsPage";
 function Header({ userData, socket }) {
   const [notifications, setNotifications] = useState([]);
-  const [isNotificationsOpen, setisNotificationsOpen] = useState(true);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(true);
   const [invisibleComponent, setInvisibleComponent] = useState(false);
   const { theme, setTheme } = useTheme();
   const handleThemeChange = () => {
@@ -21,7 +21,7 @@ function Header({ userData, socket }) {
   }, [socket]);
   const handleReadAll = () => {
     setNotifications([]);
-    setisNotificationsOpen(false);
+    setIsNotificationsOpen(false);
   };
 
   return (
@@ -30,7 +30,7 @@ function Header({ userData, socket }) {
         <h2>ServiceIt</h2>
       </div>
       <div>
-        <p>Hello, {userData?.FirstName}!</p>
+        <p>Hello, {userData?.Name}!</p>
       </div>
       <nav className="navigation">
         <ul className="navigationList">
