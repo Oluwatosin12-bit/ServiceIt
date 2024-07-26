@@ -37,6 +37,7 @@ const feedCategory = async (userID, categories) => {
   if (docSnap.exists()) {
     const userData = docSnap.data();
     currentCategories = userData.feedCategories ?? [];
+    currentCategories = userData.feedCategories ?? [];
   }
 
   categories.forEach((category) => {

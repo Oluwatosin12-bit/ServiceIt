@@ -30,8 +30,8 @@ function UserProfilePage({ userUID, userData }) {
   const MINIMUM_SEARCH_WORD = 2;
   const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
-  const [isDeletePostDropdownVisible, setIsDeletePostDropdownVisible] =
-    useState(false);
+  const [deletePostIndex, setDeletePostIndex] =
+    useState(null);
   const signOutDropdownRef = useRef(null);
   const deletePostDropdownRef = useRef({});
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -54,9 +54,16 @@ function UserProfilePage({ userUID, userData }) {
     setIsSignOutDropdownVisible(!isSignOutDropdownVisible);
   };
   const toggleDeletePostDropdown = (index) => {
-    setIsDeletePostDropdownVisible(
-      isDeletePostDropdownVisible === index ? null : index
+    setDeletePostIndex(
+      deletePostIndex === index ? null : index
     );
+  };
+  const toggleCreatePostModal = () => {
+    setIsCreatePostModalShown(!isCreatePostModalShown);
+  };
+  const toggleOpenPostModal = (post) => {
+    setSelectedPost(post);
+    setIsPostDetailModalShown(!isPostDetailModalShown);
   };
   const toggleCreatePostModal = () => {
     setIsCreatePostModalShown(!isCreatePostModalShown);
@@ -398,7 +405,7 @@ function UserProfilePage({ userUID, userData }) {
                 >
                   <i className="fa-solid fa-ellipsis-vertical" />
                 </span>
-                {isDeletePostDropdownVisible === index && (
+                {deletePostIndex === index && (
                   <div
                     ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
                     className="deleteDropDown"

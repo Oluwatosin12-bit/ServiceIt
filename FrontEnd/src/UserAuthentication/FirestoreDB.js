@@ -40,6 +40,8 @@ async function addUser(
     Email: signUpEmail,
     selectedCategories: selectedCategories ?? [],
     feedCategories: selectedCategories ?? [],
+    selectedCategories: selectedCategories ?? [],
+    feedCategories: selectedCategories ?? [],
     UserLocation: userLocation,
     FavoriteCount: ACTION_COUNTS,
     AppointmentCount: ACTION_COUNTS,
