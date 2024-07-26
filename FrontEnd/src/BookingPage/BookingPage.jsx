@@ -6,6 +6,7 @@ import { useTheme } from "../UseContext";
 import {
   addToRecommendedCategory,
   getRecommendedVendors,
+  updateVendorPostAppointment
 } from "../HomePage/RecommendationDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
@@ -85,6 +86,7 @@ function BookingForm({ userData, socket }) {
       );
       await addToRecommendedCategory(userUID, post.serviceCategories);
       await getRecommendedVendors(userUID, post.vendorUID);
+      await updateVendorPostAppointment(post)
       await socket.emit("sendNotification", {
         userID: userUID,
         senderID: userUID,

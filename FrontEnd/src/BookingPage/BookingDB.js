@@ -180,10 +180,11 @@ const fetchPendingAppointments = (userID, socket, callback) => {
 
     return unsubscribe;
   } catch (error) {
-    throw new Error(`Error fetching pending appointment data: ${error.message}`);
+    throw new Error(
+      `Error fetching pending appointment data: ${error.message}`
+    );
   }
 };
-
 
 const fetchUpcomingAppointments = (userID, socket, callback) => {
   try {
@@ -222,11 +223,10 @@ const fetchUpcomingAppointments = (userID, socket, callback) => {
           });
         }
 
-        if (appointmentDateStr < todayDateStr){
-          await pastAppointment(userID, data.vendorUID, data.docID)
+        if (appointmentDateStr < todayDateStr) {
+          await pastAppointment(userID, data.vendorUID, data.docID);
         }
       });
-
       await Promise.all(promises);
 
       upcomingAppointmentsData.sort((a, b) => {
@@ -332,7 +332,7 @@ const pastAppointment = async (userID, vendorID, appointmentID) => {
     appointmentID
   );
   await updateDoc(userAppointmentRef, {
-    Status: DECLINED_STATUS,
+    Status: PAST_APPOINTMENT_STATUS,
   });
 
   const vendorAppointmentRef = doc(
@@ -356,5 +356,5 @@ export {
   acceptAppointment,
   declineAppointment,
   generateRandomID,
-  fetchPastAppointments
+  fetchPastAppointments,
 };

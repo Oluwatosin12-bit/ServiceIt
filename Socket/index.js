@@ -161,7 +161,6 @@ io.on("connection", (socket) => {
       appointmentTime,
     }) => {
       const receiver = getUser(vendorID);
-
       const vendorNotice = {
         message: `Please make an action on ${customerUsername}'s appointment request`,
         timestamp: Timestamp.now(),
@@ -233,7 +232,7 @@ io.on("connection", (socket) => {
             vendorID,
             NOTIFICATIONS_FOLDER_NAME
           ),
-          customerReminder
+          vendorReminder
         );
       } catch (error) {
         throw new Error(`Error storing notification:" ${error}`);
@@ -300,12 +299,6 @@ io.on("connection", (socket) => {
 
       try {
         await addDoc(
-          collection(
-            database,
-            DATABASE_FOLDER_NAME,
-            receiverID,
-            NOTIFICATIONS_FOLDER_NAME
-          ),
           collection(
             database,
             DATABASE_FOLDER_NAME,
