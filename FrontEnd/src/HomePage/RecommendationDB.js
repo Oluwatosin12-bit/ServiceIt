@@ -270,7 +270,7 @@ const fetchPostsFromRecommendedCategories = async (
   const FAVORITE_OVERALL_SCORE = 45;
   const APPOINTMENT_OVERALL_SCORE = 25;
   const FAVORITE_MULTIPLICAND = 3;
-  const APPOINTMENT_MULTIPLICAND = 2.5
+  const APPOINTMENT_MULTIPLICAND = 2.5;
 
   const recommendedCategoriesPostPromises = categories.map(async (category) => {
     const categoryCollectionRef = collection(
@@ -287,8 +287,10 @@ const fetchPostsFromRecommendedCategories = async (
         const postData = postDoc.data();
 
         let postScore = 0;
-        const postFavoritesScore = postData.FavoriteCount * FAVORITE_MULTIPLICAND;
-        const postAppointmentsScore = postData.AppointmentCount * APPOINTMENT_MULTIPLICAND;
+        const postFavoritesScore =
+          postData.FavoriteCount * FAVORITE_MULTIPLICAND;
+        const postAppointmentsScore =
+          postData.AppointmentCount * APPOINTMENT_MULTIPLICAND;
 
         postScore += Math.min(postFavoritesScore, FAVORITE_OVERALL_SCORE);
         postScore += Math.min(postAppointmentsScore, APPOINTMENT_OVERALL_SCORE);
