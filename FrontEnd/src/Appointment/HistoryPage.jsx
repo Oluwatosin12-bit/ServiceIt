@@ -6,7 +6,7 @@ import LoadingPage from "../LoadingComponent/LoadingPage";
 
 function HistoryPage({ userData }) {
   const userID = userData?.userID;
-  const [pastAppointmentData, setpastAppointmentData] = useState([]);
+  const [pastAppointmentData, setPastAppointmentData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] =
@@ -20,7 +20,7 @@ function HistoryPage({ userData }) {
     const unsubscribePastAppointments = fetchPastAppointments(
       userID,
       (appointmentData) => {
-        setpastAppointmentData(appointmentData);
+        setPastAppointmentData(appointmentData);
       }
     );
     setIsLoading(false);
