@@ -3,6 +3,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { database } from "../UserAuthentication/FirebaseConfig";
 import fetchCategoryNames from "../Categories";
 import Modal from "../Modal";
+import LoadingPage from "../LoadingComponent/LoadingPage";
 
 const EditProfile = ({
   userUID,
@@ -63,50 +64,52 @@ const EditProfile = ({
 
   return (
     <Modal isShown={isEditProfileModalShown} onClose={toggleEditProfileModal}>
-      <div>
-        <label htmlFor="bioInput">Bio</label>
-        <textarea
-          id="bioInput"
-          value={userBio}
-          onChange={handleBioChange}
-          rows={4}
-          cols={50}
-        />
-      </div>
-
-      <div className="selectedCategories">
-        <label>Selected Categories:</label>
-        {userSelectedCategories.map((category, index) => (
-          <div className="categoryTag" key={index}>
-            {category}
-            <span
-              className="cancelIcon"
-              onClick={() => removeCategory(category)}
-            >
-              ×
-            </span>
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <div>
+          <div>
+            <label htmlFor="bioInput">Bio</label>
+            <textarea
+              id="bioInput"
+              value={userBio}
+              onChange={handleBioChange}
+              rows={4}
+              cols={50}
+            />
           </div>
-        ))}
-      </div>
 
-      <div className="availableCategories">
-        <label htmlFor="categoryDropdown">Select Categories:</label>
-        <select id="categoryDropdown" onChange={handleCategoryChange}>
-          <option value="">Select category</option>
-          {isLoading ? (
-            <p>Loading...</p>
-          ) : (
-            availableCategories.map((category) => (
-              <option key={category} value={category}>
+          <div className="selectedCategories">
+            <label>Selected Categories:</label>
+            {userSelectedCategories.map((category, index) => (
+              <div className="categoryTag" key={index}>
                 {category}
-              </option>
-            ))
-          )}
-        </select>
-      </div>
-      <button onClick={handleSave} className="saveButton">
-        Save
-      </button>
+                <span
+                  className="cancelIcon"
+                  onClick={() => removeCategory(category)}
+                >
+                  ×
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="availableCategories">
+            <label htmlFor="categoryDropdown">Select Categories:</label>
+            <select id="categoryDropdown" onChange={handleCategoryChange}>
+              <option value="">Select category</option>
+              {availableCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button onClick={handleSave} className="saveButton">
+            Save
+          </button>
+        </div>
+      )}
     </Modal>
   );
 };

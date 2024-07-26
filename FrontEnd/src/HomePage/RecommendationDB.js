@@ -281,7 +281,7 @@ const fetchPostsFromRecommendedCategories = async (
     );
     const categoryPostsSnapshot = await getDocs(categoryCollectionRef);
 
-    return categoryPostsSnapshot.docs
+    const filteredPosts = categoryPostsSnapshot.docs
       .map((postDoc) => {
         const postID = postDoc.id;
         const postData = postDoc.data();
@@ -305,7 +305,9 @@ const fetchPostsFromRecommendedCategories = async (
         }
         return null;
       })
-      .then((posts) => posts.filter((post) => post !== null));
+      .filter((post) => post !== null);
+
+    return filteredPosts;
   });
   const results = await Promise.all(recommendedCategoriesPostPromises);
   return results.flat();

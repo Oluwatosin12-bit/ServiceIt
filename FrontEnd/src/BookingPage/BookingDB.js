@@ -270,7 +270,7 @@ const fetchPastAppointments = (userID, callback) => {
     return unsubscribe;
   } catch (error) {
     throw new Error(
-      `Error fetching pending appointment data: ${error.message}`
+      `Error fetching past appointment data: ${error.message}`
     );
   }
 };
