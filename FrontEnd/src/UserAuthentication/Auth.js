@@ -24,7 +24,7 @@ const registerUser = async (
     }
     const newUser = await createUserWithEmailAndPassword(auth, email, password);
     const userId = newUser.user.uid;
-    const userAddedToDB = await addUser(
+    const isUserAddedToDB = await addUser(
       userId,
       name,
       username,
@@ -32,7 +32,7 @@ const registerUser = async (
       selectedCategories ?? [],
       userLocation
     );
-    if (newUser !== null && userAddedToDB !== false) {
+    if (newUser !== null && isUserAddedToDB !== false) {
       return newUser;
     }
     return null;
