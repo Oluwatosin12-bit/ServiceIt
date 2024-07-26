@@ -1,6 +1,5 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
-import { GOOGLE_PLACES_KEY } from "./env.js";
 import cors from "cors";
 import express from "express";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
@@ -42,7 +41,7 @@ const io = new Server(server, {
 });
 
 const fetchPlacesAutocomplete = async (query) => {
-  const apiKey = GOOGLE_PLACES_KEY;
+  const apiKey = process.env.GOOGLE_PLACES_KEY;
   const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=(cities)&key=${apiKey}`;
 
   try {
