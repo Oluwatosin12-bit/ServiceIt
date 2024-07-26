@@ -192,9 +192,6 @@ function AppointmentPage({ userData, socket }) {
               </div>
             </div>
             <div className="appointmentActions">
-              <button className="appointmentButtons acceptAppointment">
-                Add to Google Calendar
-              </button>
               <button
                 className="appointmentButtons cancelAppointment"
                 onClick={(event) =>

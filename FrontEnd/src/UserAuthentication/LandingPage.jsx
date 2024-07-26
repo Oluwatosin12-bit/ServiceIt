@@ -39,11 +39,7 @@ function LandingPage() {
             </div>
 
             <div className="links">
-              <ul className={isMenuOpen ? "active" : ""}>
-                <li>
-                  <a href="#">About Us</a>
-                </li>
-              </ul>
+              <ul className={isMenuOpen ? "active" : ""}></ul>
             </div>
 
             <div

@@ -153,6 +153,41 @@ io.on("connection", (socket) => {
   const NOTIFICATIONS_FOLDER_NAME = "Notifications";
 
   socket.on(
+    "sendNotice",
+    async ({
+      vendorID,
+      customerUsername,
+      vendorUsername,
+      appointmentTime,
+    }) => {
+      const receiver = getUser(vendorID);
+
+      const vendorNotice = {
+        message: `Please make an action on ${customerUsername}'s appointment request`,
+        timestamp: Timestamp.now(),
+      };
+
+      if (receiver !== undefined) {
+        io.to(receiver.socketID).emit("getNotice", vendorNotice);
+      }
+
+      try {
+        await addDoc(
+          collection(
+            database,
+            DATABASE_FOLDER_NAME,
+            vendorID,
+            NOTIFICATIONS_FOLDER_NAME
+          ),
+          vendorNotice
+        );
+      } catch (error) {
+        throw new Error(`Error storing notification:" ${error}`);
+      }
+    }
+  );
+
+  socket.on(
     "sendReminder",
     async ({
       userID,
@@ -166,9 +201,11 @@ io.on("connection", (socket) => {
 
       const customerReminder = {
         message: `You have an appointment tomorrow with ${vendorUsername} at ${appointmentTime}`,
+        timestamp: Timestamp.now(),
       };
       const vendorReminder = {
         message: `You have a service to render to ${customerUsername} at ${appointmentTime}`,
+        timestamp: Timestamp.now(),
       };
 
       if (receiver1 !== undefined) {

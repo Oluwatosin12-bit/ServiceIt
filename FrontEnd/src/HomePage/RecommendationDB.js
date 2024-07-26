@@ -28,20 +28,23 @@ const APPOINTMENT_COLLECTION = "Appointments";
 const LOCATION_FOLDER_NAME = "serviceLocations";
 const COUNT_CHANGE = 1;
 
-//recommended categories + user interest
-const feedCategory = async (userID, categories) => {
+const addToRecommendedCategory = async (userID, categories) => {
   const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
 
   const docSnap = await getDoc(userDocRef);
   let currentCategories = [];
+  let userSelectedCategories = [];
   if (docSnap.exists()) {
     const userData = docSnap.data();
-    currentCategories = userData.feedCategories ?? [];
-    currentCategories = userData.feedCategories ?? [];
+    currentCategories = userData.recommendedCategories ?? [];
+    userSelectedCategories = userData.selectedCategories ?? [];
   }
 
   categories.forEach((category) => {
-    if (!currentCategories.includes(category)) {
+    if (
+      !currentCategories.includes(category) &&
+      !userSelectedCategories.includes(category)
+    ) {
       currentCategories.push(category);
     }
   });
@@ -49,7 +52,7 @@ const feedCategory = async (userID, categories) => {
   return await setDoc(
     userDocRef,
     {
-      feedCategories: currentCategories,
+      recommendedCategories: currentCategories,
     },
     { merge: true }
   );
@@ -232,7 +235,7 @@ const filterByCategory = async (userID, category) => {
   return posts;
 };
 
-const fetchPostsFromCategories = async (categories, uniquePosts) => {
+const fetchPostsFromCategories = async (categories, uniquePosts, userID) => {
   const postsPromises = categories.map(async (categoryID) => {
     const categoryRef = doc(database, POST_CATEGORIES_FOLDER, categoryID);
     const categoryDoc = await getDoc(categoryRef);
@@ -257,6 +260,61 @@ const fetchPostsFromCategories = async (categories, uniquePosts) => {
   return results.flat();
 };
 
+const fetchPostsFromRecommendedCategories = async (
+  categories,
+  userLocation,
+  uniquePosts,
+  userID
+) => {
+  const REC_CATEGORY_POST_CUTOFF_SCORE = 40;
+  const SIMILAR_LOCATION_SCORE = 40;
+  const FAVORITE_OVERALL_SCORE = 35;
+  const APPOINTMENT_OVERALL_SCORE = 25;
+  const MULTIPLICAND = 3;
+
+  const recommendedCategoriesPostPromises = categories.map(async (category) => {
+    const categoryCollectionRef = collection(
+      database,
+      POST_CATEGORIES_FOLDER,
+      category,
+      POSTS_COLLECTION
+    );
+    const categoryPostsSnapshot = await getDocs(categoryCollectionRef);
+
+    return categoryPostsSnapshot.docs
+      .map((postDoc) => {
+        const postID = postDoc.id;
+        const postData = postDoc.data();
+
+        let accountScore = 0;
+        const postFavoritesScore = postData.FavoriteCount * MULTIPLICAND;
+        const postAppointmentsScore = postData.AppointmentCount * MULTIPLICAND;
+
+        accountScore += Math.min(postFavoritesScore, FAVORITE_OVERALL_SCORE);
+        accountScore += Math.min(
+          postAppointmentsScore,
+          APPOINTMENT_OVERALL_SCORE
+        );
+
+        if (postData.serviceLocations.includes(userLocation)) {
+          accountScore += SIMILAR_LOCATION_SCORE;
+        }
+        if (
+          !uniquePosts.has(postID) &&
+          postData.vendorUID !== userID &&
+          accountScore > REC_CATEGORY_POST_CUTOFF_SCORE
+        ) {
+          uniquePosts.add(postID);
+          return postData;
+        }
+        return null;
+      })
+      .then((posts) => posts.filter((post) => post !== null));
+  });
+  const results = await Promise.all(recommendedCategoriesPostPromises);
+  return results.flat();
+};
+
 const fetchPostsFromVendors = async (
   vendors,
   uniquePosts,
@@ -265,9 +323,9 @@ const fetchPostsFromVendors = async (
 ) => {
   const REC_VENDOR_CUTOFF_SCORE = 30;
   const SIMILAR_LOCATION_SCORE = 40;
-  const FAVORITE_OVERALL_SCORE = 13;
-  const APPOINTMENT_OVERALL_SCORE = 30;
-  const POSTCOUNT_OVERALL_SCORE = 17;
+  const FAVORITE_OVERALL_SCORE = 20;
+  const APPOINTMENT_OVERALL_SCORE = 25;
+  const POSTCOUNT_OVERALL_SCORE = 15;
   const MULTIPLICAND = 0.99;
 
   const vendorPostsPromises = vendors.map(async (vendorID) => {
@@ -276,11 +334,12 @@ const fetchPostsFromVendors = async (
 
     if (vendorCollectionSnap.exists()) {
       const vendorData = vendorCollectionSnap.data();
+      const INITIAL_SCORE = 0;
       const favoriteScore = vendorData.FavoriteCount * MULTIPLICAND;
       const appointmentScore = vendorData.AppointmentCount * MULTIPLICAND;
       const postCountScore = vendorData.PostCount * MULTIPLICAND;
 
-      let accountScore = 0;
+      let accountScore = INITIAL_SCORE;
       accountScore += Math.min(favoriteScore, FAVORITE_OVERALL_SCORE);
       accountScore += Math.min(appointmentScore, APPOINTMENT_OVERALL_SCORE);
       accountScore += Math.min(postCountScore, POSTCOUNT_OVERALL_SCORE);
@@ -319,21 +378,34 @@ const fetchUserFeed = async (userID) => {
   const uniquePosts = new Set();
   const userData = await getUserData(userID);
   const userLocation = userData?.UserLocation;
-  const userFeedCategories = userData.feedCategories ?? [];
-  const approvedVendorsID = userData.recommendedVendors ?? [];
+  const userSelectedCategories = userData.selectedCategories ?? [];
+  const userFeedCategories = userData.recommendedCategories ?? [];
+  const approvedVendorsIDs = userData.recommendedVendors ?? [];
 
+  //add all posts from selectedCategories
   const categoryPosts = await fetchPostsFromCategories(
-    userFeedCategories,
-    uniquePosts
+    userSelectedCategories,
+    uniquePosts,
+    userID
   );
+
+  //score posts from recommended vendors that meet cutoff
   const vendorPosts = await fetchPostsFromVendors(
-    approvedVendorsID,
+    approvedVendorsIDs,
     uniquePosts,
     userLocation,
     userID
   );
 
-  const allPosts = [...categoryPosts, ...vendorPosts];
+  //score posts from recommended vendors that meet cutoff
+  const recommendedPosts = await fetchPostsFromRecommendedCategories(
+    userFeedCategories,
+    userLocation,
+    uniquePosts,
+    userID
+  );
+
+  const allPosts = [...categoryPosts, ...vendorPosts, ...recommendedPosts];
 
   //post by nearest location
   const locationPostRef = doc(database, LOCATION_FOLDER_NAME, userLocation);
@@ -351,12 +423,13 @@ const fetchUserFeed = async (userID) => {
   }
 
   allPosts.sort((a, b) => b.createdAt - a.createdAt);
+  console.log(allPosts);
   return allPosts;
 };
 
 export {
   fetchUserFeed,
-  feedCategory,
+  addToRecommendedCategory,
   addToFavoriteDocs,
   isLiked,
   getRecommendedVendors,

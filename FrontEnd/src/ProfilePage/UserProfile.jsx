@@ -8,7 +8,7 @@ import PostFullDisplay from "../HomePage/PostFullDisplay";
 import { fetchLocations, handleDeletePost } from "../UseableFunctions";
 import { EditProfile } from "./EditingProfile";
 import { useTheme } from "../UseContext";
-import LoadingPage from "../LoadingComponent/LoadingPage"
+import LoadingPage from "../LoadingComponent/LoadingPage";
 import "./UserProfile.css";
 
 function UserProfilePage({ userUID, userData }) {
@@ -30,8 +30,7 @@ function UserProfilePage({ userUID, userData }) {
   const MINIMUM_SEARCH_WORD = 2;
   const [isSignOutDropdownVisible, setIsSignOutDropdownVisible] =
     useState(false);
-  const [deletePostIndex, setDeletePostIndex] =
-    useState(null);
+  const [deletePostIndex, setDeletePostIndex] = useState(null);
   const signOutDropdownRef = useRef(null);
   const deletePostDropdownRef = useRef({});
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -54,17 +53,9 @@ function UserProfilePage({ userUID, userData }) {
     setIsSignOutDropdownVisible(!isSignOutDropdownVisible);
   };
   const toggleDeletePostDropdown = (index) => {
-    setDeletePostIndex(
-      deletePostIndex === index ? null : index
-    );
+    setDeletePostIndex(deletePostIndex === index ? null : index);
   };
-  const toggleCreatePostModal = () => {
-    setIsCreatePostModalShown(!isCreatePostModalShown);
-  };
-  const toggleOpenPostModal = (post) => {
-    setSelectedPost(post);
-    setIsPostDetailModalShown(!isPostDetailModalShown);
-  };
+
   const toggleCreatePostModal = () => {
     setIsCreatePostModalShown(!isCreatePostModalShown);
   };
@@ -388,43 +379,49 @@ function UserProfilePage({ userUID, userData }) {
       </div>
       <div className="userPosts">
         <div className="userPostsPreview">
-          {isLoading ? (<LoadingPage />) :userPosts.map((post, index) => (
-            <div
-              key={index}
-              className="eachPost"
-              onClick={() => toggleOpenPostModal(post)}
-            >
-              <div className="postHeading">
-                <p>{post.serviceTitle}</p>
-                <span
-                  className="icon ellipsisIcon"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleDeletePostDropdown(index);
-                  }}
-                >
-                  <i className="fa-solid fa-ellipsis-vertical" />
-                </span>
-                {deletePostIndex === index && (
-                  <div
-                    ref={(ref) => (deletePostDropdownRef.current[index] = ref)}
-                    className="deleteDropDown"
+          {isLoading ? (
+            <LoadingPage />
+          ) : (
+            userPosts.map((post, index) => (
+              <div
+                key={index}
+                className="eachPost"
+                onClick={() => toggleOpenPostModal(post)}
+              >
+                <div className="postHeading">
+                  <p>{post.serviceTitle}</p>
+                  <span
+                    className="icon ellipsisIcon"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      toggleDeletePostDropdown(index);
+                    }}
                   >
-                    <ul>
-                      <li
-                        onClick={(event) =>
-                          handleDeletePost(event, userUID, post.postID)
-                        }
-                      >
-                        Delete Post
-                      </li>
-                    </ul>
-                  </div>
-                )}
+                    <i className="fa-solid fa-ellipsis-vertical" />
+                  </span>
+                  {deletePostIndex === index && (
+                    <div
+                      ref={(ref) =>
+                        (deletePostDropdownRef.current[index] = ref)
+                      }
+                      className="deleteDropDown"
+                    >
+                      <ul>
+                        <li
+                          onClick={(event) =>
+                            handleDeletePost(event, userUID, post.postID)
+                          }
+                        >
+                          Delete Post
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                <img src={post.imageURL} alt="post photo" />
               </div>
-              <img src={post.imageURL} alt="post photo" />
-            </div>
-          ))}
+            ))
+          )}
           {isPostDetailModalShown && selectedPost !== null && (
             <div>
               <PostFullDisplay
