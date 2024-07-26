@@ -39,9 +39,7 @@ async function addUser(
     UserName: userName,
     Email: signUpEmail,
     selectedCategories: selectedCategories ?? [],
-    feedCategories: selectedCategories ?? [],
-    selectedCategories: selectedCategories ?? [],
-    feedCategories: selectedCategories ?? [],
+    recommendedCategories: [],
     UserLocation: userLocation,
     FavoriteCount: ACTION_COUNTS,
     AppointmentCount: ACTION_COUNTS,
@@ -187,49 +185,14 @@ const createPost = async (formData, imageUpload, userID, userData) => {
     const postCount = userDocSnap.data().PostCount;
     batchWrite.update(userDocRef, { PostCount: postCount + COUNT_CHANGE });
 
-    //add to postCategories collection
-    for (const category of formData.serviceCategories) {
-      const categoryDocRef = doc(
-        database,
-        POST_CATEGORIES_FOLDER_NAME,
-        category
-      );
-      const categoryDocSnap = await getDoc(categoryDocRef);
-
-      if (!categoryDocSnap.exists()) {
-        batchWrite.set(categoryDocRef, { categoryName: category, Posts: [] });
-      }
-
-      const categoryPostsCollectionRef = collection(
-        categoryDocRef,
-        POSTS_COLLECTION
-      );
-      const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
-      batchWrite.set(categoryPostDocRef, formDataWithImage);
-    }
-
-    //add to Location collection
-    for (const location of formData.serviceLocations) {
-      const locationDocRef = doc(database, LOCATION_FOLDER_NAME, location);
-      const categoryDocSnap = await getDoc(locationDocRef);
-
-      if (!categoryDocSnap.exists()) {
-        batchWrite.set(locationDocRef, { locationName: location, Posts: [] });
-      }
-
-      const categoryPostsCollectionRef = collection(
-        locationDocRef,
-        POSTS_COLLECTION
-      );
-      const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
-      batchWrite.set(categoryPostDocRef, formDataWithImage);
-    }
+    //add to appropriate category in services collection
     await processServiceCategories(
       formData.serviceCategories,
       batchWrite,
       formDataWithImage,
       generatedID
     );
+    //add to appropriate state,city in location collection
     await processServiceLocations(
       formData.serviceLocations,
       batchWrite,

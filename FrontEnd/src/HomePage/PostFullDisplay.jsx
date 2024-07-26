@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import {
-  feedCategory,
+  addToRecommendedCategory,
   addToFavoriteDocs,
   isLiked,
   getRecommendedVendors,
@@ -19,7 +19,7 @@ function PostFullDisplay({
   socket,
 }) {
   const [favorited, setFavorited] = useState("");
-  const [notificationSent, setNotificationSent] = useState(false);
+  const [isNotificationSent, setIsNotificationSent] = useState(false);
 
   useEffect(() => {
     const postID = post?.postID;
@@ -41,11 +41,11 @@ function PostFullDisplay({
   const handleNotification = async (type) => {
     try {
       setFavorited(!favorited);
-      feedCategory(userUID, post.serviceCategories);
+      addToRecommendedCategory(userUID, post.serviceCategories);
       await getRecommendedVendors(userUID, post.vendorUID);
       await addToFavoriteDocs(userUID, favorited, post);
       await updateVendorPostLikes(post, favorited);
-      if (!notificationSent) {
+      if (!isNotificationSent) {
         socket.emit("sendNotification", {
           userID: userUID,
           senderID: userUID,
@@ -56,7 +56,7 @@ function PostFullDisplay({
           type,
         });
       }
-      setNotificationSent(true);
+      setIsNotificationSent(true);
     } catch (error) {
       throw new Error(`Error updating likes: ${error.message}`);
     }

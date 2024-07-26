@@ -1,6 +1,5 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
-import { GOOGLE_PLACES_KEY } from "./env.js";
 import cors from "cors";
 import express from "express";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
@@ -42,7 +41,7 @@ const io = new Server(server, {
 });
 
 const fetchPlacesAutocomplete = async (query) => {
-  const apiKey = GOOGLE_PLACES_KEY;
+  const apiKey = process.env.GOOGLE_PLACES_KEY;
   const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=(cities)&key=${apiKey}`;
 
   try {
@@ -153,6 +152,40 @@ io.on("connection", (socket) => {
   const NOTIFICATIONS_FOLDER_NAME = "Notifications";
 
   socket.on(
+    "sendNotice",
+    async ({
+      vendorID,
+      customerUsername,
+      vendorUsername,
+      appointmentTime,
+    }) => {
+      const receiver = getUser(vendorID);
+      const vendorNotice = {
+        message: `Please make an action on ${customerUsername}'s appointment request`,
+        timestamp: Timestamp.now(),
+      };
+
+      if (receiver !== undefined) {
+        io.to(receiver.socketID).emit("getNotice", vendorNotice);
+      }
+
+      try {
+        await addDoc(
+          collection(
+            database,
+            DATABASE_FOLDER_NAME,
+            vendorID,
+            NOTIFICATIONS_FOLDER_NAME
+          ),
+          vendorNotice
+        );
+      } catch (error) {
+        throw new Error(`Error storing notification:" ${error}`);
+      }
+    }
+  );
+
+  socket.on(
     "sendReminder",
     async ({
       userID,
@@ -166,9 +199,11 @@ io.on("connection", (socket) => {
 
       const customerReminder = {
         message: `You have an appointment tomorrow with ${vendorUsername} at ${appointmentTime}`,
+        timestamp: Timestamp.now(),
       };
       const vendorReminder = {
         message: `You have a service to render to ${customerUsername} at ${appointmentTime}`,
+        timestamp: Timestamp.now(),
       };
 
       if (receiver1 !== undefined) {
@@ -196,7 +231,7 @@ io.on("connection", (socket) => {
             vendorID,
             NOTIFICATIONS_FOLDER_NAME
           ),
-          customerReminder
+          vendorReminder
         );
       } catch (error) {
         throw new Error(`Error storing notification:" ${error}`);
@@ -263,12 +298,6 @@ io.on("connection", (socket) => {
 
       try {
         await addDoc(
-          collection(
-            database,
-            DATABASE_FOLDER_NAME,
-            receiverID,
-            NOTIFICATIONS_FOLDER_NAME
-          ),
           collection(
             database,
             DATABASE_FOLDER_NAME,

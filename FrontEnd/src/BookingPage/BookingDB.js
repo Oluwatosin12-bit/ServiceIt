@@ -21,6 +21,7 @@ const FAVORITES_COLLECTION = "Favorites";
 const PENDING_STATUS = "pending";
 const ACCEPTED_STATUS = "accepted";
 const DECLINED_STATUS = "declined";
+const PAST_APPOINTMENT_STATUS = "passed";
 
 const requestAppointment = async (
   userUID,
@@ -132,11 +133,12 @@ const fetchUserFavorites = (userID, callback) => {
   }
 };
 
-const fetchPendingAppointments = (userID, callback) => {
+const fetchPendingAppointments = (userID, socket, callback) => {
   try {
     if (userID === null) {
       return;
     }
+
     const q = query(
       collection(
         database,
@@ -146,12 +148,33 @@ const fetchPendingAppointments = (userID, callback) => {
       ),
       where("Status", "==", PENDING_STATUS)
     );
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+
+    const unsubscribe = onSnapshot(q, async (querySnapshot) => {
       const pendingAppointmentsData = [];
-      querySnapshot.forEach((doc) => {
-        pendingAppointmentsData.push({ docID: doc.id, ...doc.data() });
+      const today = new Date();
+      const twoDaysFromNow = new Date(today);
+      twoDaysFromNow.setDate(today.getDate() + 2);
+      const twoDaysFromNowStr = twoDaysFromNow.toISOString().split("T")[0];
+
+      const promises = querySnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        const appointmentDate = new Date(data.appointmentDate);
+        const appointmentDateStr = appointmentDate.toISOString().split("T")[0];
+
+        pendingAppointmentsData.push({ docID: doc.id, ...data });
+
+        if (appointmentDateStr === twoDaysFromNowStr) {
+          await socket.emit("sendNotice", {
+            userID: userID,
+            vendorID: data.vendorUID,
+            customerUsername: data.customerUsername,
+            vendorUsername: data.vendorUsername,
+            appointmentTime: data.appointmentDate,
+          });
+        }
       });
 
+      await Promise.all(promises);
       callback(pendingAppointmentsData);
     });
 
@@ -182,12 +205,12 @@ const fetchUpcomingAppointments = (userID, socket, callback) => {
       const today = new Date();
       const tomorrow = new Date(today);
       tomorrow.setDate(today.getDate() + 1);
+      const todayDateStr = today.toISOString().split("T")[0];
       const tomorrowDateStr = tomorrow.toISOString().split("T")[0];
 
       const promises = querySnapshot.docs.map(async (doc) => {
         const data = doc.data();
         const appointmentDateStr = data.appointmentDate;
-
         upcomingAppointmentsData.push({ docID: doc.id, ...data });
 
         if (appointmentDateStr === tomorrowDateStr) {
@@ -199,8 +222,11 @@ const fetchUpcomingAppointments = (userID, socket, callback) => {
             appointmentTime: appointmentDateStr,
           });
         }
-      });
 
+        if (appointmentDateStr < todayDateStr) {
+          await pastAppointment(userID, data.vendorUID, data.docID);
+        }
+      });
       await Promise.all(promises);
 
       upcomingAppointmentsData.sort((a, b) => {
@@ -214,6 +240,37 @@ const fetchUpcomingAppointments = (userID, socket, callback) => {
   } catch (error) {
     throw new Error(
       `Error fetching upcoming appointment data: ${error.message}`
+    );
+  }
+};
+
+const fetchPastAppointments = (userID, callback) => {
+  try {
+    if (userID === null) {
+      return;
+    }
+    const q = query(
+      collection(
+        database,
+        DATABASE_FOLDER_NAME,
+        userID,
+        APPOINTMENT_COLLECTION
+      ),
+      where("Status", "==", PAST_APPOINTMENT_STATUS)
+    );
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const pendingAppointmentsData = [];
+      querySnapshot.forEach((doc) => {
+        pendingAppointmentsData.push({ docID: doc.id, ...doc.data() });
+      });
+
+      callback(pendingAppointmentsData);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    throw new Error(
+      `Error fetching past appointment data: ${error.message}`
     );
   }
 };
@@ -266,6 +323,30 @@ const declineAppointment = async (userID, vendorID, appointmentID) => {
   });
 };
 
+const pastAppointment = async (userID, vendorID, appointmentID) => {
+  const userAppointmentRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    userID,
+    APPOINTMENT_COLLECTION,
+    appointmentID
+  );
+  await updateDoc(userAppointmentRef, {
+    Status: PAST_APPOINTMENT_STATUS,
+  });
+
+  const vendorAppointmentRef = doc(
+    database,
+    DATABASE_FOLDER_NAME,
+    vendorID,
+    APPOINTMENT_COLLECTION,
+    appointmentID
+  );
+  await updateDoc(vendorAppointmentRef, {
+    Status: PAST_APPOINTMENT_STATUS,
+  });
+};
+
 export {
   requestAppointment,
   fetchNotifications,
@@ -275,4 +356,5 @@ export {
   acceptAppointment,
   declineAppointment,
   generateRandomID,
+  fetchPastAppointments,
 };

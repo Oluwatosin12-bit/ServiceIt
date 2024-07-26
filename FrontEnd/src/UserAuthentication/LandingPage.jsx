@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTheme } from "../UseContext";
 import "./LandingPage.css";
 
@@ -9,11 +9,6 @@ function LandingPage() {
 
   const handleThemeChange = () => {
     setTheme(theme === "light" ? "dark" : "light");
-  };
-
-  const handleMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
-    document.body.classList.toggle("stopScrolling");
   };
 
   return (
@@ -36,23 +31,6 @@ function LandingPage() {
                   className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
                 ></i>
               </button>
-            </div>
-
-            <div className="links">
-              <ul className={isMenuOpen ? "active" : ""}>
-                <li>
-                  <a href="#">About Us</a>
-                </li>
-              </ul>
-            </div>
-
-            <div
-              className={`overlay ${isMenuOpen ? "active" : ""}`}
-              onClick={handleMenuToggle}
-            ></div>
-
-            <div className="hamburgerMenu" onClick={handleMenuToggle}>
-              <div className="bar"></div>
             </div>
           </div>
         </header>

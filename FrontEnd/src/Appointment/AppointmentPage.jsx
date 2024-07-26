@@ -9,7 +9,7 @@ import { updateVendorPostAppointment } from "../HomePage/RecommendationDB";
 import "./AppointmentPage.css";
 import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
-import LoadingPage from "../LoadingComponent/LoadingPage"
+import LoadingPage from "../LoadingComponent/LoadingPage";
 
 function AppointmentPage({ userData, socket }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -77,12 +77,14 @@ function AppointmentPage({ userData, socket }) {
     }
     const unsubscribePendingAppointment = fetchPendingAppointments(
       userID,
+      socket,
       (appointmentData) => {
         setPendingAppointmentData(appointmentData);
       }
     );
     const unsubscribeUpcomingAppointment = fetchUpcomingAppointments(
-      userID, socket,
+      userID,
+      socket,
       (appointmentData) => {
         setUpcomingAppointmentData(appointmentData);
       }
@@ -115,62 +117,74 @@ function AppointmentPage({ userData, socket }) {
     <div className={`appointmentPage ${theme}`}>
       <div className="appointments">
         <h2>Pending Appointments</h2>
-        {isLoading ? (<LoadingPage />) : pendingAppointmentData.map((appointment) => (
-          <div key={appointment.docID} className="appointmentTab" onClick={()=>toggleAppointmentDetailsModal(appointment)}>
-            <div className="appointmentInfo">
-              {appointment.vendorUID === userID && (
-                <p className="appointmentUser">
-                  {appointment.customerUsername}
+        {isLoading ? (
+          <LoadingPage />
+        ) : (
+          pendingAppointmentData.map((appointment) => (
+            <div
+              key={appointment.docID}
+              className="appointmentTab"
+              onClick={() => toggleAppointmentDetailsModal(appointment)}
+            >
+              <div className="appointmentInfo">
+                {appointment.vendorUID === userID && (
+                  <p className="appointmentUser">
+                    {appointment.customerUsername}
+                  </p>
+                )}
+                {appointment.customerUID === userID && (
+                  <p className="appointmentUser">
+                    {appointment.vendorUsername}
+                  </p>
+                )}
+                <p className="appointmentTitle">
+                  {appointment.appointmentTitle}
                 </p>
-              )}
-              {appointment.customerUID === userID && (
-                <p className="appointmentUser">{appointment.vendorUsername}</p>
-              )}
-              <p className="appointmentTitle">{appointment.appointmentTitle}</p>
-              <div className="appointmentDetail">
-                <i className="fa-solid fa-calendar"></i>
-                <p>{appointment.appointmentDate}</p>
+                <div className="appointmentDetail">
+                  <i className="fa-solid fa-calendar"></i>
+                  <p>{appointment.appointmentDate}</p>
+                </div>
+                <div className="appointmentDetail">
+                  <i className="fa-solid fa-clock"></i>
+                  <p>{appointment.appointmentTime}</p>
+                </div>
               </div>
-              <div className="appointmentDetail">
-                <i className="fa-solid fa-clock"></i>
-                <p>{appointment.appointmentTime}</p>
-              </div>
+              {appointment.vendorUID === userID && (
+                <div className="appointmentActions">
+                  <button
+                    className="appointmentButtons acceptAppointment"
+                    onClick={() =>
+                      handleAcceptedAppointment(
+                        appointment,
+                        appointment.customerUID,
+                        appointment.vendorUID,
+                        appointment.docID,
+                        ACCEPTED_ACTION_TYPE
+                      )
+                    }
+                  >
+                    Accept
+                  </button>
+                  <button
+                    className="appointmentButtons cancelAppointment"
+                    onClick={(event) =>
+                      handleDeclinedAppointment(
+                        event,
+                        appointment,
+                        appointment.customerUID,
+                        appointment.vendorUID,
+                        appointment.docID,
+                        DECLINED_ACTION_TYPE
+                      )
+                    }
+                  >
+                    Decline
+                  </button>
+                </div>
+              )}
             </div>
-            {appointment.vendorUID === userID && (
-              <div className="appointmentActions">
-                <button
-                  className="appointmentButtons acceptAppointment"
-                  onClick={() =>
-                    handleAcceptedAppointment(
-                      appointment,
-                      appointment.customerUID,
-                      appointment.vendorUID,
-                      appointment.docID,
-                      ACCEPTED_ACTION_TYPE
-                    )
-                  }
-                >
-                  Accept
-                </button>
-                <button
-                  className="appointmentButtons cancelAppointment"
-                  onClick={(event) =>
-                    handleDeclinedAppointment(
-                      event,
-                      appointment,
-                      appointment.customerUID,
-                      appointment.vendorUID,
-                      appointment.docID,
-                      DECLINED_ACTION_TYPE
-                    )
-                  }
-                >
-                  Decline
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+          ))
+        )}
 
         <h2>Upcoming Appointments</h2>
         {upcomingAppointmentData.map((appointment) => (
@@ -192,9 +206,6 @@ function AppointmentPage({ userData, socket }) {
               </div>
             </div>
             <div className="appointmentActions">
-              <button className="appointmentButtons acceptAppointment">
-                Add to Google Calendar
-              </button>
               <button
                 className="appointmentButtons cancelAppointment"
                 onClick={(event) =>

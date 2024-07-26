@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { requestAppointment } from "./BookingDB";
 import { useTheme } from "../UseContext";
 import {
-  feedCategory,
+  addToRecommendedCategory,
   getRecommendedVendors,
+  updateVendorPostAppointment,
 } from "../HomePage/RecommendationDB";
 import Modal from "../Modal";
 import NotificationsPage from "../Notifications/NotificationsPage";
@@ -83,8 +84,9 @@ function BookingForm({ userData, socket }) {
         post.vendorName,
         post.postID
       );
-      await feedCategory(userUID, post.serviceCategories);
+      await addToRecommendedCategory(userUID, post.serviceCategories);
       await getRecommendedVendors(userUID, post.vendorUID);
+      await updateVendorPostAppointment(post);
       await socket.emit("sendNotification", {
         userID: userUID,
         senderID: userUID,

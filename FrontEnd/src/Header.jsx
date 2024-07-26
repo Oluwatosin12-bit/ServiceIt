@@ -24,12 +24,22 @@ function Header({ userData, socket }) {
           setNotifications((prev) => [...prev, data]);
         }
       });
-      socket.on("getReminders",(data)=>{
-        const isDuplicate = notifications.some((notification)=> notification.message === data.message);
-        if (isDuplicate === false){
+      socket.on("getReminder", (data) => {
+        const isDuplicate = notifications.some(
+          (notification) => notification.message === data.message
+        );
+        if (!isDuplicate) {
           setNotifications((prev) => [...prev, data]);
         }
-      })
+      });
+      socket.on("getNotice", (data) => {
+        const isDuplicate = notifications.some(
+          (notification) => notification.message === data.message
+        );
+        if (!isDuplicate) {
+          setNotifications((prev) => [...prev, data]);
+        }
+      });
     }
   }, [socket]);
 
