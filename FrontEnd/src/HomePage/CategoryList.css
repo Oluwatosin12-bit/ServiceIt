@@ -1,20 +1,36 @@
 @import "../Colors.css";
 .categorySection {
+.categorySection {
   display: flex;
+  box-shadow: 0px 5px 8px var(--backgroundColor);
 }
 .categories {
-  background-color: var(--backgroundColor);
+  background-color: var(--menuColor);
   flex: 1;
 }
 .categoriesList {
-  color: var(--darkOne);
+  color: var(--primaryText);
   text-align: center;
 }
 
 .categories ul li {
   list-style: none;
-  margin: 20px auto;
-  color: var(--darkOne);
+  margin: 35px auto;
+  color: var(--secondaryText);
+  cursor: pointer;
+}
+
+.categories ul li,
+.selectedFilter {
+  box-sizing: border-box;
+}
+.categories ul li:hover,
+.selectedFilter {
+  background-color: var(--darkTwo);
+  padding: 15px;
+  width: 200px;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 .categories nav {
   display: flex;
@@ -31,6 +47,10 @@
   }
   .categories ul li {
     font-size: 10px;
+  }
+  .categories ul li:hover,
+  .selectedFilter {
+    width: 100px;
   }
 
   .categoriesList {

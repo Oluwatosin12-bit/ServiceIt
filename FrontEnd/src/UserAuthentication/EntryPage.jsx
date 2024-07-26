@@ -12,32 +12,33 @@ function EntryPage() {
     contRef.current.classList.toggle("s-signup");
   }
   return (
-    <div className={`cont ${theme}`} ref={contRef}>
-      <LoginPage />
+    <div className={`entryPage ${theme}`}>
+      <div className={`cont `} ref={contRef}>
+        <LoginPage />
+        <div className="sub-cont">
+          <div className="img">
+            <div className="img-text m-up">
+              <h1>New here?</h1>
+              <p>sign up and discover</p>
+            </div>
+            <div className="img-text m-in">
+              <h1>One of us?</h1>
+              <p>Just sign in</p>
+            </div>
+            <div>
+              <img
+                className="signUpImage"
+                src="/coworking-woman-doing-online-shopping-at-home.gif"
+              />
+            </div>
+            <div className="img-btn" ref={imgBtnRef} onClick={handleClick}>
+              <span className="m-up">Sign Up</span>
+              <span className="m-in">Login</span>
+            </div>
+          </div>
 
-      <div className="sub-cont">
-        <div className="img">
-          <div className="img-text m-up">
-            <h1>New here?</h1>
-            <p>sign up and discover</p>
-          </div>
-          <div className="img-text m-in">
-            <h1>One of us?</h1>
-            <p>just sign in</p>
-          </div>
-          <div>
-            <img
-              className="signUpImage"
-              src="/coworking-woman-doing-online-shopping-at-home.gif"
-            />
-          </div>
-          <div className="img-btn" ref={imgBtnRef} onClick={handleClick}>
-            <span className="m-up">Sign Up</span>
-            <span className="m-in">Login</span>
-          </div>
+          <SignUpPage />
         </div>
-
-        <SignUpPage />
       </div>
     </div>
   );

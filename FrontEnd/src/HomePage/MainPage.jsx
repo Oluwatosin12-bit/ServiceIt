@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { fetchUserFeed } from "./RecommendationDB";
+import { fetchUserFeed, filterByCategory } from "./RecommendationDB";
 import CategoryList from "./CategoryList";
 import PostsPreview from "./PostsPreview";
 import PostFullDisplay from "./PostFullDisplay";
 import SearchBar from "../Search/SearchBar";
 import { useTheme } from "../UseContext";
+import { fetchAndUpdateUserLocation } from "../LocationUtil";
+import LoadingPage from "../LoadingComponent/LoadingPage"
 import "./MainPage.css";
 
 function MainPage({ userUID, userData, socket }) {
@@ -13,21 +15,48 @@ function MainPage({ userUID, userData, socket }) {
   const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
+  const REFRESH_TIME = 3600000;
   const { theme } = useTheme();
 
-  const fetchFeed = async () => {
-    if (userUID !== null) {
-      const feedData = await fetchUserFeed(userUID);
-      setUserFeed(feedData);
-      setFilteredPosts(feedData);
-      setIsLoading(false);
-    }
-  };
   useEffect(() => {
-    fetchFeed();
+    const fetchDataAndUpdateLocalStorage = async () => {
+      try {
+        const storedUserFeed = localStorage.getItem("userFeed");
+        if (storedUserFeed !== null) {
+          const parsedUserFeed = JSON.parse(storedUserFeed);
+          setUserFeed(parsedUserFeed);
+          setFilteredPosts(parsedUserFeed);
+          setIsLoading(false);
+        }
+
+        if (userUID !== null || storedUserFeed === null) {
+          const feedData = await fetchUserFeed(userUID);
+          const feedDataWithDates = feedData.map((item) => ({
+            ...item,
+            createdAt: item.createdAt.toDate(),
+          }));
+          setUserFeed(feedDataWithDates);
+          setFilteredPosts(feedDataWithDates);
+          setIsLoading(false);
+          localStorage.setItem("userFeed", JSON.stringify(feedDataWithDates));
+        }
+
+        if (userUID !== null) {
+          await fetchAndUpdateUserLocation(userUID);
+        }
+      } catch (error) {
+        throw new Error(`Error fetching or updating data: ${error.message}`);
+      }
+    };
+    fetchDataAndUpdateLocalStorage();
+    const intervalId = setInterval(
+      fetchDataAndUpdateLocalStorage,
+      REFRESH_TIME
+    );
+    return () => clearInterval(intervalId);
   }, [userUID]);
 
-  const filterPosts = (selectedCategories = [], searchWord = "") => {
+  const filterPosts = async (selectedCategories = [], searchWord = "") => {
     let filtered = [...userFeed];
     if (selectedCategories.length > 0) {
       filtered = filtered.filter((post) =>
@@ -70,12 +99,10 @@ function MainPage({ userUID, userData, socket }) {
         <CategoryList filterPosts={filterPosts} />
       </div>
       <div className="bodyArea">
-        <div className="searchArea">
-          <SearchBar filterPosts={filterPosts} />
-        </div>
+        <SearchBar filterPosts={filterPosts} />
         <div className="feedSection">
-          {isLoading ? (
-            <p>Loading...</p>
+          {userUID !== null && isLoading ? (
+            <LoadingPage />
           ) : filteredPosts.length === 0 ? (
             <p>No posts found.</p>
           ) : (

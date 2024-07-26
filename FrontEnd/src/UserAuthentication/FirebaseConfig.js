@@ -2,14 +2,16 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-
-import {VITE_API_KEY, VITE_AUTH_DOMAIN,
+import {
+  VITE_API_KEY,
+  VITE_AUTH_DOMAIN,
   VITE_PROJECT_ID,
   VITE_STORAGE_BUCKET,
   VITE_MESSAGING_SENDER_ID,
   VITE_APP_ID,
   VITE_MEASUREMENT_ID,
-  VITE_VAPID_KEY} from "../env";
+  VITE_VAPID_KEY,
+} from "../env";
 
 const firebaseConfig = {
   apiKey: VITE_API_KEY,

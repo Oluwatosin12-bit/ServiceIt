@@ -21,9 +21,13 @@
 }
 
 .fullDisplayDetails {
-  overflow: auto;
+  overflow-y: auto;
 }
 
-.hearted{
+.hearted {
   color: red;
+}
+.bookButton {
+  background: var(--buttonColor);
+  margin-top: 5px;
 }

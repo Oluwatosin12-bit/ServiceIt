@@ -17,9 +17,11 @@
   padding: 0 1rem;
 }
 
-h2,
+h2 {
+  color: var(--primaryText);
+}
 p {
-  color: var(--darkTwo);
+  color: var(--secondaryColor);
 }
 
 .appointmentTab {
@@ -72,7 +74,6 @@ p {
 
 .appointmentActions button {
   margin-top: 0.5rem;
-  background-color: var(--color6);
   color: #000;
   border: none;
   padding: 0.5rem 1rem;
@@ -80,6 +81,18 @@ p {
   cursor: pointer;
   font-size: 0.9rem;
   width: 200px;
+}
+
+.acceptAppointment {
+  background-color: var(--mainColor) !important;
+}
+
+.cancelAppointment {
+  background-color: var(--cancelButton);
+}
+
+.cancelAppointment:hover {
+  background-color: var(--hoverCancelButton) !important;
 }
 
 .appointmentActions button:hover {

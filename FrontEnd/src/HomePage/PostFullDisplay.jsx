@@ -4,8 +4,10 @@ import {
   feedCategory,
   addToFavoriteDocs,
   isLiked,
-  recommendedVendors
+  getRecommendedVendors,
+  updateVendorPostLikes,
 } from "./RecommendationDB";
+import { handleDeletePost } from "../UseableFunctions";
 import "./PostFullDisplay.css";
 
 function PostFullDisplay({
@@ -31,19 +33,19 @@ function PostFullDisplay({
   const handleBookingFormOpen = () => {
     navigate("/BookingPage", { state: { post, userUID } });
   };
-  if (isShown === false) {
+  if (!isShown) {
     return null;
   }
-  const createdAt = post.createdAt.toDate();
 
   //add to favorites document, extract post category for recommendation
   const handleNotification = async (type) => {
     try {
       setFavorited(!favorited);
       feedCategory(userUID, post.serviceCategories);
-      await recommendedVendors(userUID, post.vendorUID)
+      await getRecommendedVendors(userUID, post.vendorUID);
       await addToFavoriteDocs(userUID, favorited, post);
-      if (notificationSent === false) {
+      await updateVendorPostLikes(post, favorited);
+      if (!notificationSent) {
         socket.emit("sendNotification", {
           userID: userUID,
           senderID: userUID,
@@ -78,28 +80,46 @@ function PostFullDisplay({
             <div className="fullDisplayDetails">
               <h3 className="fullDisplayTitle">{post.serviceTitle}</h3>
               <p className="fullDisplayPrice">
-                Price Range: {post.servicePrice}
+                <strong>Price Range:</strong> {post.servicePrice}
               </p>
               <p className="fullDisplayDescription">
-                Description: {post.serviceDescription}
+                <strong>Description:</strong> {post.serviceDescription}
               </p>
-              <button onClick={handleBookingFormOpen}>Book Now</button>
-              <span>
-                {favorited ? (
-                  <i
-                    className="fa-solid fa-heart hearted"
-                    onClick={() => handleNotification(1)}
-                  />
-                ) : (
-                  <i
-                    className="fa-regular fa-heart"
-                    onClick={() => handleNotification(1)}
-                  />
-                )}
-              </span>
-              <p className="fullDisplayTimestamp">
-                Created at: {createdAt.toLocaleString()}
-              </p>
+              {post.vendorUID !== userUID && (
+                <div>
+                  <button
+                    onClick={handleBookingFormOpen}
+                    className="bookButton"
+                  >
+                    Book Now
+                  </button>
+                  <span>
+                    {favorited ? (
+                      <i
+                        className="fa-solid fa-heart hearted"
+                        onClick={() => handleNotification(1)}
+                      />
+                    ) : (
+                      <i
+                        className="fa-regular fa-heart"
+                        onClick={() => handleNotification(1)}
+                      />
+                    )}
+                  </span>
+                </div>
+              )}
+              {post.vendorUID === userUID && (
+                <div>
+                  <button
+                    onClick={(event) =>
+                      handleDeletePost(event, userUID, post.postID)
+                    }
+                    className="bookButton"
+                  >
+                    Delete Post
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

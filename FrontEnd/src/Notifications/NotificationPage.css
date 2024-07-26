@@ -13,22 +13,32 @@ html {
   display: flex;
   flex-direction: column;
   flex: 1;
-  justify-content: center;
   align-items: center;
 }
 
 .notificationTitle {
   margin-bottom: 1rem;
-  color: var(--darkTwo);
+  color: var(--primaryText);
+}
+.stackedNotifications {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 61rem;
 }
 .notificationTab {
   display: flex;
-  flex-direction: column;
-  background-color: var(--lightOne);
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--darkOne);
   padding: 1rem;
   margin-bottom: 0.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.notificationContent {
+  display: flex;
+  flex-direction: column;
 }
 
 .firstNotification {
@@ -36,9 +46,24 @@ html {
   color: var(--lightOne);
 }
 
-.stackedNotifications {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 61rem;
+.notificationMessage {
+  color: var(--secondaryText);
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.notificationTime {
+  color: var(--secondaryText);
+}
+
+.notificationImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.emptyPageMessage {
+  text-align: center;
 }

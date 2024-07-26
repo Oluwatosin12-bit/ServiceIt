@@ -1,26 +1,35 @@
 .light {
-    --color1: rgb(254, 218, 117); /* Yellow */
-    --color2: rgb(250, 126, 30); /*Orange */
-    --color3: rgb(214, 41, 118); /* Pink */
-    --color4: rgb(150, 47, 191); /* Purple */
-    --color5: rgb(79, 91, 213); /* Blue */
-    --color6: rgb(255, 255, 255); /* White */
-    --color7: black; /* Black */
-    --mainColor: #64bcf4; /* Sky Blue*/
-    --backgroundColor: #f1f8fc;
-    --hoverColor: #5bacdf; /*Slightly darker blue*/
-    --darkOne: #312f3a;
-    --darkTwo: #45424b;
-    --lightOne: #919191;
-    --lightTwo: #aaa;
-    --alert: red;
-    --buttonColor: linear-gradient(
-      45deg,
-      blue 0%,
-      purple 0%,
-      rgb(230, 70, 182) 0%,
-      rgb(255, 102, 102) 100%
-    );
+  --color1: rgb(254, 218, 117); /* Yellow */
+  --color2: rgb(250, 126, 30); /*Orange */
+  --color3: rgb(214, 41, 118); /* Pink */
+  --color4: rgb(150, 47, 191); /* Purple */
+  --color5: rgb(79, 91, 213); /* Blue */
+  --color6: rgb(255, 255, 255); /* White */
+  --color7: black; /* Black */
+  --mainColor: #00ffff;
+  --hoverColor: #00cccc;
+  --hoverColor: #5bacdf; /*Slightly darker blue*/
+  --darkOne: #312f3a;
+  --darkTwo: #45424b;
+  --lightOne: #919191;
+  --lightTwo: #aaa;
+  --toggleIcon:#e7e3e3;
+  --menuColor: #f2f2f2;
+  --darkOne: #e0e0e0;
+  --darkTwo: #cccccc;
+  --primaryText: #333333;
+  --secondaryText: #666666;
+  --modalTextColor: #181818;
+  --alert: red;
+  --cancelButton: #e85f6f;
+  --hoverCancelButton: #b53026;
+  --buttonColor: linear-gradient(
+    45deg,
+    blue 0%,
+    purple 0%,
+    rgb(230, 70, 182) 0%,
+    rgb(255, 102, 102) 100%
+  );
 }
 
 .dark {
@@ -31,19 +40,27 @@
   --color5: rgb(79, 91, 213); /* Blue */
   --color6: rgb(255, 255, 255); /* White */
   --color7: black; /* Black */
-  --mainColor: #64bcf4;
-  --hoverColor: #5bacdf;
-  --backgroundColor: #192e3a;
-  --darkOne: #f3f3f3;
-  --darkTwo: #fff;
+  --mainColor: #00ffff;
+  --hoverColor: #00cccc;
+  --buttonText: #002e4d;
+  --backgroundColor: #121212;
+  --menuColor: #181818;
+  --darkOne: #282828;
+  --darkTwo: #404040;
+  --primaryText: #ffffff;
+  --secondaryText: #b3b3b3;
+  --modalTextColor: #181818;
+  --toggleIcon: #181818;
   --lightOne: #ccc;
   --lightTwo: #e7e3e3;
   --alert: red;
+  --cancelButton: #e85f6f;
+  --hoverCancelButton: #b53026;
   --buttonColor: linear-gradient(
-      45deg,
-      blue 0%,
-      purple 0%,
-      rgb(230, 70, 182) 0%,
-      rgb(255, 102, 102) 100%
-    );
+    45deg,
+    blue 0%,
+    purple 0%,
+    rgb(230, 70, 182) 0%,
+    rgb(255, 102, 102) 100%
+  );
 }

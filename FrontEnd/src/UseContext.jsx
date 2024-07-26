@@ -1,8 +1,8 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
 const ThemeContext = createContext();
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState("light");
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
@@ -18,7 +18,7 @@ export const SearchWordProvider = ({ children }) => {
   const [searchWord, setSearchWord] = useState("");
 
   return (
-    <SearchWordContext.Provider value={{searchWord, setSearchWord}}>
+    <SearchWordContext.Provider value={{ searchWord, setSearchWord }}>
       {children}
     </SearchWordContext.Provider>
   );

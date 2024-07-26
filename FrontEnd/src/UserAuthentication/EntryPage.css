@@ -26,13 +26,15 @@ button {
   border: none;
   background: none;
 }
-
+.entryPage {
+  background-color: var(--backgroundColor);
+}
 .cont {
   overflow: hidden;
   position: relative;
   width: 900px;
   height: 900px;
-  background: var(--lightOne);
+  background-color: var(--lightOne);
   box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
   border-radius: 15px;
   display: flex;
@@ -325,7 +327,7 @@ button {
 
 .sign-up {
   padding: 30px;
-  background-color: var(--backgroundColor);
+  background-color: var(--menuColor);
   -webkit-transform: translate3d(-900px, 0, 0);
   transform: translate3d(-900px, 0, 0);
 }
@@ -440,7 +442,7 @@ button {
 }
 
 @media screen and (max-height: 849px) {
-  .cont{
+  .cont {
     margin: 75px;
   }
 }

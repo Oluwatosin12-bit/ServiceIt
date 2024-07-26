@@ -1,9 +1,11 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useTheme } from "./UseContext";
+import { logOutUser } from "./UserAuthentication/Auth";
 import "./Header.css";
 import NotificationsPage from "./Notifications/NotificationsPage";
 function Header({ userData, socket }) {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(true);
   const [invisibleComponent, setInvisibleComponent] = useState(false);
@@ -13,15 +15,41 @@ function Header({ userData, socket }) {
   };
 
   useEffect(() => {
-    if (socket) {
+    if (socket !== null && socket !== undefined) {
       socket.on("getNotification", (data) => {
-        setNotifications((prev) => [...prev, data]);
+        const isDuplicate = notifications.some(
+          (notification) => notification.message === data.message
+        );
+        if (!isDuplicate) {
+          setNotifications((prev) => [...prev, data]);
+        }
       });
+      socket.on("getReminders",(data)=>{
+        const isDuplicate = notifications.some((notification)=> notification.message === data.message);
+        if (isDuplicate === false){
+          setNotifications((prev) => [...prev, data]);
+        }
+      })
     }
   }, [socket]);
+
   const handleReadAll = () => {
     setNotifications([]);
     setIsNotificationsOpen(false);
+  };
+
+  const handleLogOut = async () => {
+    try {
+      const logOutConfirmation = window.confirm(
+        "Are you sure you want to sign out?"
+      );
+      if (logOutConfirmation) {
+        await logOutUser();
+        navigate("/");
+      }
+    } catch (error) {
+      throw new Error(`Error logging out: ${error.message}`);
+    }
   };
 
   return (
@@ -29,8 +57,8 @@ function Header({ userData, socket }) {
       <div>
         <h2>ServiceIt</h2>
       </div>
-      <div>
-        <p>Hello, {userData?.Name}!</p>
+      <div className="userName">
+        <p>Hello, {userData?.UserName}!</p>
       </div>
       <nav className="navigation">
         <ul className="navigationList">
@@ -50,7 +78,7 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
-            <NavLink to="">
+            <NavLink to="/HistoryPage">
               <p>History</p>
             </NavLink>
           </li>
@@ -63,16 +91,21 @@ function Header({ userData, socket }) {
             </NavLink>
           </li>
           <li>
+            <button className="toggleBtns" onClick={handleThemeChange}>
+              <i
+                className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
+              ></i>
+            </button>
+          </li>
+          <li>
             <NavLink to="/UserProfile">
               <i className="fa-solid fa-user profileIcon"></i>
             </NavLink>
           </li>
           <li>
-            <button className="toggleBtn" onClick={handleThemeChange}>
-              <i
-                className={`far ${theme === "light" ? "fa-moon" : "fa-sun"}`}
-              ></i>
-            </button>
+            <p onClick={handleLogOut} className="signOut">
+              Sign Out
+            </p>
           </li>
         </ul>
       </nav>

@@ -5,19 +5,22 @@ import {
   acceptAppointment,
   declineAppointment,
 } from "../BookingPage/BookingDB";
+import { updateVendorPostAppointment } from "../HomePage/RecommendationDB";
 import "./AppointmentPage.css";
 import { useTheme } from "../UseContext";
 import AppointmentDetails from "./AppointmentDetails";
-import Modal from "../Modal";
+import LoadingPage from "../LoadingComponent/LoadingPage"
 
 function AppointmentPage({ userData, socket }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [isAppointmentDetailsModalShown, setIsAppointmentDetailsModalShown] =
     useState(false);
   const [pendingAppointmentData, setPendingAppointmentData] = useState([]);
   const [upcomingAppointmentData, setUpcomingAppointmentData] = useState([]);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
   const userID = userData?.userID;
-  const ACCEPTED_ACTION_TYPE = 3
-  const DECLINED_ACTION_TYPE = 4
+  const ACCEPTED_ACTION_TYPE = 3;
+  const DECLINED_ACTION_TYPE = 4;
   const { theme } = useTheme();
 
   const handleAcceptedAppointment = async (
@@ -28,6 +31,7 @@ function AppointmentPage({ userData, socket }) {
     type
   ) => {
     await acceptAppointment(customerID, vendorID, appointmentID);
+    await updateVendorPostAppointment(appointment);
     await socket.emit("sendNotification", {
       userID: userData?.userID,
       senderID: userData?.userID,
@@ -41,23 +45,30 @@ function AppointmentPage({ userData, socket }) {
   };
 
   const handleDeclinedAppointment = async (
+    event,
     appointment,
     vendorID,
     customerID,
     appointmentID,
     type
   ) => {
-    await declineAppointment(customerID, vendorID, appointmentID);
-    await socket.emit("sendNotification", {
-      userID: userData?.userID,
-      senderID: userData?.userID,
-      receiverID: appointment.customerUID,
-      senderName: userData?.UserName,
-      receiverName: appointment.customerUsername,
-      appointmentDate: appointment.appointmentDate,
-      appointmentTitle: appointment.appointmentTitle,
-      type,
-    });
+    event.stopPropagation();
+    const declineAppointmentConfirmation = window.confirm(
+      "Are you sure you want to decline appointment?"
+    );
+    if (declineAppointmentConfirmation === true) {
+      await declineAppointment(customerID, vendorID, appointmentID);
+      await socket.emit("sendNotification", {
+        userID: userData?.userID,
+        senderID: userData?.userID,
+        receiverID: appointment.customerUID,
+        senderName: userData?.UserName,
+        receiverName: appointment.customerUsername,
+        appointmentDate: appointment.appointmentDate,
+        appointmentTitle: appointment.appointmentTitle,
+        type,
+      });
+    }
   };
 
   useEffect(() => {
@@ -71,18 +82,20 @@ function AppointmentPage({ userData, socket }) {
       }
     );
     const unsubscribeUpcomingAppointment = fetchUpcomingAppointments(
-      userID,
+      userID, socket,
       (appointmentData) => {
         setUpcomingAppointmentData(appointmentData);
       }
     );
+    setIsLoading(false);
     return () => {
       unsubscribePendingAppointment();
       unsubscribeUpcomingAppointment();
     };
   }, [userID]);
 
-  const toggleModal = () => {
+  const toggleAppointmentDetailsModal = (appointment) => {
+    setSelectedAppointment(appointment);
     setIsAppointmentDetailsModalShown(!isAppointmentDetailsModalShown);
   };
 
@@ -102,8 +115,8 @@ function AppointmentPage({ userData, socket }) {
     <div className={`appointmentPage ${theme}`}>
       <div className="appointments">
         <h2>Pending Appointments</h2>
-        {pendingAppointmentData.map((appointment) => (
-          <div key={appointment.docID} className="appointmentTab">
+        {isLoading ? (<LoadingPage />) : pendingAppointmentData.map((appointment) => (
+          <div key={appointment.docID} className="appointmentTab" onClick={()=>toggleAppointmentDetailsModal(appointment)}>
             <div className="appointmentInfo">
               {appointment.vendorUID === userID && (
                 <p className="appointmentUser">
@@ -126,7 +139,7 @@ function AppointmentPage({ userData, socket }) {
             {appointment.vendorUID === userID && (
               <div className="appointmentActions">
                 <button
-                  className="appointmentButtons"
+                  className="appointmentButtons acceptAppointment"
                   onClick={() =>
                     handleAcceptedAppointment(
                       appointment,
@@ -140,9 +153,10 @@ function AppointmentPage({ userData, socket }) {
                   Accept
                 </button>
                 <button
-                  className="appointmentButtons"
-                  onClick={() =>
+                  className="appointmentButtons cancelAppointment"
+                  onClick={(event) =>
                     handleDeclinedAppointment(
+                      event,
                       appointment,
                       appointment.customerUID,
                       appointment.vendorUID,
@@ -160,7 +174,11 @@ function AppointmentPage({ userData, socket }) {
 
         <h2>Upcoming Appointments</h2>
         {upcomingAppointmentData.map((appointment) => (
-          <div key={appointment.docID} className="appointmentTab">
+          <div
+            key={appointment.docID}
+            className="appointmentTab"
+            onClick={() => toggleAppointmentDetailsModal(appointment)}
+          >
             <div className="appointmentInfo">
               <p className="appointmentUser">{appointment.vendorUsername}</p>
               <p className="appointmentTitle">{appointment.appointmentTitle}</p>
@@ -174,13 +192,14 @@ function AppointmentPage({ userData, socket }) {
               </div>
             </div>
             <div className="appointmentActions">
-              <button className="appointmentButtons">
+              <button className="appointmentButtons acceptAppointment">
                 Add to Google Calendar
               </button>
               <button
-                className="appointmentButtons"
-                onClick={() =>
+                className="appointmentButtons cancelAppointment"
+                onClick={(event) =>
                   handleDeclinedAppointment(
+                    event,
                     appointment,
                     appointment.customerUID,
                     appointment.vendorUID,
@@ -194,6 +213,15 @@ function AppointmentPage({ userData, socket }) {
             </div>
           </div>
         ))}
+        {isAppointmentDetailsModalShown && selectedAppointment !== null && (
+          <div>
+            <AppointmentDetails
+              isShown={isAppointmentDetailsModalShown}
+              onClose={toggleAppointmentDetailsModal}
+              appointment={selectedAppointment}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

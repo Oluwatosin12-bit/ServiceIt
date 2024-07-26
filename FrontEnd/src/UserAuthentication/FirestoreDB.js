@@ -10,6 +10,9 @@ import {
   onSnapshot,
   Timestamp,
   deleteDoc,
+  updateDoc,
+  writeBatch,
+  FieldValue,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { generateRandomID } from "../BookingPage/BookingDB";
@@ -18,6 +21,9 @@ import { v4 } from "uuid";
 const DATABASE_FOLDER_NAME = "users";
 const POSTS_COLLECTION = "Posts";
 const POST_CATEGORIES_FOLDER_NAME = "postCategories";
+const LOCATION_FOLDER_NAME = "serviceLocations";
+const ACTION_COUNTS = 0;
+const COUNT_CHANGE = 1;
 async function addUser(
   userID,
   name,
@@ -34,7 +40,13 @@ async function addUser(
     Email: signUpEmail,
     selectedCategories: selectedCategories ?? [],
     feedCategories: selectedCategories ?? [],
+    selectedCategories: selectedCategories ?? [],
+    feedCategories: selectedCategories ?? [],
     UserLocation: userLocation,
+    FavoriteCount: ACTION_COUNTS,
+    AppointmentCount: ACTION_COUNTS,
+    Bio: "I am an amazing service provider",
+    PostCount: ACTION_COUNTS,
   });
 }
 
@@ -46,7 +58,7 @@ async function isDatabaseExist() {
 
 async function isUsernameUnique(username) {
   const databaseExists = await isDatabaseExist(DATABASE_FOLDER_NAME);
-  if (databaseExists === false) {
+  if (!databaseExists) {
     return true;
   }
   const usersCollection = collection(database, DATABASE_FOLDER_NAME);
@@ -85,6 +97,56 @@ const uploadPostImage = async (serviceCategory, imageUpload) => {
   }
 };
 
+const processServiceCategories = async (
+  categories,
+  batchWrite,
+  formDataWithImage,
+  generatedID
+) => {
+  const categoryPromises = categories.map(async (category) => {
+    const categoryDocRef = doc(database, POST_CATEGORIES_FOLDER_NAME, category);
+    const categoryDocSnap = await getDoc(categoryDocRef);
+
+    if (!categoryDocSnap.exists()) {
+      batchWrite.set(categoryDocRef, { categoryName: category, Posts: [] });
+    }
+
+    const categoryPostsCollectionRef = collection(
+      categoryDocRef,
+      POSTS_COLLECTION
+    );
+    const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
+    batchWrite.set(categoryPostDocRef, formDataWithImage);
+  });
+
+  await Promise.all(categoryPromises);
+};
+
+const processServiceLocations = async (
+  locations,
+  batchWrite,
+  formDataWithImage,
+  generatedID
+) => {
+  const locationPromises = locations.map(async (location) => {
+    const locationDocRef = doc(database, LOCATION_FOLDER_NAME, location);
+    const locationDocSnap = await getDoc(locationDocRef);
+
+    if (!locationDocSnap.exists()) {
+      batchWrite.set(locationDocRef, { locationName: location, Posts: [] });
+    }
+
+    const locationPostsCollectionRef = collection(
+      locationDocRef,
+      POSTS_COLLECTION
+    );
+    const locationPostDocRef = doc(locationPostsCollectionRef, generatedID);
+    batchWrite.set(locationPostDocRef, formDataWithImage);
+  });
+
+  await Promise.all(locationPromises);
+};
+
 const createPost = async (formData, imageUpload, userID, userData) => {
   try {
     const imageURL = await uploadPostImage(
@@ -99,17 +161,31 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       imageURL,
       createdAt,
       vendorUsername,
+      vendorEmail: userData.Email,
       vendorUID: userID,
+      vendorName: userData.Name,
       postID: generatedID,
+      FavoriteCount: ACTION_COUNTS,
+      AppointmentCount: ACTION_COUNTS,
     };
 
     if (userID === null) {
       throw new Error(`Invalid user ID: ${error.message}`);
     }
+    const batchWrite = writeBatch(database);
+
+    //add to user collection
     const userDocRef = doc(database, DATABASE_FOLDER_NAME, userID);
-    const postsCollectionRef = collection(userDocRef, POSTS_COLLECTION);
-    const postDocRef = doc(postsCollectionRef, generatedID);
-    await setDoc(postDocRef, formDataWithImage);
+    const postDocRef = doc(
+      collection(userDocRef, POSTS_COLLECTION),
+      generatedID
+    );
+    batchWrite.set(postDocRef, formDataWithImage);
+
+    //increase postCount
+    const userDocSnap = await getDoc(userDocRef);
+    const postCount = userDocSnap.data().PostCount;
+    batchWrite.update(userDocRef, { PostCount: postCount + COUNT_CHANGE });
 
     //add to postCategories collection
     for (const category of formData.serviceCategories) {
@@ -120,14 +196,47 @@ const createPost = async (formData, imageUpload, userID, userData) => {
       );
       const categoryDocSnap = await getDoc(categoryDocRef);
 
-      if (categoryDocSnap.exists() === false) {
-        await setDoc(categoryDocRef, { categoryName: category, Posts: [] });
+      if (!categoryDocSnap.exists()) {
+        batchWrite.set(categoryDocRef, { categoryName: category, Posts: [] });
       }
 
-      const categoryPostsCollectionRef = collection(categoryDocRef, "Posts");
+      const categoryPostsCollectionRef = collection(
+        categoryDocRef,
+        POSTS_COLLECTION
+      );
       const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
-      await setDoc(categoryPostDocRef, formDataWithImage);
+      batchWrite.set(categoryPostDocRef, formDataWithImage);
     }
+
+    //add to Location collection
+    for (const location of formData.serviceLocations) {
+      const locationDocRef = doc(database, LOCATION_FOLDER_NAME, location);
+      const categoryDocSnap = await getDoc(locationDocRef);
+
+      if (!categoryDocSnap.exists()) {
+        batchWrite.set(locationDocRef, { locationName: location, Posts: [] });
+      }
+
+      const categoryPostsCollectionRef = collection(
+        locationDocRef,
+        POSTS_COLLECTION
+      );
+      const categoryPostDocRef = doc(categoryPostsCollectionRef, generatedID);
+      batchWrite.set(categoryPostDocRef, formDataWithImage);
+    }
+    await processServiceCategories(
+      formData.serviceCategories,
+      batchWrite,
+      formDataWithImage,
+      generatedID
+    );
+    await processServiceLocations(
+      formData.serviceLocations,
+      batchWrite,
+      formDataWithImage,
+      generatedID
+    );
+    await batchWrite.commit();
   } catch (error) {
     throw new Error(`Error creating post: ${error.message}`);
   }
@@ -160,7 +269,7 @@ const fetchUserPosts = (userID, callback) => {
       postsData.push(doc.data());
     });
 
-    callback(postsData);
+    callback(postsData.sort((a, b) => b.createdAt - a.createdAt));
   });
   return unsubscribe;
 };

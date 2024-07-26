@@ -30,7 +30,7 @@ const registerUser = async (
       username,
       email,
       selectedCategories ?? [],
-      userLocation,
+      userLocation
     );
     if (newUser !== null && userAddedToDB !== false) {
       return newUser;

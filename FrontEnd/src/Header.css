@@ -10,36 +10,51 @@
   z-index: 1000;
   width: 100%;
   height: 100px;
-  border-bottom: 1px solid #cccccc;
-  background-color: var(--backgroundColor);
+  border-bottom: 2px solid var(--secondaryText);
+  background-color: var(--menuColor);
 }
 
-h2{
-  color: var(--darkOne);
+.userName p {
+  color: var(--primaryText);
 }
 
+.headerSection h2 {
+  color: var(--primaryText);
+}
+.headerSection p {
+  cursor: pointer;
+}
+.navigation ul li {
+  margin: 10px;
+}
 .navigationList {
   list-style: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--darkOne);
+  color: var(--primaryText);
 }
 
 .navigationList p,
 .navigationList i,
 .navigationList a {
-  color: var(--darkOne);
+  color: var(--primaryText);
   text-decoration: none;
+  padding: 10px;
+}
+
+.navigationList .activeLink {
+  font-weight: bold;
+  color: red;
 }
 
 .navigationList li {
   margin-right: 10px;
-  color: var(--darkOne);
+  color: var(--primaryText);
   position: relative;
 }
 
-.counter{
+.counter {
   width: 13px;
   height: 13px;
   background-color: red;
@@ -55,7 +70,11 @@ h2{
   right: -5px;
 }
 
-.popNotifications{
+.profileIcon {
+  font-size: 25px;
+}
+
+.popNotifications {
   position: absolute;
   top: 100px;
   right: zero;
@@ -66,14 +85,31 @@ h2{
   padding: 10px;
 }
 
-.popNotification{
+.popNotification {
   padding: 5px;
   font-size: 14px;
 }
-.notificationButton{
+.notificationButton {
   width: 80%;
   margin-top: 10px;
   padding: 5px;
+  background: var(--buttonColor);
+}
+.toggleBtns {
+  display: inline-block;
+  border: none;
+  background: var(--primaryText);
+  color: var(--toggleIcon);
+  outline: none;
+  cursor: pointer;
+  height: 39px;
+  width: 39px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  transition: 0.3s;
+}
+.toggleBtns i {
+  color: var(--toggleIcon);
 }
 
 @media (max-width: 1000px) {
@@ -92,7 +128,14 @@ h2{
 }
 
 @media (max-width: 357px) {
-  .headerSection{
+  .headerSection {
     height: 115px;
+  }
+}
+
+@media (max-width: 850px) {
+  .navigation ul li{
+    margin-top: 0;
+    margin-bottom: 7px;
   }
 }

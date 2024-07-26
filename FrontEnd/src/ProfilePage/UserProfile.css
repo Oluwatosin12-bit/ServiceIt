@@ -14,7 +14,7 @@
 }
 
 .welcomePlace {
-  color: var(--darkOne);
+  color: var(--primaryText);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,13 +27,14 @@
 }
 
 .userInfo {
-  border-bottom: 1px solid var(--darkOne);
+  border-bottom: 1px solid var(--secondaryText);
   min-height: 250px;
   margin: 0 5px;
 }
 
-.formHeading{
+.formHeading {
   text-align: center;
+  color: var(--modalTextColor);
 }
 
 .postForm {
@@ -72,7 +73,7 @@ textarea {
   height: 150px;
 }
 
-button {
+.createButton {
   background: var(--buttonColor);
   color: var(--color6);
   padding: 10px 10px;
@@ -82,8 +83,8 @@ button {
   margin-right: 5px;
 }
 
-button:disabled {
-  background-color: #aaa;
+.createButton:disabled {
+  background: var(--secondaryText);
   cursor: not-allowed;
 }
 
@@ -114,6 +115,12 @@ button:disabled {
   align-items: center;
   position: relative;
 }
+.bioContainer p {
+  color: var(--secondaryText);
+}
+.welcomePlace p {
+  color: var(--secondaryText);
+}
 
 .ellipsisIcon,
 .editIcon {
@@ -131,18 +138,21 @@ button:disabled {
   z-index: 1;
 }
 
-.dropdownMenu ul, .deleteDropDown ul {
+.dropdownMenu ul,
+.deleteDropDown ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.dropdownMenu li, .deleteDropDown li {
+.dropdownMenu li,
+.deleteDropDown li {
   padding: 8px 16px;
   cursor: pointer;
 }
 
-.dropdownMenu li:hover, .deleteDropDown li:hover{
+.dropdownMenu li:hover,
+.deleteDropDown li:hover {
   background-color: var(--hoverColor);
 }
 
@@ -150,7 +160,7 @@ button:disabled {
   float: right;
 }
 p {
-  color: var(--darkOne);
+  color: var(--secondaryText);
 }
 .createButton {
   width: 200px;
@@ -160,8 +170,15 @@ p {
   display: flex;
   justify-content: space-between;
 }
+.postHeading p {
+  color: var(--secondaryText);
+}
+.availabilityInfo {
+  font-size: 9px;
+  text-align: center;
+}
 
-.deleteDropDown{
+.deleteDropDown {
   position: absolute;
   top: 30px;
   right: 0;
@@ -170,6 +187,10 @@ p {
   border-radius: 5px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1;
+}
+.saveButton {
+  background: var(--buttonColor);
+  margin-top: 7px;
 }
 
 @media (max-width: 1000px) {

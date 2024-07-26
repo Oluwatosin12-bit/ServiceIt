@@ -16,21 +16,31 @@ p {
   top: 100px;
   bottom: 0;
   overflow-y: auto;
-  background-color: var(--color7);
-  border-right: 1px solid #cccccc;
 }
 
 .bodyArea {
+.bodyArea {
   margin-top: 100px;
-  overflow-y: auto;
 }
 .searchArea {
-  display: block;
-  margin-left: 290px;
-  margin-top: 20px;
-  text-align: center;
+  position: relative;
+  display: flex;
+  align-items: center;
   width: 200px;
 }
+
+.searchInput {
+  flex: 1;
+  padding-left: 25px;
+  color: var(--primaryText);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 8px;
+  color: var(--primaryText);
+}
+
 .feedSection {
   flex-grow: 1;
   display: flex;
@@ -41,11 +51,12 @@ p {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  max-height: calc(100vh - 130px);
 }
 
 .postFeed {
   margin: 1rem;
-  height: 450px;
+  height: 400px;
 }
 .postFeed:hover {
   transition: 0.1s;
@@ -68,6 +79,9 @@ p {
   .feedSection img {
     width: 200px;
     height: 150px;
+  }
+  .postFeed:hover {
+    width: 205px;
   }
   p {
     font-size: 10px;
