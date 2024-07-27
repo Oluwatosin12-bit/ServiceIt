@@ -5,7 +5,7 @@ import cors from "cors";
 import express from "express";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import axios from "axios";
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(
