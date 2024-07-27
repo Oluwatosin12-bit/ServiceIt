@@ -1,0 +1,137 @@
+[
+    {
+      "uid": "3NGz7AkvDogEKjnPifGkfw5cysi1",
+      "posts": [
+        {
+          "serviceTitle": "Car Repair Service",
+          "serviceCategories": ["Automotive", "Hair Styling", "Fitness"],
+          "serviceLocations": ["New York, NY"],
+          "serviceAvailability": "Weekdays 9am - 5pm",
+          "servicePrice": "$50 - $100",
+          "serviceDescription": "Professional car repair service with a focus on engine and transmission repair."
+        },
+        {
+          "serviceTitle": "Oil Change Service",
+          "serviceCategories":  ["Automotive", "Plumbing", "Cleaning"],
+          "serviceLocations": ["New York, NY"],
+          "serviceAvailability": "Weekends 10am - 4pm",
+          "servicePrice": "$30 - $50",
+          "serviceDescription": "Quick and affordable oil change service for all types of vehicles."
+        },
+        {
+          "serviceTitle": "Brake Inspection",
+          "serviceCategories":  ["Automotive", "Electricity", "Home Decor"],
+          "serviceLocations": ["New York, NY"],
+          "serviceAvailability": "Mondays and Wednesdays 1pm - 4pm",
+          "servicePrice": "$40 - $60",
+          "serviceDescription": "Thorough brake inspection and maintenance service."
+        },
+        {
+          "serviceTitle": "Tire Replacement",
+          "serviceCategories":  ["Automotive", "Car Repair", "Pet Sitting"],
+          "serviceLocations": ["New York, NY"],
+          "serviceAvailability": "Tuesdays and Thursdays 2pm - 6pm",
+          "servicePrice": "$80 - $120",
+          "serviceDescription": "Tire replacement service with a wide range of tire options."
+        },
+        {
+          "serviceTitle": "Battery Replacement",
+          "serviceCategories":  ["Automotive", "Chef", "Cleaning"],
+          "serviceLocations": ["New York, NY"],
+          "serviceAvailability": "Fridays 9am - 1pm",
+          "servicePrice": "$70 - $100",
+          "serviceDescription": "Fast and reliable battery replacement service for all vehicle models."
+        }
+      ]
+    },
+    {
+      "uid": "5Pjvjd27I9badJZ5ip2QsagtiFk1",
+      "posts": [
+        {
+          "serviceTitle": "Web Development Service",
+          "serviceCategories": ["Technology", "Design", "Marketing"],
+          "serviceLocations": ["Los Angeles, CA"],
+          "serviceAvailability": "Weekdays 10am - 6pm",
+          "servicePrice": "$500 - $1000",
+          "serviceDescription": "Professional web development service specializing in React and Node.js."
+        },
+        {
+          "serviceTitle": "Mobile App Development",
+          "serviceCategories": ["Technology", "Design", "Health"],
+          "serviceLocations": ["Los Angeles, CA"],
+          "serviceAvailability": "Weekends 11am - 4pm",
+          "servicePrice": "$800 - $1500",
+          "serviceDescription": "Custom mobile app development for both iOS and Android platforms."
+        },
+        {
+          "serviceTitle": "UI/UX Design",
+          "serviceCategories": ["Design", "Marketing", "Fitness"],
+          "serviceLocations": ["Los Angeles, CA"],
+          "serviceAvailability": "Mondays and Fridays 12pm - 3pm",
+          "servicePrice": "$300 - $700",
+          "serviceDescription": "Creative UI/UX design services for websites and mobile apps."
+        },
+        {
+          "serviceTitle": "SEO Optimization",
+          "serviceCategories": ["Marketing", "Technology", "Health"],
+          "serviceLocations": ["Los Angeles, CA"],
+          "serviceAvailability": "Tuesdays and Thursdays 1pm - 5pm",
+          "servicePrice": "$400 - $800",
+          "serviceDescription": "SEO optimization service to improve your website's search engine ranking."
+        },
+        {
+          "serviceTitle": "Digital Marketing",
+          "serviceCategories": ["Marketing", "Technology", "Fitness"],
+          "serviceLocations": ["Los Angeles, CA"],
+          "serviceAvailability": "Wednesdays 10am - 2pm",
+          "servicePrice": "$600 - $1200",
+          "serviceDescription": "Comprehensive digital marketing services including social media management and PPC advertising."
+        }
+      ]
+    },
+    {
+      "uid": "5efCZUBwdbf814ZeIjlsLwjrFjI3",
+      "posts": [
+        {
+          "serviceTitle": "Yoga Classes",
+          "serviceCategories": ["Fitness","Technology", "Fitness"],
+          "serviceLocations": ["Chicago, IL"],
+          "serviceAvailability": "Weekdays 7am - 9am",
+          "servicePrice": "$20 - $40",
+          "serviceDescription": "Morning yoga classes for all levels, focusing on flexibility and relaxation."
+        },
+        {
+          "serviceTitle": "Personal Training",
+          "serviceCategories": ["Fitness","Marketing", "Fitness"],
+          "serviceLocations": ["Chicago, IL"],
+          "serviceAvailability": "Weekends 8am - 12pm",
+          "servicePrice": "$50 - $80",
+          "serviceDescription": "One-on-one personal training sessions to help you achieve your fitness goals."
+        },
+        {
+          "serviceTitle": "Nutrition Coaching",
+          "serviceCategories": ["Health","Design", "Health"],
+          "serviceLocations": ["Chicago, IL"],
+          "serviceAvailability": "Mondays and Thursdays 5pm - 7pm",
+          "servicePrice": "$60 - $100",
+          "serviceDescription": "Personalized nutrition coaching to improve your diet and overall health."
+        },
+        {
+          "serviceTitle": "Meditation Classes",
+          "serviceCategories": ["Health","Design", "Marketing"],
+          "serviceLocations": ["Chicago, IL"],
+          "serviceAvailability": "Wednesdays 6pm - 8pm",
+          "servicePrice": "$25 - $50",
+          "serviceDescription": "Evening meditation classes to help you relax and reduce stress."
+        },
+        {
+          "serviceTitle": "Pilates Classes",
+          "serviceCategories": ["Fitness","Technology", "Health"],
+          "serviceLocations": ["Chicago, IL"],
+          "serviceAvailability": "Tuesdays and Fridays 7pm - 9pm",
+          "servicePrice": "$30 - $60",
+          "serviceDescription": "Pilates classes focused on core strength and flexibility."
+        }
+      ]
+    }
+  ]

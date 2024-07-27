@@ -1,0 +1,72 @@
+[
+  {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "username": "johndoe",
+    "selectedCategories": ["Hair Styling, Plumbing"],
+    "userLocation": "New York, NY"
+  },
+  {
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "username": "janesmith",
+    "selectedCategories": ["Plumbing, Fitness"],
+    "userLocation": "Los Angeles, CA"
+  },
+  {
+    "name": "Alice Johnson",
+    "email": "alice.johnson@example.com",
+    "username": "alicejohnson",
+    "selectedCategories": ["Fitness, Electricity"],
+    "userLocation": "Chicago, IL"
+  },
+  {
+    "name": "Bob Brown",
+    "email": "bob.brown@example.com",
+    "username": "bobbrown",
+    "selectedCategories": ["Fitness, Home Decor"],
+    "userLocation": "Houston, TX"
+  },
+  {
+    "name": "Charlie Davis",
+    "email": "charlie.davis@example.com",
+    "username": "charliedavis",
+    "selectedCategories": ["Electricity"],
+    "userLocation": "San Francisco, CA"
+  },
+  {
+    "name": "Emily Evans",
+    "email": "emily.evans@example.com",
+    "username": "emilyevans",
+    "selectedCategories": ["Home Decor, Car Repair"],
+    "userLocation": "Denver, CO"
+  },
+  {
+    "name": "Frank Harris",
+    "email": "frank.harris@example.com",
+    "username": "frankharris",
+    "selectedCategories": ["Car Repair, Pet Sitting"],
+    "userLocation": "Miami, FL"
+  },
+  {
+    "name": "Grace Lee",
+    "email": "grace.lee@example.com",
+    "username": "gracelee",
+    "selectedCategories": ["Pet Sitting, Cleaning"],
+    "userLocation": "Seattle, WA"
+  },
+  {
+    "name": "Hank Martin",
+    "email": "hank.martin@example.com",
+    "username": "hankmartin",
+    "selectedCategories": ["Chef, Pet Sitting"],
+    "userLocation": "Boston, MA"
+  },
+  {
+    "name": "Ivy Nelson",
+    "email": "ivy.nelson@example.com",
+    "username": "ivynelson",
+    "selectedCategories": ["Cleaning, Pet Sitting"],
+    "userLocation": "Austin, TX"
+  }
+]
