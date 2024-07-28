@@ -1,12 +1,12 @@
 import { Server } from "socket.io";
 import { database } from "./FirebaseConfig.js";
-import { GOOGLE_PLACES_KEY } from "./env.js";
 import cors from "cors";
 import express from "express";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import axios from "axios";
 const PORT = process.env.PORT || 3000;
 const app = express();
+const GOOGLE_PLACES_KEY="AIzaSyDiMeYprJDeYoM-WclTeU2mHqS4PfEJmaY"
 
 app.use(
   cors({
@@ -30,7 +30,9 @@ app.use(
   })
 );
 
-const server = app.listen(PORT, () => {});
+const server = app.listen(PORT, () => {
+
+});
 
 const io = new Server(server, {
   cors: {
