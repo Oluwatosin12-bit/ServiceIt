@@ -5,7 +5,6 @@ import express from "express";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import axios from "axios";
 import {GOOGLE_PLACES_KEY, PORT} from "./env.js";
-const PORT = PORT || 3000
 const app = express();
 
 app.use(
