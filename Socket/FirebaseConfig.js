@@ -9,7 +9,7 @@ import {VITE_API_KEY, VITE_AUTH_DOMAIN,
   VITE_STORAGE_BUCKET,
   VITE_MESSAGING_SENDER_ID,
   VITE_APP_ID,
-  VITE_MEASUREMENT_ID} from "./env";
+  VITE_MEASUREMENT_ID} from "./env.js";
 
 
 const firebaseConfig = {
