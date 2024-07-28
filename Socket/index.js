@@ -4,7 +4,7 @@ import cors from "cors";
 import express from "express";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 import axios from "axios";
-const PORT = process.env.PORT || 3000
+const PORT = PORT || 3000
 const app = express();
 
 app.use(
@@ -42,7 +42,7 @@ const io = new Server(server, {
 });
 
 const fetchPlacesAutocomplete = async (query) => {
-  const apiKey = process.env.GOOGLE_PLACES_KEY;
+  const apiKey = GOOGLE_PLACES_KEY;
   const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&types=(cities)&key=${apiKey}`;
 
   try {
