@@ -180,6 +180,18 @@ p {
 .compulsorySign{
   color: red;
 }
+.selectedCategories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
+.categoryTag {
+
+  display: flex;
+  align-items: center;
+}
 
 .suggestions{
   background-color: var(--secondaryText);
@@ -232,6 +244,18 @@ p {
   }
   .createButton {
     width: 130px;
+  }
+}
+
+@media (max-width: 849px){
+  .userProfileSection {
+    margin-top: 360px;
+  }
+}
+
+@media (max-width: 439px){
+  .userInfo {
+    margin-top: 700px;
   }
 }
 

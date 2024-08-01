@@ -15,7 +15,7 @@ function MainPage({ userUID, userData, socket }) {
   const [isPostDetailModalShown, setIsPostDetailModalShown] = useState(false);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
-  const REFRESH_TIME = 3600000;
+  const REFRESH_TIME = 360000;
   const { theme } = useTheme();
 
   useEffect(() => {

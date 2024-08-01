@@ -51,7 +51,7 @@ function HistoryPage({ userData }) {
         <LoadingPage />
       ) : (
         pastAppointmentData.map((appointment) => (
-          <div key={appointment.docID} onClick={()=>toggleAppointmentDetailsModal(appointment)}>
+          <div className="appointmentTab" key={appointment.docID} onClick={()=>toggleAppointmentDetailsModal(appointment)}>
             {appointment.vendorUID === userID && (
               <p className="appointmentUser">{appointment.customerUsername}</p>
             )}

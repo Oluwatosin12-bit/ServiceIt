@@ -15,7 +15,7 @@ body {
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background-color: (--backgroundColor);
+  background-color: var(--backgroundColor);
 }
 
 .login-content {
@@ -327,6 +327,7 @@ button {
 
 .sign-up {
   padding: 30px;
+  overflow-y: auto;
   background-color: var(--menuColor);
   -webkit-transform: translate3d(-900px, 0, 0);
   transform: translate3d(-900px, 0, 0);
@@ -454,6 +455,7 @@ button {
     justify-content: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
+    overflow-y: auto;
   }
   .cont {
     width: 400px;
