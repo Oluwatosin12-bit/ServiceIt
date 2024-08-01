@@ -34,7 +34,21 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5173/BookingPage",
+      "http://localhost:5173/MainPage",
+      "http://localhost:5173/Header",
+      "http://localhost:5173/UserProfile",
+      "http://localhost:5173/NotificationsPage",
+      "https://serviceitt.netlify.app",
+      "https://serviceitt.netlify.app/BookingPage",
+      "https://serviceitt.netlify.app/MainPage",
+      "https://serviceitt.netlify.app/Header",
+      "https://serviceitt.netlify.app/UserProfile",
+      "https://serviceitt.netlify.app/NotificationsPage",
+      "https://serviceitbackend.onrender.com",
+    ],
     methods: ["GET", "POST"],
     pingInterval: 25000,
     pingTimeout: 60000,
