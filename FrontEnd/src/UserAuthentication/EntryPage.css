@@ -33,7 +33,7 @@ button {
   overflow: hidden;
   position: relative;
   width: 900px;
-  height: 900px;
+  height: 800px;
   background-color: var(--lightOne);
   box-shadow: 0 19px 38px rgba(0, 0, 0, 0.3), 0 15px 12px rgba(0, 0, 0, 0.22);
   border-radius: 15px;
@@ -99,7 +99,7 @@ button {
 }
 
 .submit {
-  margin: 40px auto 0;
+  margin: 25px auto 0;
   text-transform: uppercase;
   font-weight: 600;
   font-family: "Nunito", sans-serif;

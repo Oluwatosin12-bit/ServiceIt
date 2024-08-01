@@ -26,16 +26,13 @@ function PostsPreview({ post }) {
       <img src={post.imageURL} className="feedImage" />
       <h3 className="feedTitle">{post.serviceTitle}</h3>
       <p className="feedPrice">
-        {" "}
         <strong>Price Range:</strong> {post.servicePrice}
       </p>
       <p className="feedDescription">
-        {" "}
-        <strong>Description:</strong>{" "}
+        <strong>Description:</strong>
         {truncateDescription(post.serviceDescription, 20)}
       </p>
       <p className="feedTimestamp">
-        {" "}
         Created at: {post.createdAt.toLocaleString()}
       </p>
     </div>

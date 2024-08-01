@@ -76,13 +76,13 @@ function LoginPage() {
         <div className="social-media">
           <ul>
             <li>
-              <i className="fa-brands fa-instagram"></i>
+              <i href="https://www.instagram.com/tosin.x_/" className="fa-brands fa-instagram"></i>
             </li>
             <li>
               <i className="fa-brands fa-twitter"></i>
             </li>
             <li>
-              <i className="fa-brands fa-linkedin"></i>
+              <i href="https://www.linkedin.com/in/oluwatosin-oyekeye/" className="fa-brands fa-linkedin"></i>
             </li>
           </ul>
         </div>

@@ -37,10 +37,11 @@
   height: 100vh;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1057px) {
   .categories {
-    width: 100px;
+    width: 150px;
   }
+
   .categories ul {
     padding: 5px;
   }

@@ -149,7 +149,7 @@ function UserProfilePage({ userUID, userData }) {
         deletePostDropdownRef.current[postId] !== null &&
         !deletePostDropdownRef.current[postId].contains(event.target)
       ) {
-        setIsDeletePostDropdownVisible(null);
+        setDeletePostIndex(null);
       }
     });
   };
@@ -244,7 +244,7 @@ function UserProfilePage({ userUID, userData }) {
           <form onSubmit={handleFormSubmit} className="postForm">
             <div className="formGroup">
               <h2 className="formHeading">Create Post</h2>
-              <label htmlFor="serviceTitle">Title:</label>
+              <label htmlFor="serviceTitle">Title: <span className="compulsorySign">*</span></label>
               <input
                 type="text"
                 placeholder="Enter Title"
@@ -269,7 +269,7 @@ function UserProfilePage({ userUID, userData }) {
             </div>
 
             <div className="availableCategories">
-              <label htmlFor="categoryDropdown">Select Categories:</label>
+              <label htmlFor="categoryDropdown">Select Categories: <span className="compulsorySign">*</span></label>
               <select id="categoryDropdown" onChange={handleCategoryChange}>
                 <option></option>
                 {availableCategories.map((category) => (
@@ -287,7 +287,7 @@ function UserProfilePage({ userUID, userData }) {
             />
             <button onClick={addCategory}>Add Category</button>
             <div>
-              <label htmlFor="serviceLocations">Serviceable Location(s):</label>
+              <label htmlFor="serviceLocations">Serviceable Location(s): <span className="compulsorySign">*</span></label>
               <input
                 type="text"
                 placeholder="Example: Los Angeles, Birmingham"
@@ -309,12 +309,12 @@ function UserProfilePage({ userUID, userData }) {
                   </div>
                 ))}
               </div>
-              <div className="selected-locations">
+              <div className="selectedLocations">
                 {selectedLocations.map((location, index) => (
-                  <div key={index} className="selected-location">
+                  <div key={index} className="selectedLocation">
                     {location}
                     <span
-                      className="remove-location"
+                      className="removeLocation"
                       onClick={() => removeLocation(index)}
                     >
                       x
@@ -324,10 +324,13 @@ function UserProfilePage({ userUID, userData }) {
               </div>
             </div>
             <div>
-              <label htmlFor="serviceAvailability">Availability:</label>{" "}
-              <span className="availabilityInfo">
+              <label htmlFor="serviceAvailability">
+                Availability:
+                <span className="availabilityInfo">
                 When you are available to offer this service
-              </span>
+                </span>
+              </label>
+
               <input
                 type="text"
                 placeholder="Example: Every Thursday, through July 2024"
@@ -349,7 +352,7 @@ function UserProfilePage({ userUID, userData }) {
               />
             </div>
             <div className="formGroup">
-              <label htmlFor="ImageURL">Select Image</label>
+              <label htmlFor="ImageURL">Select Image: <span className="compulsorySign">*</span></label>
               <input
                 type="file"
                 name="ImageURL"

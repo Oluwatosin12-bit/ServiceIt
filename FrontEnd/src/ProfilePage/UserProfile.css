@@ -177,6 +177,39 @@ p {
   font-size: 9px;
   text-align: center;
 }
+.compulsorySign{
+  color: red;
+}
+
+.suggestions{
+  background-color: var(--secondaryText);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.suggestion{
+  border-bottom: 0.7px solid var(--lightTwo);
+}
+.suggestion:hover{
+  cursor: pointer;
+  background-color: var(--lightTwo);
+}
+.selectedLocation{
+  display: inline-block;
+  background-color: var(--lightOne);
+  border: 1px solid #ccc;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 10px;
+  width: max-content;
+}
+.removeLocation{
+  margin-left: 7px;
+  color: var(--darkTwo);
+  font-size: 15px;
+}
+.removeLocation:hover{
+  cursor: pointer;
+}
 
 .deleteDropDown {
   position: absolute;
