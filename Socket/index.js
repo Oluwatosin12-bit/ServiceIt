@@ -283,12 +283,6 @@ io.on("connection", (socket) => {
             receiverID,
             NOTIFICATIONS_FOLDER_NAME
           ),
-          collection(
-            database,
-            DATABASE_FOLDER_NAME,
-            receiverID,
-            NOTIFICATIONS_FOLDER_NAME
-          ),
           receiverNotification
         );
         await addDoc(
