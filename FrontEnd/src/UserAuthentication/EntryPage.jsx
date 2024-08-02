@@ -36,7 +36,6 @@ function EntryPage() {
               <span className="m-in">Login</span>
             </div>
           </div>
-
           <SignUpPage />
         </div>
       </div>

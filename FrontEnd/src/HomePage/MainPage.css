@@ -65,15 +65,16 @@ p {
   border: solid gold;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1057px) {
   .categorySection {
-    width: 100px;
+    width: 150px;
   }
+
   .searchArea {
-    margin-left: 125px;
+    margin-left: 150px;
   }
   .feedSection {
-    margin-left: 100px;
+    margin-left: 150px;
   }
   .feedSection img {
     width: 200px;

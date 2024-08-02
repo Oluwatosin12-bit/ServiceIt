@@ -31,7 +31,8 @@ const requestAppointment = async (
   userData,
   vendorEmail,
   vendorName,
-  postID
+  postID,
+  image
 ) => {
   try {
     const Status = PENDING_STATUS;
@@ -51,6 +52,7 @@ const requestAppointment = async (
       customerName,
       vendorName,
       postID,
+      postImage: image,
     };
     const userDocRef = doc(
       database,

@@ -40,7 +40,7 @@
 .navigationList a {
   color: var(--primaryText);
   text-decoration: none;
-  padding: 10px;
+  
 }
 
 .navigationList .activeLink {

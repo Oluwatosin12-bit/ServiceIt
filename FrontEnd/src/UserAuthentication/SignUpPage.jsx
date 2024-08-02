@@ -186,7 +186,8 @@ function SignUpPage() {
             placeholder="City, State"
           />
         </label>
-        <div className="suggestions">
+        {userLocation!=="" && (
+          <div className="suggestions">
           {searchSuggestions.map((location, index) => (
             <div
               key={index}
@@ -197,6 +198,7 @@ function SignUpPage() {
             </div>
           ))}
         </div>
+        )}
       </div>
       <button
         type="button"

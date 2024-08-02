@@ -178,28 +178,28 @@ function SignUpPage() {
           </select>
         </div>
         <div>
-          <label>
-            <span>Location</span>
-            <input
-              name="location"
-              value={userLocation}
-              onChange={handleLocationInputChange}
-              required="required"
-              placeholder="City, State"
-            />
-          </label>
-          <div className="suggestions">
-            {searchSuggestions.map((location, index) => (
-              <div
-                key={index}
-                className="suggestion"
-                onClick={() => addLocation(location.description)}
-              >
-                {location.description}
-              </div>
-            ))}
-          </div>
+        <label>
+          <span>Location</span>
+          <input
+            name="location"
+            value={userLocation}
+            onChange={handleLocationInputChange}
+            required="required"
+            placeholder="City, State"
+          />
+        </label>
+        <div className="suggestions">
+          {searchSuggestions.map((location, index) => (
+            <div
+              key={index}
+              className="suggestion"
+              onClick={() => addLocation(location.description)}
+            >
+              {location.description}
+            </div>
+          ))}
         </div>
+      </div>
         <div className="link-out">
           <a href="/EntryPage" className="redirect3">
             Already have an account? Login here

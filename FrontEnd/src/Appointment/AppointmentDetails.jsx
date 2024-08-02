@@ -37,6 +37,11 @@ function AppointmentDetails({ isShown, onClose, appointment }) {
                   <p>Vendor Email: {appointment.vendorEmail}</p>
                 </p>
               </div>
+              <div>
+                <strong>Appointment Time</strong>
+                <p>Date: {appointment.appointmentDate}</p>
+                <p>Date: {appointment.appointmentTime}</p>
+              </div>
             </div>
           </div>
         </div>

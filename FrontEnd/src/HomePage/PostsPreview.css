@@ -22,6 +22,11 @@
   color: var(--secondaryText);
   text-align: left;
 }
+
+.feedPrice,
+.feedDescription{
+  font-size: 13px;
+}
 .postHeader h3 {
   color: var(--primaryText);
 }
@@ -34,6 +39,7 @@
 .feedImage {
   width: 250px;
   height: 200px;
+  object-fit: fill;
 }
 .vendorUsername {
   cursor: pointer;

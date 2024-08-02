@@ -41,7 +41,8 @@ function BookingForm({ userData, socket }) {
     userData,
     vendorEmail,
     vendorName,
-    postID
+    postID,
+    image
   ) => {
     await requestAppointment(
       userUID,
@@ -51,7 +52,8 @@ function BookingForm({ userData, socket }) {
       userData,
       vendorEmail,
       vendorName,
-      postID
+      postID,
+      image
     );
   };
 
@@ -82,7 +84,8 @@ function BookingForm({ userData, socket }) {
         userData,
         post.vendorEmail,
         post.vendorName,
-        post.postID
+        post.postID,
+        post.imageURL
       );
       await addToRecommendedCategory(userUID, post.serviceCategories);
       await getRecommendedVendors(userUID, post.vendorUID);
